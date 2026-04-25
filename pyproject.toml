@@ -1,0 +1,28 @@
+[project]
+name = "todoleilao-scraper"
+version = "0.1.0"
+description = "Pipeline de raspagem de imóveis em leilão a partir de leiloeiros oficiais brasileiros."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Eduardo P Lima" },
+]
+dependencies = [
+    "scrapy>=2.11",
+    "scrapy-playwright>=0.0.40",
+    "httpx>=0.27",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.2",
+    "pandas>=2.2",
+    "loguru>=0.7",
+    "rich>=13.7",
+    "typer>=0.12",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.uv]
+package = false

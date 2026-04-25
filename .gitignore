@@ -216,3 +216,23 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# uv
+.venv/
+uv.lock.bak
+
+# Playwright
+.playwright/
+playwright-report/
+test-results/
+
+# Project data — preserva a estrutura, ignora conteúdo bruto/intermediário/processado
+data/raw/*
+!data/raw/.gitkeep
+data/intermediate/*
+!data/intermediate/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Reports gerados automaticamente (mantenha relatórios manuais commitados explicitamente)
+reports/*.auto.md
