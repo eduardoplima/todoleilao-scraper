@@ -53,7 +53,7 @@ PATH_MEDIUM = ("/leiloes", "/leilao", "/lotes", "categoria=imovel", "tipo=imovel
 PRICE_RE = re.compile(r"R\$\s*[\d.,]+")
 
 OUT_COLUMNS = [
-    "auctioneer_slug", "site", "listing_url",
+    "id", "auctioneer_slug", "site", "listing_url",
     "items_detected", "sample_item_url",
     "notes", "needs_manual_review",
 ]
@@ -283,6 +283,7 @@ async def find_listing_for_site(
     needs_manual = best_count < ITEMS_THRESHOLD
 
     return {
+        "id": site_row.get("id") or "",
         "auctioneer_slug": site_row.get("slug") or "",
         "site": site,
         "listing_url": best_url,
