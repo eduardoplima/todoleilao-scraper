@@ -14,12 +14,8 @@ o `detect_property_type` do loader retornar None.
 from __future__ import annotations
 
 import re
-from urllib.parse import urljoin
 
-import scrapy
-
-from leilao_scraper.items import PropertyItem
-from leilao_scraper.loaders import PropertyLoader, normalize_uf
+from leilao_scraper.loaders import normalize_uf
 
 from .base import BaseAuctionSpider
 
@@ -37,7 +33,7 @@ ADDRESS_RE = re.compile(
 
 class OALeiloesSpider(BaseAuctionSpider):
     name = "oaleiloes"
-    auctioneer = "oaleiloes"
+    auctioneer_slug = "oaleiloes"
     allowed_domains = ["oaleiloes.com.br"]
     start_urls = ["https://www.oaleiloes.com.br/"]
 
@@ -51,7 +47,7 @@ class OALeiloesSpider(BaseAuctionSpider):
             if absolute in seen:
                 continue
             seen.add(absolute)
-            yield scrapy.Request(absolute, callback=self.parse_leilao)
+            yield self.make_request(absolute, callback=self.parse_leilao)
 
     def parse_leilao(self, response):
         """Leilão → segue cada `/lote/{id}` cuja categoria menciona imóvel."""
@@ -67,19 +63,15 @@ class OALeiloesSpider(BaseAuctionSpider):
             if not PROPERTY_CATEGORY_RE.search(anchor_text):
                 continue
             seen.add(absolute)
-            yield scrapy.Request(
+            yield self.make_request(
                 absolute,
-                callback=self.parse_lote,
-                cb_kwargs={"source_listing_url": response.url},
+                callback=self.parse_property,
+                meta={"source_listing_url": response.url},
             )
 
-    def parse_lote(self, response, source_listing_url: str | None = None):
+    def parse_property(self, response):
         """Página do lote → emite um `PropertyItem`."""
-        loader = PropertyLoader(item=PropertyItem(), selector=response)
-        loader.add_value("url", response.url)
-        loader.add_value("auctioneer", self.auctioneer)
-        if source_listing_url:
-            loader.add_value("source_listing_url", source_listing_url)
+        loader = self.new_loader(response)
 
         # Title sai como "OALeilões | <ENDEREÇO> em <CIDADE> - <ESTADO>".
         # Mantemos só a parte após o pipe.

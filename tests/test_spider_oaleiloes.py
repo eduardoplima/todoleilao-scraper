@@ -12,9 +12,9 @@ from leilao_scraper.spiders.oaleiloes import OALeiloesSpider
 FIXTURES = Path(__file__).parent / "fixtures" / "oaleiloes"
 
 
-def _response(filename: str, url: str) -> HtmlResponse:
+def _response(filename: str, url: str, meta: dict | None = None) -> HtmlResponse:
     body = (FIXTURES / filename).read_bytes()
-    request = Request(url=url)
+    request = Request(url=url, meta=meta or {})
     return HtmlResponse(url=url, body=body, encoding="utf-8", request=request)
 
 
@@ -33,8 +33,8 @@ def test_parse_leilao_yields_property_lote_requests_only(spider):
     assert len(requests) > 30, f"esperava muitos lotes de imóveis, obteve {len(requests)}"
     # todos os requests vão para /lote/{id}
     assert all("/lote/" in r.url for r in requests)
-    # source_listing_url é propagado via cb_kwargs
-    assert all(r.cb_kwargs.get("source_listing_url") == response.url for r in requests)
+    # source_listing_url é propagado via meta
+    assert all(r.meta.get("source_listing_url") == response.url for r in requests)
     # dedup: cada URL é única
     urls = [r.url for r in requests]
     assert len(urls) == len(set(urls))
@@ -48,14 +48,15 @@ def test_parse_leilao_skips_non_property_categories(spider):
     assert "/lote/14267" in requests[0].url
 
 
-# ---- parse_lote -----------------------------------------------------------
+# ---- parse_property -------------------------------------------------------
 
-def test_parse_lote_extracts_full_property_item(spider):
+def test_parse_property_extracts_full_property_item(spider):
     response = _response(
         "lote_14268_casa.html",
         "https://www.oaleiloes.com.br/lote/14268/al-arapiraca-rua-sob-codigo-municipal-em-arapiraca",
+        meta={"source_listing_url": "https://www.oaleiloes.com.br/leilao/361"},
     )
-    items = list(spider.parse_lote(response, source_listing_url="https://www.oaleiloes.com.br/leilao/361"))
+    items = list(spider.parse_property(response))
     assert len(items) == 1
     item = items[0]
 
