@@ -33,3 +33,4 @@ package = false
 testpaths = ["tests"]
 addopts = "-q"
 asyncio_mode = "auto"
+pythonpath = ["scrapy_project"]
