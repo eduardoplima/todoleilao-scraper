@@ -221,6 +221,9 @@ __marimo__/
 .venv/
 uv.lock.bak
 
+# Claude Code working files
+.claude/
+
 # Playwright
 .playwright/
 playwright-report/
