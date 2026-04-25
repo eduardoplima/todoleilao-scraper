@@ -98,8 +98,12 @@ PLAYWRIGHT_ABORT_REQUEST = None  # spiders podem sobrescrever para bloquear asse
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 FEED_EXPORT_ENCODING = "utf-8"
 
-# Pipelines / middlewares são habilitados nos arquivos correspondentes
-# (pipelines.py, middlewares.py) — registrados aqui sob demanda.
-ITEM_PIPELINES: dict[str, int] = {}
+# Pipelines: ordem por prioridade (menor primeiro).
+ITEM_PIPELINES: dict[str, int] = {
+    "leilao_scraper.pipelines.ValidationPipeline": 100,
+    "leilao_scraper.pipelines.DeduplicationPipeline": 200,
+    "leilao_scraper.pipelines.EnrichmentPipeline": 300,
+    "leilao_scraper.pipelines.JsonLinesExportPipeline": 900,
+}
 SPIDER_MIDDLEWARES: dict[str, int] = {}
 DOWNLOADER_MIDDLEWARES: dict[str, int] = {}
