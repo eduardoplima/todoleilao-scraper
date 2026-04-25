@@ -37,6 +37,7 @@ class FrazaoSpider(BaseAuctionSpider):
         yield loader.load_item()
 ```
 """
+
 from __future__ import annotations
 
 import re
@@ -49,7 +50,6 @@ from scrapy_playwright.page import PageMethod
 
 from leilao_scraper.items import PropertyItem
 from leilao_scraper.loaders import PropertyLoader
-
 
 # JS de scroll progressivo: rola até o final, espera 800ms, checa se cresceu;
 # quando estabiliza, sai. Cobre lazy-load por intersection observer e por
@@ -191,11 +191,7 @@ class BaseAuctionSpider(scrapy.Spider):
         loader = PropertyLoader(item=PropertyItem(), selector=response)
         loader.add_value("url", response.url)
         loader.add_value("auctioneer", self.auctioneer_slug)
-        src = (
-            source_listing_url
-            or response.meta.get("source_listing_url")
-            or response.url
-        )
+        src = source_listing_url or response.meta.get("source_listing_url") or response.url
         loader.add_value("source_listing_url", src)
         return loader
 
@@ -242,9 +238,7 @@ class BaseAuctionSpider(scrapy.Spider):
         return urljoin(response.url, href)
 
     @staticmethod
-    def first_match(
-        pattern: str, text: str, group: int = 1, flags: int = re.IGNORECASE
-    ) -> str:
+    def first_match(pattern: str, text: str, group: int = 1, flags: int = re.IGNORECASE) -> str:
         if not text:
             return ""
         m = re.search(pattern, text, flags)

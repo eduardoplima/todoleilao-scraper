@@ -1,4 +1,5 @@
 """Testes das pipelines."""
+
 from __future__ import annotations
 
 import json
@@ -6,8 +7,6 @@ from decimal import Decimal
 from types import SimpleNamespace
 
 import pytest
-from scrapy.exceptions import DropItem
-
 from leilao_scraper.items import PropertyItem
 from leilao_scraper.pipelines import (
     DeduplicationPipeline,
@@ -15,16 +14,26 @@ from leilao_scraper.pipelines import (
     JsonLinesExportPipeline,
     ValidationPipeline,
 )
-
+from scrapy.exceptions import DropItem
 
 # ---- helpers --------------------------------------------------------------
 
+
 class _Logger:
-    def __init__(self): self.logs: list[str] = []
-    def info(self, msg, *a, **kw): self.logs.append(("info", msg, a))
-    def debug(self, *a, **kw): pass
-    def warning(self, *a, **kw): pass
-    def error(self, *a, **kw): pass
+    def __init__(self):
+        self.logs: list[str] = []
+
+    def info(self, msg, *a, **kw):
+        self.logs.append(("info", msg, a))
+
+    def debug(self, *a, **kw):
+        pass
+
+    def warning(self, *a, **kw):
+        pass
+
+    def error(self, *a, **kw):
+        pass
 
 
 def _make_spider(name: str = "test_spider"):
@@ -36,6 +45,7 @@ def _item(**kwargs) -> PropertyItem:
 
 
 # ---- ValidationPipeline ----------------------------------------------------
+
 
 def test_validation_passes_complete_item():
     p = ValidationPipeline()
@@ -68,6 +78,7 @@ def test_validation_drops_missing_auctioneer():
 
 # ---- DeduplicationPipeline -------------------------------------------------
 
+
 def test_dedup_lets_through_unique():
     p = DeduplicationPipeline()
     spider = _make_spider()
@@ -92,10 +103,12 @@ def test_dedup_drops_duplicate_url():
 
 # ---- EnrichmentPipeline ----------------------------------------------------
 
+
 def test_enrichment_computes_discount():
     p = EnrichmentPipeline()
     item = _item(
-        url="https://x.com/1", auctioneer="a",
+        url="https://x.com/1",
+        auctioneer="a",
         minimum_bid=Decimal("250000.00"),
         market_value=Decimal("500000.00"),
     )
@@ -106,7 +119,8 @@ def test_enrichment_computes_discount():
 def test_enrichment_no_discount_when_equal():
     p = EnrichmentPipeline()
     item = _item(
-        url="https://x.com/1", auctioneer="a",
+        url="https://x.com/1",
+        auctioneer="a",
         minimum_bid=Decimal("100"),
         market_value=Decimal("100"),
     )
@@ -117,7 +131,8 @@ def test_enrichment_no_discount_when_equal():
 def test_enrichment_negative_when_above_market():
     p = EnrichmentPipeline()
     item = _item(
-        url="https://x.com/1", auctioneer="a",
+        url="https://x.com/1",
+        auctioneer="a",
         minimum_bid=Decimal("120"),
         market_value=Decimal("100"),
     )
@@ -135,7 +150,8 @@ def test_enrichment_skips_when_missing_market_value():
 def test_enrichment_skips_when_market_value_zero():
     p = EnrichmentPipeline()
     item = _item(
-        url="https://x.com/1", auctioneer="a",
+        url="https://x.com/1",
+        auctioneer="a",
         minimum_bid=Decimal("100"),
         market_value=Decimal("0"),
     )
@@ -146,7 +162,8 @@ def test_enrichment_skips_when_market_value_zero():
 def test_enrichment_accepts_str_input():
     p = EnrichmentPipeline()
     item = _item(
-        url="https://x.com/1", auctioneer="a",
+        url="https://x.com/1",
+        auctioneer="a",
         minimum_bid="250000",
         market_value="1000000",
     )
@@ -156,18 +173,28 @@ def test_enrichment_accepts_str_input():
 
 # ---- JsonLinesExportPipeline ----------------------------------------------
 
+
 def test_export_writes_jsonl(tmp_path):
     p = JsonLinesExportPipeline(project_root=tmp_path)
     spider = _make_spider("frazao_leiloes")
     p.open_spider(spider)
-    p.process_item(_item(
-        url="https://x.com/1", auctioneer="frazao",
-        title="Apto", minimum_bid=Decimal("250000.00"),
-    ), spider)
-    p.process_item(_item(
-        url="https://x.com/2", auctioneer="frazao",
-        title="Casa",
-    ), spider)
+    p.process_item(
+        _item(
+            url="https://x.com/1",
+            auctioneer="frazao",
+            title="Apto",
+            minimum_bid=Decimal("250000.00"),
+        ),
+        spider,
+    )
+    p.process_item(
+        _item(
+            url="https://x.com/2",
+            auctioneer="frazao",
+            title="Casa",
+        ),
+        spider,
+    )
     p.close_spider(spider)
 
     output_dir = tmp_path / "data" / "raw" / "frazao_leiloes"

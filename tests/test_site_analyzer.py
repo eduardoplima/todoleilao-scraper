@@ -8,7 +8,6 @@ from discovery.site_analyzer import (
     requires_js_for_listings,
 )
 
-
 WP_HTML = """
 <!doctype html>
 <html><head>

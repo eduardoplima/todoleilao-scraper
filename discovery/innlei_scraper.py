@@ -5,6 +5,7 @@ hidratada client-side via GET /api/public/leiloeiros (paginação JSON com cap
 real de 100 itens/página). Este módulo consome esse endpoint diretamente —
 ver `reports/innlei_recon.md` para o raciocínio e os campos disponíveis.
 """
+
 from __future__ import annotations
 
 import csv
@@ -95,10 +96,14 @@ def _request_with_retry(
             response = client.get(url, params=params)
         except (httpx.TransportError, httpx.TimeoutException) as exc:
             last_exc = exc
-            wait = BACKOFF_BASE_S ** attempt + random.uniform(0, 0.5)
+            wait = BACKOFF_BASE_S**attempt + random.uniform(0, 0.5)
             logger.warning(
                 "Falha de rede em {} (tentativa {}/{}): {}. Retry em {:.1f}s",
-                url, attempt, MAX_RETRIES, exc, wait,
+                url,
+                attempt,
+                MAX_RETRIES,
+                exc,
+                wait,
             )
             time.sleep(wait)
             continue
@@ -107,10 +112,14 @@ def _request_with_retry(
             last_exc = httpx.HTTPStatusError(
                 f"{response.status_code} em {url}", request=response.request, response=response
             )
-            wait = BACKOFF_BASE_S ** attempt + random.uniform(0, 0.5)
+            wait = BACKOFF_BASE_S**attempt + random.uniform(0, 0.5)
             logger.warning(
                 "HTTP {} em {} (tentativa {}/{}). Retry em {:.1f}s",
-                response.status_code, url, attempt, MAX_RETRIES, wait,
+                response.status_code,
+                url,
+                attempt,
+                MAX_RETRIES,
+                wait,
             )
             time.sleep(wait)
             continue
@@ -133,8 +142,7 @@ def _normalize(record: dict[str, Any]) -> dict[str, Any]:
     primary = matriculas[0] if matriculas else {}
     junta = primary.get("junta") or {}
     extras = "; ".join(
-        f"{m.get('matricula', '')}@{(m.get('junta') or {}).get('uf', '')}"
-        for m in matriculas[1:]
+        f"{m.get('matricula', '')}@{(m.get('junta') or {}).get('uf', '')}" for m in matriculas[1:]
     )
 
     return {
@@ -216,7 +224,8 @@ def fetch_all_auctioneers(
         if total and len(records) != total:
             logger.warning(
                 "Esperava {} leiloeiros, obteve {} — listagem pode ter mudado durante o crawl",
-                total, len(records),
+                total,
+                len(records),
             )
         return records
     finally:

@@ -14,6 +14,7 @@ arquivo), e a pipeline garante o mesmo output mesmo quando outros
 mecanismos rodam (ex.: orquestração via Python, `scrapy crawl X -o -`).
 Em cenários onde 2x o disco é problema, comente um dos dois.
 """
+
 from __future__ import annotations
 
 import json
@@ -33,6 +34,7 @@ logger = logging.getLogger(__name__)
 # Validation
 # ---------------------------------------------------------------------------
 
+
 class ValidationPipeline:
     """Descarta itens que não têm url ou auctioneer (campos não-negociáveis)."""
 
@@ -42,7 +44,11 @@ class ValidationPipeline:
 
     def process_item(self, item: Any, spider: Any) -> Any:
         adapter = ItemAdapter(item)
-        url = (adapter.get("url") or "").strip() if isinstance(adapter.get("url"), str) else adapter.get("url")
+        url = (
+            (adapter.get("url") or "").strip()
+            if isinstance(adapter.get("url"), str)
+            else adapter.get("url")
+        )
         auctioneer = (
             (adapter.get("auctioneer") or "").strip()
             if isinstance(adapter.get("auctioneer"), str)
@@ -61,13 +67,16 @@ class ValidationPipeline:
         if total:
             logger.info(
                 "ValidationPipeline: dropped %d (no_url=%d, no_auctioneer=%d)",
-                total, self.dropped_missing_url, self.dropped_missing_auctioneer,
+                total,
+                self.dropped_missing_url,
+                self.dropped_missing_auctioneer,
             )
 
 
 # ---------------------------------------------------------------------------
 # Deduplication (in-memory por run)
 # ---------------------------------------------------------------------------
+
 
 class DeduplicationPipeline:
     """Descarta itens com `url` já vista neste run.
@@ -95,13 +104,15 @@ class DeduplicationPipeline:
         if self.duplicates:
             logger.info(
                 "DeduplicationPipeline: %d duplicates dropped (%d unique)",
-                self.duplicates, len(self.seen),
+                self.duplicates,
+                len(self.seen),
             )
 
 
 # ---------------------------------------------------------------------------
 # Enrichment
 # ---------------------------------------------------------------------------
+
 
 class EnrichmentPipeline:
     """Calcula `discount_pct = (1 - minimum_bid / market_value) * 100`.
@@ -140,6 +151,7 @@ class EnrichmentPipeline:
 # JSON Lines export
 # ---------------------------------------------------------------------------
 
+
 class _ItemJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
@@ -171,6 +183,7 @@ class JsonLinesExportPipeline:
         project_root: Path | None = None
         try:
             from .settings import PROJECT_ROOT  # type: ignore
+
             project_root = Path(PROJECT_ROOT)
         except Exception:
             project_root = None
@@ -189,7 +202,8 @@ class JsonLinesExportPipeline:
             self.file.close()
             spider.logger.info(
                 "JsonLinesExportPipeline: %d itens gravados em %s",
-                self.count, self.path,
+                self.count,
+                self.path,
             )
 
     def process_item(self, item: Any, spider: Any) -> Any:
@@ -197,8 +211,7 @@ class JsonLinesExportPipeline:
             return item
         adapter = ItemAdapter(item)
         self.file.write(
-            json.dumps(adapter.asdict(), cls=_ItemJSONEncoder, ensure_ascii=False)
-            + "\n"
+            json.dumps(adapter.asdict(), cls=_ItemJSONEncoder, ensure_ascii=False) + "\n"
         )
         self.count += 1
         return item

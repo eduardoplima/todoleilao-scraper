@@ -13,6 +13,7 @@ Para cada leiloeiro, gera as colunas:
 
 Sem `dominio`, todas as colunas ficam vazias e `site_error="no_domain"`.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -166,7 +167,10 @@ async def enrich_dataframe(
 
     logger.info(
         "Enriquecendo {} sites externos (concurrency={}, timeout={}s, cache={})",
-        len(targets), concurrency, timeout, use_cache,
+        len(targets),
+        concurrency,
+        timeout,
+        use_cache,
     )
 
     sem = asyncio.Semaphore(concurrency)
@@ -183,6 +187,7 @@ async def enrich_dataframe(
     async with httpx.AsyncClient(
         headers=headers, limits=limits, http2=False, verify=True
     ) as client:
+
         async def worker(idx: int, url: str) -> tuple[int, dict[str, Any]]:
             async with sem:
                 payload = await fetch_one(client, url, use_cache=use_cache, timeout=timeout)
@@ -194,7 +199,10 @@ async def enrich_dataframe(
             if progress["done"] % 50 == 0 or progress["done"] == total:
                 logger.info(
                     "Progresso {}/{}  cache_hits={}  errors={}",
-                    progress["done"], total, progress["cache"], progress["fail"],
+                    progress["done"],
+                    total,
+                    progress["cache"],
+                    progress["fail"],
                 )
             return idx, payload
 
@@ -246,7 +254,11 @@ def run(
         help="CSV enriquecido.",
     ),
     concurrency: int = typer.Option(
-        DEFAULT_CONCURRENCY, "--concurrency", "-c", min=1, max=20,
+        DEFAULT_CONCURRENCY,
+        "--concurrency",
+        "-c",
+        min=1,
+        max=20,
         help="Conexões simultâneas (default 5).",
     ),
     timeout: float = typer.Option(
@@ -266,9 +278,7 @@ def run(
 
     started = time.monotonic()
     enriched = asyncio.run(
-        enrich_dataframe(
-            rows, concurrency=concurrency, timeout=timeout, use_cache=not no_cache
-        )
+        enrich_dataframe(rows, concurrency=concurrency, timeout=timeout, use_cache=not no_cache)
     )
     elapsed = time.monotonic() - started
 
@@ -278,14 +288,9 @@ def run(
     with_domain = sum(1 for r in enriched if (r.get("dominio") or "").strip())
     no_domain = total - with_domain
     online = sum(1 for r in enriched if not r.get("site_error") and r.get("site_status_code"))
-    error = sum(
-        1 for r in enriched
-        if r.get("site_error") and r["site_error"] != "no_domain"
-    )
+    error = sum(1 for r in enriched if r.get("site_error") and r["site_error"] != "no_domain")
 
-    logger.success(
-        "Gravados {} leiloeiros em {} ({:.1f}s)", total, output, elapsed
-    )
+    logger.success("Gravados {} leiloeiros em {} ({:.1f}s)", total, output, elapsed)
     logger.info("=== Resumo ===")
     logger.info("Total leiloeiros: {}", total)
     logger.info("Com dominio:      {}", with_domain)

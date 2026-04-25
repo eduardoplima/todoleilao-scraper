@@ -25,6 +25,10 @@ dependencies = [
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+    "black>=24.8",
+    "mypy>=1.11",
+    "pre-commit>=3.8",
 ]
 
 [tool.uv]
@@ -35,3 +39,57 @@ testpaths = ["tests"]
 addopts = "-q"
 asyncio_mode = "auto"
 pythonpath = ["scrapy_project"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["data", "tests/fixtures"]
+
+[tool.ruff.lint]
+# Pragmático: erros, pyflakes, warnings, isort, naming, ruff-specific.
+# Excluímos pyupgrade/bugbear até o codebase estabilizar.
+select = ["E", "F", "W", "I", "N", "RUF"]
+ignore = [
+    "E501",  # line-too-long — black/format gerencia
+    "N999",  # invalid module name (testes têm `_` no início)
+    "RUF001", "RUF002", "RUF003",  # ambiguous unicode (tem PT-BR no projeto)
+    "RUF012",  # mutable class attributes — Scrapy idiom usa class attrs com lista/dict
+    "RUF059",  # _, _ unpack ignorado em loops é idiomático
+    "RUF034",  # if-else ternary "useless" às vezes é mais legível
+    "RUF005",  # iterable unpack em sort key/etc.
+    "N806",    # nomes UPPER em funções (constantes locais como EXCLUDED são claros)
+    "F841",    # variável atribuída mas não usada — flag mata loops com index
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["N802"]  # nomes long/snake nos testes
+"discovery/build_site_report.py" = ["F841"]  # var não-usadas em strings de markdown ok
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+extend-exclude = "tests/fixtures|data"
+
+[tool.mypy]
+python_version = "3.11"
+files = ["discovery", "scrapy_project/leilao_scraper", "scripts"]
+# Modo gradual — só sinaliza os erros mais óbvios, não exige tipagem completa.
+ignore_missing_imports = true
+strict_optional = false
+disallow_untyped_defs = false
+check_untyped_defs = false
+warn_unused_ignores = false
+warn_redundant_casts = true
+# Códigos desativados:
+#   union-attr  — BeautifulSoup retorna `str | AttributeValueList` em get(),
+#                 que sempre str na prática.
+#   arg-type    — scrapy/playwright têm overloads mal-tipadas (Selector vs Response,
+#                 ViewportSize vs dict).
+#   unreachable — gerado por checks defensivos que mypy julga "impossível".
+#   assignment  — atribuir TextIO a um campo None inicializado.
+#   var-annotated — listas vazias inicializadas dentro de função.
+disable_error_code = ["union-attr", "arg-type", "unreachable", "assignment", "var-annotated"]
+
+[[tool.mypy.overrides]]
+module = ["scrapy.*", "scrapy_playwright.*", "itemadapter", "itemloaders.*", "bs4.*", "playwright.*"]
+ignore_errors = true

@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import asyncio
-from pathlib import Path
-
 import httpx
 import pytest
 
 from discovery import enrich_auctioneers as mod
-
 
 HTML_HOUSE = """
 <html><head>

@@ -1,9 +1,9 @@
 """Testes dos helpers Playwright em `BaseAuctionSpider.make_request`."""
+
 from __future__ import annotations
 
-from scrapy_playwright.page import PageMethod
-
 from leilao_scraper.spiders.base import BaseAuctionSpider
+from scrapy_playwright.page import PageMethod
 
 
 class _PWSpider(BaseAuctionSpider):
@@ -31,9 +31,7 @@ def _methods(req):
 
 
 def test_wait_for_selector_appends_page_method():
-    req = _PWSpider().make_request(
-        "https://x.com/", callback=None, wait_for_selector=".lote"
-    )
+    req = _PWSpider().make_request("https://x.com/", callback=None, wait_for_selector=".lote")
     methods = _methods(req)
     assert len(methods) == 1
     pm = methods[0]
@@ -54,9 +52,7 @@ def test_wait_timeout_overridable():
 
 
 def test_scroll_to_bottom_appends_evaluate_and_networkidle():
-    req = _PWSpider().make_request(
-        "https://x.com/", callback=None, scroll_to_bottom=True
-    )
+    req = _PWSpider().make_request("https://x.com/", callback=None, scroll_to_bottom=True)
     methods = _methods(req)
     assert len(methods) == 2
     assert methods[0].method == "evaluate"
@@ -95,9 +91,9 @@ def test_helpers_combine_in_canonical_order():
     methods = _methods(req)
     assert methods[0].method == "set_extra_http_headers"
     assert methods[1].method == "wait_for_selector"
-    assert methods[2].method == "evaluate"          # scroll JS
+    assert methods[2].method == "evaluate"  # scroll JS
     assert methods[3].method == "wait_for_load_state"
-    assert methods[4].method == "evaluate"          # load_more JS
+    assert methods[4].method == "evaluate"  # load_more JS
     assert methods[4].args[1]["sel"] == "button.more"
 
 

@@ -22,6 +22,7 @@ Helpers do `BaseAuctionSpider` exercitados:
 mas não são exercitados aqui — o site é paginado tradicional, não
 infinite scroll.)
 """
+
 from __future__ import annotations
 
 from .base import BaseAuctionSpider

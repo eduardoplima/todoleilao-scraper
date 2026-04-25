@@ -3,6 +3,7 @@
 RechSpider usa exatamente o mesmo base — confiamos que se Müller passa,
 Rech também passa (config trivial difference).
 """
+
 from __future__ import annotations
 
 import re
@@ -10,16 +11,17 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
-from scrapy.http import HtmlResponse, Request
-
 from leilao_scraper.spiders.muller import MullerSpider
+from scrapy.http import HtmlResponse, Request
 
 FIXTURES = Path(__file__).parent / "fixtures" / "muller"
 
 
 def _response(filename: str, url: str, meta: dict | None = None) -> HtmlResponse:
     body = (FIXTURES / filename).read_bytes()
-    return HtmlResponse(url=url, body=body, encoding="utf-8", request=Request(url=url, meta=meta or {}))
+    return HtmlResponse(
+        url=url, body=body, encoding="utf-8", request=Request(url=url, meta=meta or {})
+    )
 
 
 @pytest.fixture

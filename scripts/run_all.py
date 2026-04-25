@@ -18,12 +18,11 @@ Saídas:
   - data/processed/properties.parquet (consolidado)
   - data/processed/run_log.json       (metadados do run)
 """
+
 from __future__ import annotations
 
 import json
-import shutil
 import subprocess
-import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -62,9 +61,15 @@ def run_one(name: str, limit: int, started_at_iso: str) -> dict[str, Any]:
     logger.info("→ {} (limit={})", name, limit)
     t0 = time.monotonic()
     cmd = [
-        "uv", "run", "scrapy", "crawl", name,
-        "-s", f"CLOSESPIDER_ITEMCOUNT={limit}",
-        "-s", "LOG_LEVEL=ERROR",
+        "uv",
+        "run",
+        "scrapy",
+        "crawl",
+        name,
+        "-s",
+        f"CLOSESPIDER_ITEMCOUNT={limit}",
+        "-s",
+        "LOG_LEVEL=ERROR",
     ]
     proc = subprocess.run(
         cmd,
@@ -123,9 +128,13 @@ def consolidate(run_results: list[dict[str, Any]], output: Path) -> int:
     # converter aninhamento para JSON-string facilita SQL/df.explode posterior).
     for col in ("images", "documents"):
         if col in df.columns:
-            df[col] = df[col].apply(lambda v: json.dumps(v, ensure_ascii=False) if isinstance(v, list) else None)
+            df[col] = df[col].apply(
+                lambda v: json.dumps(v, ensure_ascii=False) if isinstance(v, list) else None
+            )
     if "address" in df.columns:
-        df["address"] = df["address"].apply(lambda v: json.dumps(v, ensure_ascii=False) if isinstance(v, dict) else None)
+        df["address"] = df["address"].apply(
+            lambda v: json.dumps(v, ensure_ascii=False) if isinstance(v, dict) else None
+        )
 
     output.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(output, engine="pyarrow", compression="snappy", index=False)
@@ -138,19 +147,24 @@ def main(
     limit: int = typer.Option(20, "--limit", "-n", help="CLOSESPIDER_ITEMCOUNT por spider."),
     exclude: str = typer.Option(
         ",".join(sorted(EXCLUDE_DEFAULT)),
-        "--exclude", "-x",
+        "--exclude",
+        "-x",
         help="Spiders a pular (csv).",
     ),
     only: str = typer.Option(
-        "", "--only", "-o",
+        "",
+        "--only",
+        "-o",
         help="Roda só esses spiders (csv). Sobrescreve --exclude.",
     ),
     output: Path = typer.Option(
-        PROCESSED_DIR / "properties.parquet", "--output",
+        PROCESSED_DIR / "properties.parquet",
+        "--output",
         help="Caminho do parquet consolidado.",
     ),
     run_log: Path = typer.Option(
-        PROCESSED_DIR / "run_log.json", "--run-log",
+        PROCESSED_DIR / "run_log.json",
+        "--run-log",
         help="Metadados JSON deste run.",
     ),
 ) -> None:
@@ -170,10 +184,16 @@ def main(
         try:
             results.append(run_one(s, limit, started_at))
         except subprocess.TimeoutExpired:
-            results.append({
-                "spider": s, "exit_code": -1, "elapsed_s": 600,
-                "items": 0, "files": [], "stderr_tail": "TIMEOUT",
-            })
+            results.append(
+                {
+                    "spider": s,
+                    "exit_code": -1,
+                    "elapsed_s": 600,
+                    "items": 0,
+                    "files": [],
+                    "stderr_tail": "TIMEOUT",
+                }
+            )
 
     total = consolidate(results, output)
 

@@ -13,6 +13,7 @@ Os processadores são funções puras e exportadas para uso direto:
 fica a cargo do spider — tipicamente:
 `loader.add_value("address", {"state": normalize_uf(uf), ...})`.
 """
+
 from __future__ import annotations
 
 import re
@@ -31,6 +32,7 @@ TZ_OFFSET = "-03:00"
 # ---------------------------------------------------------------------------
 # helpers internos
 # ---------------------------------------------------------------------------
+
 
 def _strip_accents(text: str) -> str:
     nfd = unicodedata.normalize("NFD", text or "")
@@ -90,18 +92,30 @@ _TIME_RE = re.compile(
     re.IGNORECASE,
 )
 _MONTH_NAMES = {
-    "janeiro": 1, "jan": 1,
-    "fevereiro": 2, "fev": 2,
-    "marco": 3, "mar": 3,
-    "abril": 4, "abr": 4,
-    "maio": 5, "mai": 5,
-    "junho": 6, "jun": 6,
-    "julho": 7, "jul": 7,
-    "agosto": 8, "ago": 8,
-    "setembro": 9, "set": 9,
-    "outubro": 10, "out": 10,
-    "novembro": 11, "nov": 11,
-    "dezembro": 12, "dez": 12,
+    "janeiro": 1,
+    "jan": 1,
+    "fevereiro": 2,
+    "fev": 2,
+    "marco": 3,
+    "mar": 3,
+    "abril": 4,
+    "abr": 4,
+    "maio": 5,
+    "mai": 5,
+    "junho": 6,
+    "jun": 6,
+    "julho": 7,
+    "jul": 7,
+    "agosto": 8,
+    "ago": 8,
+    "setembro": 9,
+    "set": 9,
+    "outubro": 10,
+    "out": 10,
+    "novembro": 11,
+    "nov": 11,
+    "dezembro": 12,
+    "dez": 12,
 }
 _DATE_TEXT_RE = re.compile(
     r"(\d{1,2})\s+de\s+(\w+)(?:\s+de)?\s+(\d{4})",
@@ -139,7 +153,7 @@ def parse_br_date(value):
 
     hour = 0
     minute = 0
-    after_date = s[m.end():] if m else s
+    after_date = s[m.end() :] if m else s
     tm = _TIME_RE.search(after_date)
     if tm:
         hour = int(tm.group(1))
@@ -158,14 +172,32 @@ def parse_br_date(value):
 # ---------------------------------------------------------------------------
 
 UF_FULL_TO_CODE = {
-    "ACRE": "AC", "ALAGOAS": "AL", "AMAPA": "AP", "AMAZONAS": "AM",
-    "BAHIA": "BA", "CEARA": "CE", "DISTRITO FEDERAL": "DF",
-    "ESPIRITO SANTO": "ES", "GOIAS": "GO", "MARANHAO": "MA",
-    "MATO GROSSO": "MT", "MATO GROSSO DO SUL": "MS", "MINAS GERAIS": "MG",
-    "PARA": "PA", "PARAIBA": "PB", "PARANA": "PR", "PERNAMBUCO": "PE",
-    "PIAUI": "PI", "RIO DE JANEIRO": "RJ", "RIO GRANDE DO NORTE": "RN",
-    "RIO GRANDE DO SUL": "RS", "RONDONIA": "RO", "RORAIMA": "RR",
-    "SANTA CATARINA": "SC", "SAO PAULO": "SP", "SERGIPE": "SE",
+    "ACRE": "AC",
+    "ALAGOAS": "AL",
+    "AMAPA": "AP",
+    "AMAZONAS": "AM",
+    "BAHIA": "BA",
+    "CEARA": "CE",
+    "DISTRITO FEDERAL": "DF",
+    "ESPIRITO SANTO": "ES",
+    "GOIAS": "GO",
+    "MARANHAO": "MA",
+    "MATO GROSSO": "MT",
+    "MATO GROSSO DO SUL": "MS",
+    "MINAS GERAIS": "MG",
+    "PARA": "PA",
+    "PARAIBA": "PB",
+    "PARANA": "PR",
+    "PERNAMBUCO": "PE",
+    "PIAUI": "PI",
+    "RIO DE JANEIRO": "RJ",
+    "RIO GRANDE DO NORTE": "RN",
+    "RIO GRANDE DO SUL": "RS",
+    "RONDONIA": "RO",
+    "RORAIMA": "RR",
+    "SANTA CATARINA": "SC",
+    "SAO PAULO": "SP",
+    "SERGIPE": "SE",
     "TOCANTINS": "TO",
 }
 _UF_CODES = set(UF_FULL_TO_CODE.values())
@@ -193,10 +225,17 @@ def normalize_uf(value):
 # "Galpão Industrial" caia em "casa" via "casa "/regex.
 PROPERTY_TYPE_RULES = (
     ("apartamento", ("apartamento", "apto", "kitnet", "studio", "loft", "flat", "cobertura")),
-    ("comercial", (
-        "sala comercial", "loja", "galpao", "imovel comercial",
-        "ponto comercial", "predio comercial",
-    )),
+    (
+        "comercial",
+        (
+            "sala comercial",
+            "loja",
+            "galpao",
+            "imovel comercial",
+            "ponto comercial",
+            "predio comercial",
+        ),
+    ),
     ("rural", ("fazenda", "sitio", "chacara", "rural")),
     ("casa", ("casa", "sobrado", "residencia")),
     ("terreno", ("terreno", "lote", "gleba")),
@@ -223,6 +262,7 @@ def detect_property_type(value):
 # limpeza de HTML
 # ---------------------------------------------------------------------------
 
+
 def clean_html(value):
     """Remove tags + scripts/styles e colapsa whitespace. Mantém o texto."""
     if value is None:
@@ -239,6 +279,7 @@ def clean_html(value):
 # ---------------------------------------------------------------------------
 # ItemLoader
 # ---------------------------------------------------------------------------
+
 
 def _strip(value):
     return value.strip() if isinstance(value, str) else value

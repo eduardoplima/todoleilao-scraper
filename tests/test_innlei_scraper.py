@@ -2,6 +2,7 @@
 
 Usamos httpx.MockTransport para simular a API paginada — sem rede.
 """
+
 from __future__ import annotations
 
 import csv
@@ -47,8 +48,14 @@ def _sample(record_id: int, *, slug: str, uf: str, cidade: str) -> dict:
         "isAssociado": True,
         "nivel": "prata",
         "matriculas": [
-            {"matricula": f"{record_id}-X", "junta": {"uf": uf, "sigla": f"JUC{uf}", "nome": f"JUNTA {uf}"}},
-            {"matricula": f"{record_id}-Y", "junta": {"uf": "RJ", "sigla": "JUCERJA", "nome": "JUNTA RJ"}},
+            {
+                "matricula": f"{record_id}-X",
+                "junta": {"uf": uf, "sigla": f"JUC{uf}", "nome": f"JUNTA {uf}"},
+            },
+            {
+                "matricula": f"{record_id}-Y",
+                "junta": {"uf": "RJ", "sigla": "JUCERJA", "nome": "JUNTA RJ"},
+            },
         ],
         "dadosJunta": {},
     }
@@ -165,6 +172,7 @@ def test_max_retries_exceeded():
     client = httpx.Client(base_url=BASE_URL, transport=httpx.MockTransport(handler))
     limiter = RateLimiter(min_interval_s=0.0)
     import time as time_mod
+
     original_sleep = time_mod.sleep
     time_mod.sleep = lambda _: None
     try:

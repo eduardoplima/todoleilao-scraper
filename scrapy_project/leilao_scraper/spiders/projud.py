@@ -56,6 +56,7 @@ restrito ao primeiro hop.
 
 ================================================================================
 """
+
 from __future__ import annotations
 
 import json
@@ -73,11 +74,30 @@ PHOTO_BASE = "https://www.projudleiloes.com.br/imagens/770x540"
 
 # IconeCategoria valores que consideramos "imóvel"
 PROPERTY_ICON_CATEGORIES = {
-    "apartamentos", "casas", "terrenos", "lotes", "loteamentos",
-    "salas comerciais", "salas", "lojas", "galpões", "galpoes", "galpao",
-    "predios", "prédios", "comerciais", "residenciais",
-    "rural", "fazendas", "sítios", "sitios", "chácaras", "chacaras",
-    "imóveis", "imoveis", "imovel",
+    "apartamentos",
+    "casas",
+    "terrenos",
+    "lotes",
+    "loteamentos",
+    "salas comerciais",
+    "salas",
+    "lojas",
+    "galpões",
+    "galpoes",
+    "galpao",
+    "predios",
+    "prédios",
+    "comerciais",
+    "residenciais",
+    "rural",
+    "fazendas",
+    "sítios",
+    "sitios",
+    "chácaras",
+    "chacaras",
+    "imóveis",
+    "imoveis",
+    "imovel",
 }
 
 # Mapa IconeCategoria → nosso property_type canônico
@@ -140,7 +160,9 @@ class ProjudSpider(BaseAuctionSpider):
         try:
             data = json.loads(response.text)
         except json.JSONDecodeError:
-            self.log_event("api_parse_error", leilao_id=leilao_id, page=page, body=response.text[:200])
+            self.log_event(
+                "api_parse_error", leilao_id=leilao_id, page=page, body=response.text[:200]
+            )
             return
 
         lotes = data.get("Lotes") or []
@@ -162,7 +184,9 @@ class ProjudSpider(BaseAuctionSpider):
 
             # constrói item via new_loader (URL + auctioneer + source pré-preenchidos)
             fake_response = scrapy.http.HtmlResponse(
-                url=url_absolute, body=b"", encoding="utf-8",
+                url=url_absolute,
+                body=b"",
+                encoding="utf-8",
                 request=scrapy.Request(url_absolute, meta={"source_listing_url": source_listing}),
             )
             loader = self.new_loader(fake_response)
@@ -205,22 +229,22 @@ class ProjudSpider(BaseAuctionSpider):
             cidade = lote.get("Cidade")
             uf = lote.get("UF")
             if cidade or uf:
-                loader.add_value("address", {
-                    "street": (lote.get("Lote_Endereco") or "")[:240],
-                    "number": str(lote.get("Lote_Numero") or ""),
-                    "complement": lote.get("Lote_Complemento") or "",
-                    "neighborhood": lote.get("Lote_Bairro") or "",
-                    "city": cidade or "",
-                    "state": normalize_uf(uf) or "",
-                    "zip": lote.get("Lote_CEP") or "",
-                })
+                loader.add_value(
+                    "address",
+                    {
+                        "street": (lote.get("Lote_Endereco") or "")[:240],
+                        "number": str(lote.get("Lote_Numero") or ""),
+                        "complement": lote.get("Lote_Complemento") or "",
+                        "neighborhood": lote.get("Lote_Bairro") or "",
+                        "city": cidade or "",
+                        "state": normalize_uf(uf) or "",
+                        "zip": lote.get("Lote_CEP") or "",
+                    },
+                )
 
             # fotos
             fotos = lote.get("Fotos") or []
-            images = [
-                f"{PHOTO_BASE}/{f.get('Foto')}"
-                for f in fotos if f.get("Foto")
-            ]
+            images = [f"{PHOTO_BASE}/{f.get('Foto')}" for f in fotos if f.get("Foto")]
             if images:
                 loader.add_value("images", images)
 
@@ -230,8 +254,11 @@ class ProjudSpider(BaseAuctionSpider):
 
         self.log_event(
             "page_processed",
-            leilao_id=leilao_id, page=page,
-            total=len(lotes), emitted=emitted, skipped_non_property=skipped,
+            leilao_id=leilao_id,
+            page=page,
+            total=len(lotes),
+            emitted=emitted,
+            skipped_non_property=skipped,
         )
 
         # próxima página (PageIndexMax é 0-indexed; current page é 1-indexed)

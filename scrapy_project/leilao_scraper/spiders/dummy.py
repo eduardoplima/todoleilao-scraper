@@ -11,6 +11,7 @@ Roda em ~3 s com `scrapy crawl dummy`:
     title/property_type/preços/scraped_at);
   - exercita o ITEM_PIPELINES inteiro (Validation→Dedup→Enrich→Export).
 """
+
 from __future__ import annotations
 
 from .base import BaseAuctionSpider

@@ -12,6 +12,7 @@ reports/figures/rendering_distribution.png e um markdown com:
 
 Reroda quando os CSVs mudam.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -35,9 +36,7 @@ RENDERING_COLORS = {
 }
 
 
-def load_data(
-    site_analysis: Path, listing_urls: Path
-) -> pd.DataFrame:
+def load_data(site_analysis: Path, listing_urls: Path) -> pd.DataFrame:
     sa = pd.read_csv(site_analysis)
     lf = pd.read_csv(listing_urls)
 
@@ -60,8 +59,9 @@ def load_data(
         sa_acc = pd.concat(
             [
                 sa_acc,
-                lf[["listing_url", "items_detected", "sample_item_url", "needs_manual_review"]]
-                .reset_index(drop=True),
+                lf[
+                    ["listing_url", "items_detected", "sample_item_url", "needs_manual_review"]
+                ].reset_index(drop=True),
             ],
             axis=1,
         )
@@ -155,18 +155,24 @@ def build_markdown(df: pd.DataFrame, chart_path: Path) -> str:
         f"e cujos sites externos foram analisados em `site_analyzer` + `listing_finder`."
     )
     lines.append("")
-    lines.append(f"_Gerado a partir de `data/intermediate/site_analysis.csv` + `listing_urls.csv`._")
+    lines.append("_Gerado a partir de `data/intermediate/site_analysis.csv` + `listing_urls.csv`._")
     lines.append("")
 
     # ---- TL;DR ----
     lines.append("## TL;DR")
     lines.append("")
     lines.append(f"- **Total analisado**: {total}")
-    lines.append(f"- **Sites acessíveis** (sem erro de rede): {accessible} ({accessible/total:.1%})")
+    lines.append(
+        f"- **Sites acessíveis** (sem erro de rede): {accessible} ({accessible/total:.1%})"
+    )
     lines.append(f"- **Listing URL identificada**: {with_listing} ({with_listing/total:.1%})")
-    lines.append(f"- **Validação OK** (≥5 itens com preço na URL candidata): {items_ok} ({items_ok/total:.1%})")
+    lines.append(
+        f"- **Validação OK** (≥5 itens com preço na URL candidata): {items_ok} ({items_ok/total:.1%})"
+    )
     lines.append(f"- **Precisam de revisão manual**: {needs_review} ({needs_review/total:.1%})")
-    lines.append(f"- **Sites que exigem JS para mostrar listagem**: {requires_js} ({requires_js/total:.1%})")
+    lines.append(
+        f"- **Sites que exigem JS para mostrar listagem**: {requires_js} ({requires_js/total:.1%})"
+    )
     lines.append("")
 
     # ---- Distribuição de rendering ----
@@ -202,15 +208,19 @@ def build_markdown(df: pd.DataFrame, chart_path: Path) -> str:
     lines.append("| # | leiloeiro | UF | site | rendering | listing_url | items |")
     lines.append("|---:|---|---|---|---|---|---:|")
     for i, (_, r) in enumerate(top.iterrows(), 1):
-        lines.append(_md_row([
-            str(i),
-            _truncate(r["nome"], 40),
-            r["uf"] or "??",
-            _truncate(r["dominio"], 45),
-            r["rendering"],
-            _truncate(r["listing_url"] or "", 80),
-            str(r["items_detected"]),
-        ]))
+        lines.append(
+            _md_row(
+                [
+                    str(i),
+                    _truncate(r["nome"], 40),
+                    r["uf"] or "??",
+                    _truncate(r["dominio"], 45),
+                    r["rendering"],
+                    _truncate(r["listing_url"] or "", 80),
+                    str(r["items_detected"]),
+                ]
+            )
+        )
     lines.append("")
 
     # ---- Recomendação de ordem dos spiders ----
@@ -239,21 +249,27 @@ def build_markdown(df: pd.DataFrame, chart_path: Path) -> str:
         sub = plan[plan["rendering"] == rendering_key].head(n)
         if sub.empty:
             continue
-        lines.append(f"### Bloco {priority_order[rendering_key]} — `rendering = {rendering_key}` (top {len(sub)})")
+        lines.append(
+            f"### Bloco {priority_order[rendering_key]} — `rendering = {rendering_key}` (top {len(sub)})"
+        )
         lines.append("")
         lines.append("| ord | leiloeiro | UF | site | listing_url | items | tech_stack |")
         lines.append("|---:|---|---|---|---|---:|---|")
         for _, r in sub.iterrows():
             cum += 1
-            lines.append(_md_row([
-                str(cum),
-                _truncate(r["nome"], 35),
-                r["uf"] or "??",
-                _truncate(r["dominio"], 40),
-                _truncate(r["listing_url"] or "", 60),
-                str(r["items_detected"]),
-                _truncate(r.get("tech_stack") or "", 35),
-            ]))
+            lines.append(
+                _md_row(
+                    [
+                        str(cum),
+                        _truncate(r["nome"], 35),
+                        r["uf"] or "??",
+                        _truncate(r["dominio"], 40),
+                        _truncate(r["listing_url"] or "", 60),
+                        str(r["items_detected"]),
+                        _truncate(r.get("tech_stack") or "", 35),
+                    ]
+                )
+            )
         lines.append("")
 
     lines.append(
@@ -278,7 +294,9 @@ def build_markdown(df: pd.DataFrame, chart_path: Path) -> str:
     lines.append("")
     review = df[df["needs_manual_review"]].copy()
     review["__rank"] = review["rendering"].map(priority_order)
-    review = review.sort_values(["confidence", "__rank", "items_detected"], ascending=[True, True, False])
+    review = review.sort_values(
+        ["confidence", "__rank", "items_detected"], ascending=[True, True, False]
+    )
     lines.append(
         f"São **{len(review)} sites** ({len(review)/total:.1%}) onde o detector achou "
         f"<5 itens com preço na URL candidata. Causas mais comuns: layouts que não "
@@ -300,15 +318,19 @@ def build_markdown(df: pd.DataFrame, chart_path: Path) -> str:
     lines.append("| leiloeiro | UF | site | confidence | rendering | requires_js | nota |")
     lines.append("|---|---|---|---|---|:---:|---|")
     for _, r in sample.iterrows():
-        lines.append(_md_row([
-            _truncate(r["nome"], 35),
-            r["uf"] or "??",
-            _truncate(r["dominio"], 45),
-            r["confidence"],
-            r["rendering"],
-            "Y" if str(r.get("requires_js_for_listings")).lower() == "true" else "N",
-            _truncate(r.get("error") or r.get("html_title") or "", 40),
-        ]))
+        lines.append(
+            _md_row(
+                [
+                    _truncate(r["nome"], 35),
+                    r["uf"] or "??",
+                    _truncate(r["dominio"], 45),
+                    r["confidence"],
+                    r["rendering"],
+                    "Y" if str(r.get("requires_js_for_listings")).lower() == "true" else "N",
+                    _truncate(r.get("error") or r.get("html_title") or "", 40),
+                ]
+            )
+        )
     lines.append("")
     if len(review) > 50:
         lines.append(f"_(+{len(review) - 50} adicionais omitidos — ver tabela completa abaixo.)_")
@@ -324,21 +346,23 @@ def build_markdown(df: pd.DataFrame, chart_path: Path) -> str:
         "| leiloeiro | UF | site | confidence | http | rendering | listing_url | items | review |"
     )
     lines.append("|---|---|---|---|---|---|---|---:|:---:|")
-    full = df.sort_values(
-        ["needs_manual_review", "items_detected"], ascending=[True, False]
-    )
+    full = df.sort_values(["needs_manual_review", "items_detected"], ascending=[True, False])
     for _, r in full.iterrows():
-        lines.append(_md_row([
-            _truncate(r["nome"], 35),
-            r["uf"] or "??",
-            _truncate(r["dominio"], 40),
-            r["confidence"],
-            str(r.get("http_status") or "—"),
-            r["rendering"],
-            _truncate(r.get("listing_url") or "", 60),
-            str(r["items_detected"]),
-            "⚠" if r["needs_manual_review"] else "✓",
-        ]))
+        lines.append(
+            _md_row(
+                [
+                    _truncate(r["nome"], 35),
+                    r["uf"] or "??",
+                    _truncate(r["dominio"], 40),
+                    r["confidence"],
+                    str(r.get("http_status") or "—"),
+                    r["rendering"],
+                    _truncate(r.get("listing_url") or "", 60),
+                    str(r["items_detected"]),
+                    "⚠" if r["needs_manual_review"] else "✓",
+                ]
+            )
+        )
     lines.append("")
     lines.append("</details>")
     lines.append("")
@@ -359,13 +383,9 @@ def run(
     site_analysis: Path = typer.Option(
         Path("data/intermediate/site_analysis.csv"), "--site-analysis"
     ),
-    listing_urls: Path = typer.Option(
-        Path("data/intermediate/listing_urls.csv"), "--listing-urls"
-    ),
+    listing_urls: Path = typer.Option(Path("data/intermediate/listing_urls.csv"), "--listing-urls"),
     output_md: Path = typer.Option(REPORTS_DIR / "site_analysis.md", "--output", "-o"),
-    chart_path: Path = typer.Option(
-        FIGURES_DIR / "rendering_distribution.png", "--chart"
-    ),
+    chart_path: Path = typer.Option(FIGURES_DIR / "rendering_distribution.png", "--chart"),
 ) -> None:
     df = load_data(site_analysis, listing_urls)
     logger.info("Carregado: {} linhas", len(df))

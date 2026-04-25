@@ -10,6 +10,7 @@ requisições só passam pelo Chromium quando o spider opta com
 `meta={"playwright": True}`. Sem esse flag o handler delega para o handler
 HTTP padrão do Scrapy — o overhead da troca é desprezível.
 """
+
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -96,7 +97,7 @@ PLAYWRIGHT_LAUNCH_OPTIONS = {
     "headless": True,
     "timeout": 30_000,
     "args": [
-        "--disable-dev-shm-usage",     # Linux/Docker: usa /tmp em vez de /dev/shm
+        "--disable-dev-shm-usage",  # Linux/Docker: usa /tmp em vez de /dev/shm
         "--disable-blink-features=AutomationControlled",
     ],
 }

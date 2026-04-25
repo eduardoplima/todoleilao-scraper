@@ -15,6 +15,7 @@ Subclasses sobrescrevem apenas:
 
 Este módulo NÃO é importável como spider direto (prefixo `_`).
 """
+
 from __future__ import annotations
 
 import re
@@ -23,15 +24,10 @@ from leilao_scraper.loaders import normalize_uf
 
 from .base import BaseAuctionSpider
 
-
 PAGE_QUERY_RE = re.compile(r"[?&]page=(\d+)")
 ITEM_HREF_RE = re.compile(r"/item/(\d+)/detalhes")
-TITLE_LOCATION_RE = re.compile(
-    r"\bem\s+([A-ZÀ-Ý][\w\s]+?)\s*/\s*([A-Z]{2})\b", re.IGNORECASE
-)
-DESC_LOCATION_RE = re.compile(
-    r"Cidade:\s*([A-ZÀ-Ý][\w\sÀ-ÿ]+?)\s*/\s*([A-Z]{2})", re.IGNORECASE
-)
+TITLE_LOCATION_RE = re.compile(r"\bem\s+([A-ZÀ-Ý][\w\s]+?)\s*/\s*([A-Z]{2})\b", re.IGNORECASE)
+DESC_LOCATION_RE = re.compile(r"Cidade:\s*([A-ZÀ-Ý][\w\sÀ-ÿ]+?)\s*/\s*([A-Z]{2})", re.IGNORECASE)
 ENDERECO_RE = re.compile(
     r"Endere[cç]o:\s*([^\n]+?)(?:\s+Descri[cç][aã]o:|\s+Matr[ií]cula|$)",
     re.IGNORECASE,
@@ -82,7 +78,9 @@ class BidderLancePlatformSpider(BaseAuctionSpider):
         max_page = max(page_nums)
         self.log_event(
             "listing_paginated",
-            listing=response.url, lotes_pagina_1=len(seen_items), total_paginas=max_page,
+            listing=response.url,
+            lotes_pagina_1=len(seen_items),
+            total_paginas=max_page,
         )
         base = response.url.split("?")[0]
         for n in range(2, max_page + 1):
@@ -120,16 +118,12 @@ class BidderLancePlatformSpider(BaseAuctionSpider):
         body_text = " ".join(body_text.split())
         avaliacao = self.first_match(
             r"Valor\s+de\s+Avalia[cç][aã]o:?\s*(R\$\s*[\d.,]+)", body_text
-        ) or self.first_match(
-            r"Avalia[cç][aã]o:?\s*(R\$\s*[\d.,]+)", body_text
-        )
+        ) or self.first_match(r"Avalia[cç][aã]o:?\s*(R\$\s*[\d.,]+)", body_text)
         # 1ª praça é o primeiro "Lance Inicial" (também aceita "Mínimo:" sem
         # rótulo "Lance" — usado por cassianoleiloes p.ex.).
         lance_match = re.search(
             r"Lance\s+Inicial:?\s*(R\$\s*[\d.,]+)", body_text, re.IGNORECASE
-        ) or re.search(
-            r"M[íi]nimo:\s*(R\$\s*[\d.,]+)", body_text, re.IGNORECASE
-        )
+        ) or re.search(r"M[íi]nimo:\s*(R\$\s*[\d.,]+)", body_text, re.IGNORECASE)
         if avaliacao:
             loader.add_value("market_value", avaliacao)
         if lance_match:
@@ -144,15 +138,18 @@ class BidderLancePlatformSpider(BaseAuctionSpider):
             uf = m.group(2).upper()
             street_match = ENDERECO_RE.search(description) if description else None
             street = street_match.group(1).strip().rstrip(",.") if street_match else ""
-            loader.add_value("address", {
-                "street": street[:240],
-                "number": "",
-                "complement": "",
-                "neighborhood": "",
-                "city": city,
-                "state": normalize_uf(uf),
-                "zip": "",
-            })
+            loader.add_value(
+                "address",
+                {
+                    "street": street[:240],
+                    "number": "",
+                    "complement": "",
+                    "neighborhood": "",
+                    "city": city,
+                    "state": normalize_uf(uf),
+                    "zip": "",
+                },
+            )
 
         # áreas — primeira ocorrência de "X m²" na descrição
         if description:

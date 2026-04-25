@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from discovery.filter_real_estate import classify, score_row, _normalize
+from discovery.filter_real_estate import _normalize, classify, score_row
 
 
 def test_normalize_strips_accents():

@@ -11,7 +11,6 @@ from discovery.listing_finder import (
     validate_candidate,
 )
 
-
 HOME_HTML = """
 <html><body>
   <nav>

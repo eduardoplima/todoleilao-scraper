@@ -15,6 +15,7 @@ Detecção de stack: meta generator + presença de paths conhecidos
 data/intermediate/site_analysis.csv. Cache de HTML e screenshot em
 data/intermediate/cache/sites/.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -30,11 +31,12 @@ import httpx
 import typer
 from bs4 import BeautifulSoup
 from loguru import logger
-
 from playwright.async_api import (
     Browser,
-    TimeoutError as PWTimeoutError,
     async_playwright,
+)
+from playwright.async_api import (
+    TimeoutError as PWTimeoutError,
 )
 
 CACHE_DIR = Path("data/intermediate/cache/sites")
@@ -45,24 +47,46 @@ DEFAULT_CONCURRENCY = 3
 SCREENSHOT_VIEWPORT = {"width": 1280, "height": 800}
 
 USEFUL_PATH_KEYWORDS = (
-    "imovel", "imoveis", "lote", "leilao", "leiloes", "praca",
-    "edital", "ficha", "matricula", "produto",
+    "imovel",
+    "imoveis",
+    "lote",
+    "leilao",
+    "leiloes",
+    "praca",
+    "edital",
+    "ficha",
+    "matricula",
+    "produto",
 )
 
 ANALYSIS_COLUMNS = [
-    "id", "slug", "nome", "uf", "cidade", "dominio",
-    "confidence", "real_estate_score",
-    "http_status", "final_url", "error",
-    "tech_stack", "tech_signals",
-    "static_link_count", "dynamic_link_count",
-    "static_useful_links", "dynamic_useful_links",
-    "rendering", "requires_js_for_listings",
-    "html_title", "html_meta_generator",
+    "id",
+    "slug",
+    "nome",
+    "uf",
+    "cidade",
+    "dominio",
+    "confidence",
+    "real_estate_score",
+    "http_status",
+    "final_url",
+    "error",
+    "tech_stack",
+    "tech_signals",
+    "static_link_count",
+    "dynamic_link_count",
+    "static_useful_links",
+    "dynamic_useful_links",
+    "rendering",
+    "requires_js_for_listings",
+    "html_title",
+    "html_meta_generator",
     "screenshot_path",
 ]
 
 
 # ---------- cache ---------------------------------------------------------
+
 
 def _key(url: str) -> str:
     return hashlib.sha1(url.encode("utf-8")).hexdigest()
@@ -112,6 +136,7 @@ def _write_cache(
 
 
 # ---------- analysis primitives -------------------------------------------
+
 
 def count_links(html: str) -> tuple[int, int]:
     """Retorna (total, useful). Ignora javascript:/mailto:/tel:/fragmentos."""
@@ -236,7 +261,11 @@ def detect_tech(
         add("WordPress", "wp-content/wp-includes")
 
     # JS frameworks
-    if "/_next/" in haystack_low or "__next_data__" in haystack_low or "self.__next_f" in haystack_low:
+    if (
+        "/_next/" in haystack_low
+        or "__next_data__" in haystack_low
+        or "self.__next_f" in haystack_low
+    ):
         add("Next.js", "/_next/ or __NEXT_DATA__")
     if "/_nuxt/" in haystack_low or "window.__nuxt__" in haystack_low:
         add("Nuxt", "/_nuxt/ or __NUXT__")
@@ -281,6 +310,7 @@ def detect_tech(
 
 
 # ---------- single-site analyzer ------------------------------------------
+
 
 async def _httpx_fetch(client: httpx.AsyncClient, url: str) -> dict[str, Any]:
     out: dict[str, Any] = {
@@ -362,7 +392,10 @@ def _build_record(
     dynamic_total, dynamic_useful = count_links(dynamic_html)
 
     techs, sigs = detect_tech(
-        static_html, dynamic_html, httpx_out.get("headers") or {}, pw_out.get("final_url") or httpx_out.get("final_url") or "",
+        static_html,
+        dynamic_html,
+        httpx_out.get("headers") or {},
+        pw_out.get("final_url") or httpx_out.get("final_url") or "",
     )
     title, generator = extract_title_and_generator(dynamic_html or static_html)
 
@@ -375,8 +408,8 @@ def _build_record(
         (err_parts if not static_html else notes).append(f"httpx={httpx_out['error']}")
     if pw_out.get("error"):
         (err_parts if not dynamic_html else notes).append(f"pw={pw_out['error']}")
-    error = "; ".join(err_parts) if (not static_html and not dynamic_html) else (
-        "; ".join(err_parts)
+    error = (
+        "; ".join(err_parts) if (not static_html and not dynamic_html) else ("; ".join(err_parts))
     )
     # se houve warnings durante a coleta, registramos junto dos sinais
     if notes:
@@ -407,7 +440,9 @@ def _build_record(
         "requires_js_for_listings": req_js,
         "html_title": title,
         "html_meta_generator": generator,
-        "screenshot_path": str(_screenshot_path(row.get("dominio") or "")) if screenshot_saved else "",
+        "screenshot_path": (
+            str(_screenshot_path(row.get("dominio") or "")) if screenshot_saved else ""
+        ),
     }
 
 
@@ -455,6 +490,7 @@ async def analyze_one(
 
 # ---------- runner --------------------------------------------------------
 
+
 async def analyze_all(
     rows: list[dict[str, Any]],
     *,
@@ -478,6 +514,7 @@ async def analyze_all(
         async with async_playwright() as pw:
             browser = await pw.chromium.launch(headless=True)
             try:
+
                 async def worker(row: dict[str, Any]) -> dict[str, Any]:
                     record = await analyze_one(
                         row,
@@ -495,7 +532,10 @@ async def analyze_all(
                     if progress["done"] % 10 == 0 or progress["done"] == total:
                         logger.info(
                             "Progresso {}/{}  cache_hits={}  errors={}",
-                            progress["done"], total, progress["cache"], progress["fail"],
+                            progress["done"],
+                            total,
+                            progress["cache"],
+                            progress["fail"],
                         )
                     return record
 
@@ -530,11 +570,13 @@ def _main() -> None:
 def run(
     input_csv: Path = typer.Option(
         Path("data/intermediate/auctioneers_real_estate.csv"),
-        "--input", "-i",
+        "--input",
+        "-i",
     ),
     output: Path = typer.Option(
         Path("data/intermediate/site_analysis.csv"),
-        "--output", "-o",
+        "--output",
+        "-o",
     ),
     concurrency: int = typer.Option(DEFAULT_CONCURRENCY, "--concurrency", "-c", min=1, max=10),
     timeout_ms: int = typer.Option(PLAYWRIGHT_TIMEOUT_MS, "--timeout-ms"),
@@ -552,14 +594,18 @@ def run(
         all_rows = list(csv.DictReader(fh))
 
     rows = [
-        r for r in all_rows
+        r
+        for r in all_rows
         if r.get("confidence") in confidences and (r.get("dominio") or "").strip()
     ]
     if limit > 0:
         rows = rows[:limit]
     logger.info(
         "Analisando {} sites (confidence in {}, com domínio, limit={}, concurrency={})",
-        len(rows), confidences, limit or "∞", concurrency,
+        len(rows),
+        confidences,
+        limit or "∞",
+        concurrency,
     )
 
     started = time.monotonic()

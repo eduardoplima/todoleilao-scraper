@@ -18,6 +18,7 @@ Saída em `data/intermediate/listing_urls.csv`:
 auctioneer_slug, site, listing_url, items_detected, sample_item_url, notes,
 needs_manual_review.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -53,9 +54,14 @@ PATH_MEDIUM = ("/leiloes", "/leilao", "/lotes", "categoria=imovel", "tipo=imovel
 PRICE_RE = re.compile(r"R\$\s*[\d.,]+")
 
 OUT_COLUMNS = [
-    "id", "auctioneer_slug", "site", "listing_url",
-    "items_detected", "sample_item_url",
-    "notes", "needs_manual_review",
+    "id",
+    "auctioneer_slug",
+    "site",
+    "listing_url",
+    "items_detected",
+    "sample_item_url",
+    "notes",
+    "needs_manual_review",
 ]
 
 
@@ -79,6 +85,7 @@ def _read_cached_html(url: str) -> tuple[str, str]:
 
 
 # ---------- scoring -------------------------------------------------------
+
 
 def score_candidate(text: str, href: str) -> tuple[int, list[str]]:
     """Pontua um candidato (texto-âncora, href). 0 = descartar."""
@@ -151,6 +158,7 @@ def filter_sitemap_urls(urls: list[str]) -> list[tuple[str, int, list[str], str]
 
 # ---------- item detection ------------------------------------------------
 
+
 def detect_items(html: str, base_url: str = "") -> tuple[int, str]:
     """Conta ocorrências de preço (R$) e tenta achar um link próximo a uma delas."""
     if not html:
@@ -183,6 +191,7 @@ def detect_items(html: str, base_url: str = "") -> tuple[int, str]:
 
 # ---------- network -------------------------------------------------------
 
+
 async def fetch_sitemap(client: httpx.AsyncClient, base_url: str) -> list[str]:
     """Tenta GET /sitemap.xml. Falha silenciosa retorna []."""
     if not base_url:
@@ -201,9 +210,7 @@ async def fetch_sitemap(client: httpx.AsyncClient, base_url: str) -> list[str]:
         return []
 
 
-async def validate_candidate(
-    client: httpx.AsyncClient, candidate_url: str
-) -> tuple[int, str, str]:
+async def validate_candidate(client: httpx.AsyncClient, candidate_url: str) -> tuple[int, str, str]:
     """Retorna (items_count, sample_item_url, error)."""
     try:
         r = await client.get(candidate_url, timeout=HTTPX_TIMEOUT, follow_redirects=True)
@@ -222,6 +229,7 @@ async def validate_candidate(
 
 
 # ---------- per-site main flow --------------------------------------------
+
 
 async def find_listing_for_site(
     client: httpx.AsyncClient,
@@ -277,7 +285,9 @@ async def find_listing_for_site(
     notes.append(f"tried={tried}")
     if best_reasons:
         notes.append("matched=" + ",".join(best_reasons))
-    if (site_row.get("requires_js_for_listings") or "").strip().lower() == "true" and best_count < ITEMS_THRESHOLD:
+    if (
+        site_row.get("requires_js_for_listings") or ""
+    ).strip().lower() == "true" and best_count < ITEMS_THRESHOLD:
         notes.append("requires_js")
 
     needs_manual = best_count < ITEMS_THRESHOLD
@@ -306,6 +316,7 @@ async def find_all_listings(
     progress = {"done": 0, "with_listing": 0, "items_ok": 0}
 
     async with httpx.AsyncClient(headers=headers, limits=limits) as client:
+
         async def worker(row):
             async with sem:
                 result = await find_listing_for_site(client, row)
@@ -317,8 +328,11 @@ async def find_all_listings(
             if progress["done"] % 25 == 0 or progress["done"] == total:
                 logger.info(
                     "Progresso {}/{}  com_url={}  items>={}={}",
-                    progress["done"], total,
-                    progress["with_listing"], ITEMS_THRESHOLD, progress["items_ok"],
+                    progress["done"],
+                    total,
+                    progress["with_listing"],
+                    ITEMS_THRESHOLD,
+                    progress["items_ok"],
                 )
             return result
 
@@ -347,7 +361,8 @@ def run(
 
     if only_accessible:
         rows = [
-            r for r in rows
+            r
+            for r in rows
             if not (r.get("error") or "").strip() and (r.get("dominio") or "").strip()
         ]
 
@@ -373,9 +388,13 @@ def run(
     logger.info("Listing URL encontrada:      {}  ({:.1%})", with_url, with_url / max(total, 1))
     logger.info(
         "Validação OK (>={} items): {}  ({:.1%})",
-        ITEMS_THRESHOLD, items_ok, items_ok / max(total, 1),
+        ITEMS_THRESHOLD,
+        items_ok,
+        items_ok / max(total, 1),
     )
-    logger.info("Needs manual review:         {}  ({:.1%})", needs_review, needs_review / max(total, 1))
+    logger.info(
+        "Needs manual review:         {}  ({:.1%})", needs_review, needs_review / max(total, 1)
+    )
 
 
 if __name__ == "__main__":

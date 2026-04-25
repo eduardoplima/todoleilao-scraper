@@ -1,13 +1,13 @@
 """Tests do OALeiloesSpider usando fixtures HTML capturadas."""
+
 from __future__ import annotations
 
 from decimal import Decimal
 from pathlib import Path
 
 import pytest
-from scrapy.http import HtmlResponse, Request
-
 from leilao_scraper.spiders.oaleiloes import OALeiloesSpider
+from scrapy.http import HtmlResponse, Request
 
 FIXTURES = Path(__file__).parent / "fixtures" / "oaleiloes"
 
@@ -24,6 +24,7 @@ def spider():
 
 
 # ---- parse_leilao ---------------------------------------------------------
+
 
 def test_parse_leilao_yields_property_lote_requests_only(spider):
     """O leilão CAIXA tem 100 imóveis. parse_leilao deve emitir Request para
@@ -49,6 +50,7 @@ def test_parse_leilao_skips_non_property_categories(spider):
 
 
 # ---- parse_property -------------------------------------------------------
+
 
 def test_parse_property_extracts_full_property_item(spider):
     response = _response(

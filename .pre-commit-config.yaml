@@ -1,0 +1,31 @@
+# Hooks de lint/format em commit local. Instalar com: `uv run pre-commit install`.
+# Replica o que o CI roda: ruff + black + check JSON/YAML/etc. Mypy é deliberadamente
+# DEIXADO FORA do pre-commit (lento, gradual; só roda no CI).
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^tests/fixtures/
+      - id: end-of-file-fixer
+        exclude: ^tests/fixtures/
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=600"]
+        exclude: ^tests/fixtures/
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      # Não usamos `ruff format` porque o usuário pediu black (são intercambiáveis).
+
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        args: [--line-length=100]

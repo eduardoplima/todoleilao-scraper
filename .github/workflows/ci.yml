@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    name: lint + test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          # cache automático em ~/.cache/uv
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      # Ruff é o gate mais rápido — falha cedo se houver lint error.
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Format check (black)
+        run: uv run black --check --line-length=100 discovery scripts scrapy_project tests
+
+      # Mypy é gradual: falha só nos checks fortes habilitados em pyproject.toml.
+      - name: Type check (mypy)
+        run: uv run mypy
+
+      # Tests SEM live spiders — fixtures/mocks já cobrem o que não exige rede.
+      # Se algum teste decidir bater na rede, ele deveria ser marcado pra skip
+      # em CI (placeholder pra futuro: `pytest -m "not live"`).
+      - name: Unit tests
+        run: uv run pytest -q

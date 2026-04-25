@@ -3,6 +3,7 @@
 Mesma plataforma "bidder/lance" do Müller/Rech — toda parse logic em
 `_bidder_lance_platform.BidderLancePlatformSpider`.
 """
+
 from ._bidder_lance_platform import BidderLancePlatformSpider
 
 

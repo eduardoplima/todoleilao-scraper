@@ -3,12 +3,12 @@
 `pythonpath = ["scrapy_project"]` no pyproject.toml expõe `leilao_scraper` para
 o import desses testes.
 """
+
 from __future__ import annotations
 
 from decimal import Decimal
 
 import pytest
-
 from leilao_scraper.items import PropertyItem
 from leilao_scraper.loaders import (
     PropertyLoader,
@@ -19,10 +19,10 @@ from leilao_scraper.loaders import (
     parse_br_date,
 )
 
-
 # ---------------------------------------------------------------------------
 # clean_money
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.parametrize(
     "raw,expected",
@@ -49,6 +49,7 @@ def test_clean_money_invalid(raw):
 # ---------------------------------------------------------------------------
 # parse_br_date
 # ---------------------------------------------------------------------------
+
 
 def test_parse_br_date_numeric():
     assert parse_br_date("15/03/2025") == "2025-03-15T00:00:00-03:00"
@@ -86,6 +87,7 @@ def test_parse_br_date_invalid(raw):
 # normalize_uf
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.parametrize(
     "raw,expected",
     [
@@ -112,6 +114,7 @@ def test_normalize_uf_invalid(raw):
 # ---------------------------------------------------------------------------
 # detect_property_type
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.parametrize(
     "raw,expected",
@@ -157,6 +160,7 @@ def test_detect_property_type_no_match():
 # clean_html
 # ---------------------------------------------------------------------------
 
+
 def test_clean_html_strips_tags():
     assert clean_html("<p>Texto <b>com</b> tags</p>") == "Texto com tags"
 
@@ -183,6 +187,7 @@ def test_clean_html_handles_entities():
 # PropertyLoader integração
 # ---------------------------------------------------------------------------
 
+
 def test_loader_applies_money_processor():
     loader = PropertyLoader(item=PropertyItem())
     loader.add_value("minimum_bid", "R$ 250.000,00")
@@ -203,8 +208,8 @@ def test_loader_property_type_takes_first_valid():
     """Title não bate, description bate — TakeFirst pega o segundo."""
     loader = PropertyLoader(item=PropertyItem())
     loader.add_value("property_type", "Oportunidade incrível")  # → None
-    loader.add_value("property_type", "Apartamento 2 dorm")     # → 'apartamento'
-    loader.add_value("property_type", "Casa")                   # → 'casa' (descartado)
+    loader.add_value("property_type", "Apartamento 2 dorm")  # → 'apartamento'
+    loader.add_value("property_type", "Casa")  # → 'casa' (descartado)
     item = loader.load_item()
     assert item["property_type"] == "apartamento"
 

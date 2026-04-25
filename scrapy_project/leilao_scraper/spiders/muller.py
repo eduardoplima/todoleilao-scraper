@@ -8,6 +8,7 @@ Plataforma "bidder/lance" — toda a parse logic vive em
 `_bidder_lance_platform.BidderLancePlatformSpider`. Documentação detalhada
 da topologia e seletores está lá.
 """
+
 from ._bidder_lance_platform import BidderLancePlatformSpider
 
 

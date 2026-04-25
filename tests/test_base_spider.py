@@ -1,15 +1,14 @@
 """Testes do `BaseAuctionSpider` e do `DummySpider`."""
+
 from __future__ import annotations
 
 from decimal import Decimal
 
 import pytest
 import scrapy
-from scrapy.http import HtmlResponse, Request
-
 from leilao_scraper.spiders.base import BaseAuctionSpider
 from leilao_scraper.spiders.dummy import DummySpider
-
+from scrapy.http import HtmlResponse, Request
 
 HTML_DUMMY = b"""<!doctype html><html><head><title>Example</title></head>
 <body><h1>Example Domain</h1></body></html>"""
@@ -21,6 +20,7 @@ def _response(url: str, meta: dict | None = None) -> HtmlResponse:
 
 
 # ---- spider de teste ------------------------------------------------------
+
 
 class _PWSpider(BaseAuctionSpider):
     name = "pw_test"
@@ -43,6 +43,7 @@ class _NonPWSpider(BaseAuctionSpider):
 
 
 # ---- make_request ---------------------------------------------------------
+
 
 def test_make_request_injects_playwright_when_required():
     spider = _PWSpider()
@@ -86,6 +87,7 @@ def test_make_request_user_can_explicit_disable_playwright_per_request():
 
 # ---- new_loader -----------------------------------------------------------
 
+
 def test_new_loader_prefills_url_and_auctioneer():
     spider = _NonPWSpider()
     response = _response("https://example.com/lote/1")
@@ -121,6 +123,7 @@ def test_new_loader_explicit_source_takes_precedence_over_meta():
 
 # ---- parse_property hook --------------------------------------------------
 
+
 def test_parse_property_default_raises_not_implemented():
     """Subclasses esquecidas devem falhar barulhento, não silenciosamente."""
 
@@ -135,6 +138,7 @@ def test_parse_property_default_raises_not_implemented():
 
 
 # ---- log_event ------------------------------------------------------------
+
 
 def test_log_event_emits_structured_format(caplog):
     spider = _NonPWSpider()
@@ -155,6 +159,7 @@ def test_log_event_quotes_strings_with_spaces(caplog):
 
 
 # ---- DummySpider integração ----------------------------------------------
+
 
 def test_dummy_spider_yields_complete_item():
     spider = DummySpider()

@@ -55,6 +55,7 @@ PARTICULARIDADES
 
 ================================================================================
 """
+
 from __future__ import annotations
 
 import re
@@ -140,7 +141,9 @@ class MoaciraSpider(BaseAuctionSpider):
         max_page = max(page_nums)
         self.log_event(
             "listing_paginated",
-            leilao_id=leilao_id, lotes_pagina_1=emitted, total_paginas=max_page,
+            leilao_id=leilao_id,
+            lotes_pagina_1=emitted,
+            total_paginas=max_page,
         )
         for n in range(2, max_page + 1):
             yield self.make_request(
@@ -191,9 +194,7 @@ class MoaciraSpider(BaseAuctionSpider):
             " ".join(el.css("::text").getall()) for el in response.css(".destaque")
         )
         destaque_text = " ".join(destaque_text.split())
-        avaliacao = self.first_match(
-            r"Avalia[cç][aã]o:?\s*(R\$\s*[\d.,]+)", destaque_text
-        )
+        avaliacao = self.first_match(r"Avalia[cç][aã]o:?\s*(R\$\s*[\d.,]+)", destaque_text)
         lance = self.first_match(
             r"Lance\s+(?:Inicial|M[ií]nimo):?\s*(R\$\s*[\d.,]+)", destaque_text
         )
@@ -216,23 +217,22 @@ class MoaciraSpider(BaseAuctionSpider):
             city = m_loc.group(1).strip().title()
             uf = m_loc.group(2)
             street = m_endereco.group(1).strip().rstrip(".,") if m_endereco else ""
-            loader.add_value("address", {
-                "street": street[:240],
-                "number": "",
-                "complement": "",
-                "neighborhood": "",
-                "city": city,
-                "state": normalize_uf(uf),
-                "zip": "",
-            })
+            loader.add_value(
+                "address",
+                {
+                    "street": street[:240],
+                    "number": "",
+                    "complement": "",
+                    "neighborhood": "",
+                    "city": city,
+                    "state": normalize_uf(uf),
+                    "zip": "",
+                },
+            )
 
         # áreas — "X m2 de área (privativa|total|terreno)"
-        priv = self.first_match(
-            r"([\d.,]+)\s*m[²2]\s*de\s*[áa]rea\s+privativa", description_block
-        )
-        total = self.first_match(
-            r"([\d.,]+)\s*m[²2]\s*de\s*[áa]rea\s+total", description_block
-        )
+        priv = self.first_match(r"([\d.,]+)\s*m[²2]\s*de\s*[áa]rea\s+privativa", description_block)
+        total = self.first_match(r"([\d.,]+)\s*m[²2]\s*de\s*[áa]rea\s+total", description_block)
         terreno = self.first_match(
             r"([\d.,]+)\s*m[²2]\s*de\s*[áa]rea\s+do\s+terreno", description_block
         )

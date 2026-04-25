@@ -18,6 +18,7 @@ Confidence final:
 Se o site tem erro/offline e o nome do leiloeiro não acende a heurística,
 classificamos como `unknown` para revisão manual.
 """
+
 from __future__ import annotations
 
 import csv
@@ -36,24 +37,31 @@ from loguru import logger
 # singular (ex.: "leilao" ⊄ "leiloes", "judicial" ⊄ "judiciais"). Quando o
 # plural É substring (ex.: "casa" ⊂ "casas"), basta o singular.
 STRONG_KEYWORDS = (
-    "imovel", "imoveis",
-    "apartamento",          # apartamentos via substring
-    "casa",                 # casas via substring
-    "terreno",              # terrenos via substring
-    "lote",                 # lotes via substring
-    "imobil",               # stem: imobiliaria/-rio/-rias/-rios
+    "imovel",
+    "imoveis",
+    "apartamento",  # apartamentos via substring
+    "casa",  # casas via substring
+    "terreno",  # terrenos via substring
+    "lote",  # lotes via substring
+    "imobil",  # stem: imobiliaria/-rio/-rias/-rios
 )
 MEDIUM_KEYWORDS = (
-    "judicial", "judiciais",
-    "extrajudicial", "extrajudiciais",
-    "matricul",             # stem: matricula/-as
-    "edital", "editais",
-    "praca",                # pracas via substring
-    "leilao", "leiloes",
-    "garagem", "garagens",
-    "vaga",                 # vagas via substring
-    "hipoteca",             # hipotecas via substring
-    "alienacao", "alienacoes",
+    "judicial",
+    "judiciais",
+    "extrajudicial",
+    "extrajudiciais",
+    "matricul",  # stem: matricula/-as
+    "edital",
+    "editais",
+    "praca",  # pracas via substring
+    "leilao",
+    "leiloes",
+    "garagem",
+    "garagens",
+    "vaga",  # vagas via substring
+    "hipoteca",  # hipotecas via substring
+    "alienacao",
+    "alienacoes",
 )
 
 # --- pesos ----------------------------------------------------------------------
@@ -226,7 +234,9 @@ def run(
     logger.info("Total:   {}", total)
     logger.info("high:    {}  ({:.1%})", counts["high"], counts["high"] / total if total else 0)
     logger.info("medium:  {}  ({:.1%})", counts["medium"], counts["medium"] / total if total else 0)
-    logger.info("unknown: {}  ({:.1%})", counts["unknown"], counts["unknown"] / total if total else 0)
+    logger.info(
+        "unknown: {}  ({:.1%})", counts["unknown"], counts["unknown"] / total if total else 0
+    )
 
     if examples:
         for conf in ("high", "medium", "unknown"):

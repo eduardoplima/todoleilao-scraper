@@ -11,6 +11,7 @@ do anchor do `parse_leilao` lendo o texto da categoria (ex.: "IMÓVEIS URBANOS
 / CASAS"). Lots sem categoria de imóvel são ignorados em vez de chegar até
 o `detect_property_type` do loader retornar None.
 """
+
 from __future__ import annotations
 
 import re
@@ -96,7 +97,7 @@ class OALeiloesSpider(BaseAuctionSpider):
             body_text,
         )
         if desc_anchor:
-            description_block = body_text[desc_anchor.start():desc_anchor.start() + 1500]
+            description_block = body_text[desc_anchor.start() : desc_anchor.start() + 1500]
         else:
             description_block = body_text[:1500]
         loader.add_value("description", description_block)
@@ -122,15 +123,18 @@ class OALeiloesSpider(BaseAuctionSpider):
             uf = m.group(1)
             city = m.group(2).strip().title()
             street_part = m.group(3).strip().rstrip(",.")
-            loader.add_value("address", {
-                "street": street_part[:240],
-                "number": "",
-                "complement": "",
-                "neighborhood": "",
-                "city": city,
-                "state": normalize_uf(uf),
-                "zip": "",
-            })
+            loader.add_value(
+                "address",
+                {
+                    "street": street_part[:240],
+                    "number": "",
+                    "complement": "",
+                    "neighborhood": "",
+                    "city": city,
+                    "state": normalize_uf(uf),
+                    "zip": "",
+                },
+            )
 
         # Áreas: 'X M2 DE ÁREA PRIVATIVA' / 'Y M2 DE ÁREA DO TERRENO'
         priv = self.first_match(r"([\d.,]+)\s*M2\s*DE\s*[ÁA]REA\s+PRIVATIVA", body_text)
@@ -174,8 +178,15 @@ class OALeiloesSpider(BaseAuctionSpider):
             text = " ".join(a.css("::text").getall()).strip()
             href_low = href.lower()
             text_low = text.lower()
-            if href_low.endswith(".pdf") or "edital" in href_low or "edital" in text_low or "matr" in text_low:
-                docs.append({"name": text[:120] or "documento", "url": self.absolute(response, href)})
+            if (
+                href_low.endswith(".pdf")
+                or "edital" in href_low
+                or "edital" in text_low
+                or "matr" in text_low
+            ):
+                docs.append(
+                    {"name": text[:120] or "documento", "url": self.absolute(response, href)}
+                )
         if docs:
             loader.add_value("documents", docs)
 

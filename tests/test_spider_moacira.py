@@ -1,4 +1,5 @@
 """Testes do MoaciraSpider com fixtures HTML capturadas."""
+
 from __future__ import annotations
 
 import re
@@ -6,9 +7,8 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
-from scrapy.http import HtmlResponse, Request
-
 from leilao_scraper.spiders.moacira import MoaciraSpider
+from scrapy.http import HtmlResponse, Request
 
 FIXTURES = Path(__file__).parent / "fixtures" / "moacira"
 
@@ -26,11 +26,10 @@ def spider():
 
 # ---- parse_listing -------------------------------------------------------
 
+
 def test_listing_emits_property_lotes_and_paginates(spider):
     """Página 1 emite Request pra cada lote + Request para páginas 2..max."""
-    response = _response(
-        "leilao_730_caixa.html", "https://www.moacira.lel.br/leilao/730"
-    )
+    response = _response("leilao_730_caixa.html", "https://www.moacira.lel.br/leilao/730")
     requests = list(spider.parse_listing(response))
 
     page_re = re.compile(r"/leilao/\d+/\d+$")
@@ -49,9 +48,7 @@ def test_listing_emits_property_lotes_and_paginates(spider):
 
 def test_listing_subsequent_page_does_not_re_paginate(spider):
     """Páginas 2..N só emitem lotes (paginação só na chamada inicial)."""
-    response = _response(
-        "leilao_730_p10.html", "https://www.moacira.lel.br/leilao/730/10"
-    )
+    response = _response("leilao_730_p10.html", "https://www.moacira.lel.br/leilao/730/10")
     requests = list(spider.parse_listing(response, current_page=10))
     page_reqs = [r for r in requests if r.url.endswith("/10")]
     # nenhum request de "outra página" aqui
@@ -62,6 +59,7 @@ def test_listing_subsequent_page_does_not_re_paginate(spider):
 
 
 # ---- parse_property -------------------------------------------------------
+
 
 def test_parse_property_extracts_complete_item(spider):
     response = _response(
