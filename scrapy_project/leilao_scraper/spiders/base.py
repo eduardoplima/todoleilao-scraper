@@ -9,7 +9,10 @@ Centraliza o que é repetido em todo spider concreto:
     `source_listing_url` pré-preenchidos, via `new_loader`;
   - hook `parse_property(response)` que subclasses obrigatoriamente
     implementam para emitir o `PropertyItem` final;
-  - logging estruturado simples (`log_event(event, **fields)`).
+  - logging estruturado simples (`log_event(event, **fields)`);
+  - helpers de Playwright em `make_request`: `wait_for_selector`,
+    `scroll_to_bottom`, `load_more_selector` — encadeados como
+    `playwright_page_methods` antes da response ser entregue ao callback.
 
 Subclasse mínima:
 
@@ -42,9 +45,47 @@ from typing import Any
 from urllib.parse import urljoin
 
 import scrapy
+from scrapy_playwright.page import PageMethod
 
 from leilao_scraper.items import PropertyItem
 from leilao_scraper.loaders import PropertyLoader
+
+
+# JS de scroll progressivo: rola até o final, espera 800ms, checa se cresceu;
+# quando estabiliza, sai. Cobre lazy-load por intersection observer e por
+# fetch-on-near-bottom (padrões mais comuns).
+_SCROLL_BOTTOM_JS = """
+async () => {
+    let prev = -1;
+    let stable = 0;
+    while (stable < 2) {
+        const h = document.body.scrollHeight;
+        if (h === prev) {
+            stable += 1;
+        } else {
+            stable = 0;
+            prev = h;
+            window.scrollTo(0, h);
+        }
+        await new Promise(r => setTimeout(r, 800));
+    }
+}
+"""
+
+# Loop de "carregar mais": clica no seletor até N vezes ou até o botão sumir
+# /ficar disabled. O wait_for_timeout dá tempo do servidor responder.
+_LOAD_MORE_LOOP_JS = """
+async ({sel, maxClicks}) => {
+    for (let i = 0; i < maxClicks; i++) {
+        const btn = document.querySelector(sel);
+        if (!btn || btn.disabled || btn.offsetParent === null) break;
+        btn.click();
+        await new Promise(r => setTimeout(r, 1500));
+    }
+}
+"""
+
+DEFAULT_WAIT_TIMEOUT_MS = 15_000
 
 
 class BaseAuctionSpider(scrapy.Spider):
@@ -71,18 +112,64 @@ class BaseAuctionSpider(scrapy.Spider):
         callback: Any | None = None,
         *,
         meta: dict[str, Any] | None = None,
+        wait_for_selector: str | None = None,
+        wait_timeout_ms: int = DEFAULT_WAIT_TIMEOUT_MS,
+        scroll_to_bottom: bool = False,
+        load_more_selector: str | None = None,
+        load_more_max_clicks: int = 10,
+        page_methods: list[PageMethod] | None = None,
         **kwargs: Any,
     ) -> scrapy.Request:
-        """Cria um `scrapy.Request` injetando `playwright=True` quando necessário.
+        """Cria um `scrapy.Request` injetando `playwright=True` e, quando aplicável,
+        a sequência de `playwright_page_methods` para esperar/rolar/clicar.
 
         Preserva qualquer `meta` que o chamador passou e só adiciona a chave
         `playwright` quando ainda não está presente — permite ao spider opt-out
         explicitamente para uma URL específica em um spider Playwright (raro,
         mas útil para CDNs/sitemaps que não precisam de JS).
+
+        Helpers Playwright (ignorados quando a request não vai pro Chromium):
+
+        - `wait_for_selector`: espera por um CSS selector (até `wait_timeout_ms`)
+          antes de considerar a página pronta. Use quando o conteúdo de
+          interesse aparece após XHR.
+        - `scroll_to_bottom`: scroll progressivo até o `scrollHeight` estabilizar.
+          Cobre lazy-load por `IntersectionObserver` ou `fetch-on-near-bottom`.
+        - `load_more_selector` + `load_more_max_clicks`: clica repetidamente
+          no botão "carregar mais" até ele sumir/desabilitar ou bater o cap.
+        - `page_methods`: lista raw para casos avançados (anexada antes dos
+          helpers acima).
+
+        Estes ENCADEAM na ordem: page_methods extras → wait_for_selector →
+        scroll_to_bottom → load_more_selector. Se você precisa de outra
+        ordem, passe tudo via `page_methods=[...]`.
         """
         merged_meta = dict(meta or {})
         if self.requires_playwright:
             merged_meta.setdefault("playwright", True)
+
+        if merged_meta.get("playwright"):
+            methods: list[PageMethod] = list(merged_meta.get("playwright_page_methods", []))
+            if page_methods:
+                methods.extend(page_methods)
+            if wait_for_selector:
+                methods.append(
+                    PageMethod("wait_for_selector", wait_for_selector, timeout=wait_timeout_ms)
+                )
+            if scroll_to_bottom:
+                methods.append(PageMethod("evaluate", _SCROLL_BOTTOM_JS))
+                methods.append(PageMethod("wait_for_load_state", "networkidle"))
+            if load_more_selector:
+                methods.append(
+                    PageMethod(
+                        "evaluate",
+                        _LOAD_MORE_LOOP_JS,
+                        {"sel": load_more_selector, "maxClicks": load_more_max_clicks},
+                    )
+                )
+            if methods:
+                merged_meta["playwright_page_methods"] = methods
+
         return scrapy.Request(url, callback=callback, meta=merged_meta, **kwargs)
 
     # ---------- factory de PropertyLoader ---------------------------------

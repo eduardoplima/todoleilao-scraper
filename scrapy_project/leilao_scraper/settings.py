@@ -86,10 +86,34 @@ DOWNLOAD_HANDLERS = {
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
 PLAYWRIGHT_BROWSER_TYPE = "chromium"
-PLAYWRIGHT_LAUNCH_OPTIONS = {"headless": True}
+
+# Launch options aplicadas a `chromium.launch(...)`.
+#   `headless=True`        — headless em produção (já é o default da lib).
+#   `timeout=30_000`       — timeout do próprio launch (browser stuck na boot).
+#   `args` enxutos         — desabilita features que comem RAM/inflate flakiness
+#                             em ambiente CI/Docker. Em dev local não faz mal.
+PLAYWRIGHT_LAUNCH_OPTIONS = {
+    "headless": True,
+    "timeout": 30_000,
+    "args": [
+        "--disable-dev-shm-usage",     # Linux/Docker: usa /tmp em vez de /dev/shm
+        "--disable-blink-features=AutomationControlled",
+    ],
+}
+
+# Timeout default de `page.goto(...)` quando o spider não passa um valor próprio.
 PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 30_000  # ms
+
+# Quantas páginas mantemos abertas por contexto antes de reciclar (controla
+# vazamento de memória do Chromium em runs longos).
 PLAYWRIGHT_MAX_PAGES_PER_CONTEXT = 4
-PLAYWRIGHT_ABORT_REQUEST = None  # spiders podem sobrescrever para bloquear assets
+
+# Hook para abortar requests do Playwright (assets desnecessários).
+# spiders podem sobrescrever para bloquear imagens/css/etc.; default = nada.
+PLAYWRIGHT_ABORT_REQUEST = None
+
+# Concorrência efetiva de pages dentro do navegador headless.
+PLAYWRIGHT_CDP_KWARGS = {}
 
 # ---------------------------------------------------------------------------
 # Misc
