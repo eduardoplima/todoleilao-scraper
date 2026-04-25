@@ -307,7 +307,8 @@ class PropertyLoader(ItemLoader):
     area_sqm_in = MapCompose(_to_decimal_area)
     total_area_sqm_in = MapCompose(_to_decimal_area)
 
-    # campos de coleção: spider já entrega lista pronta
+    # coleções: spider entrega listas; ItemLoader.add_value já expande list/tuple,
+    # então Identity preserva a ordem dos elementos sem aninhar.
     images_out = Identity()
     documents_out = Identity()
-    address_out = Identity()
+    # address é um dict único — TakeFirst (default) extrai o dict cru.

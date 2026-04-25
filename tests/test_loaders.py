@@ -233,7 +233,7 @@ def test_loader_int_fields():
 
 
 def test_loader_address_passes_through_dict():
-    """Address é dict — Identity preserva."""
+    """Address é dict — TakeFirst extrai o dict como dict (não como lista)."""
     loader = PropertyLoader(item=PropertyItem())
     addr = {
         "street": "Rua X",
@@ -244,5 +244,5 @@ def test_loader_address_passes_through_dict():
     }
     loader.add_value("address", addr)
     item = loader.load_item()
-    assert item["address"] == [addr]  # Identity → lista de valores adicionados
-    assert item["address"][0]["state"] == "SP"
+    assert item["address"] == addr
+    assert item["address"]["state"] == "SP"
