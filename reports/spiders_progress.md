@@ -7,14 +7,16 @@ Status dos spiders concretos do `leilao_scraper`. Smokes rodados com
 
 ## Resumo
 
-| spider     | leiloeiro                                  | UF      | status | itens (smoke) | completos | observações                                              |
-| ---------- | ------------------------------------------ | ------- | :----: | ------------: | --------: | -------------------------------------------------------- |
-| `dummy`    | (fixture)                                  | —       | ok     |             1 |     1/1   | valida o esqueleto Validation→Dedup→Enrich→Export        |
-| `oaleiloes`| Bruno Duarte / Orlando Araújo (OALeilões)  | DF      | ok     |            24 |    19/24  | descrição mais "frouxa" — ~20% caem em property_type=None |
-| `moacira`  | Moacira Tegoni Goedert                     | DF      | ok     |            42 |    42/42  | **piloto**, 100% completos, slug→property_type            |
-| `muller`   | Darci Muller / Daniel Costa Müller         | RS      | ok     |            36 |    34/36  | bidder/lance, 1ª praça começa em market_value (disc=0%)   |
-| `rech`     | Alexandre Rech                             | RS      | ok     |            26 |    21/26  | bidder/lance, 5/26 sem cidade no padrão Cidade:X/UF       |
-| `cassiano` | Cassiano Ricardo Dall Ago e Silva          | PI      | parcial|            51 |     1/51  | bidder/lance — site **não expõe market_value publicamente** |
+| spider     | leiloeiro                                  | UF      | rendering | abordagem         | status | itens (smoke) | completos | observações                                              |
+| ---------- | ------------------------------------------ | ------- | --------- | ----------------- | :----: | ------------: | --------: | -------------------------------------------------------- |
+| `dummy`    | (fixture)                                  | —       | n/a       | mock              | ok     |             1 |     1/1   | valida o esqueleto Validation→Dedup→Enrich→Export        |
+| `playwright_example` | (quotes.toscrape.com/js)         | —       | dynamic   | Playwright        | ok     |            30 |     n/a   | valida o caminho Playwright + wait_for_selector          |
+| `oaleiloes`| Bruno Duarte / Orlando Araújo (OALeilões)  | DF      | static    | HTML scraping     | ok     |            24 |    19/24  | descrição mais "frouxa" — ~20% caem em property_type=None |
+| `moacira`  | Moacira Tegoni Goedert                     | DF      | static    | HTML scraping     | ok     |            42 |    42/42  | **piloto static**, 100% completos, slug→property_type     |
+| `muller`   | Darci Muller / Daniel Costa Müller         | RS      | static    | bidder/lance base | ok     |            36 |    34/36  | 1ª praça começa em market_value (disc=0%)                 |
+| `rech`     | Alexandre Rech                             | RS      | static    | bidder/lance base | ok     |            26 |    21/26  | 5/26 sem cidade no padrão Cidade:X/UF                     |
+| `cassiano` | Cassiano Ricardo Dall Ago e Silva          | PI      | static    | bidder/lance base | parcial|            51 |     1/51  | site **não expõe market_value publicamente**              |
+| `projud`   | Carlos Campanhã (PRÓ-JUD Leilões)          | SP      | dynamic   | **API JSON**      | ok     |             1 |     1/1   | **piloto dynamic XHR-first**, API `/ApiEngine/...` direta — Playwright dispensado |
 
 "Completos" = item com `property_type` + `minimum_bid` + `market_value` + `address` simultaneamente preenchidos.
 
@@ -43,10 +45,28 @@ domínio, slug e start_urls.
 | `rech`     |     10 | endereços + preços OK      |
 | `cassiano` |     10 | preços OK; **avaliação não exposta** no site (apenas lance mínimo) |
 
-### 3. (não cobertos) Plataformas Vue/Nuxt + Superbid
-`leiloesjudiciaismg`, `superbid`, `Mega Leilões`, `kcleiloes` (via bomvalor).
-Estes ficam para o próximo bloco — exigem investigação separada e
-provavelmente Playwright (dynamic).
+### 3. .NET ApiEngine (jQuery + SignalR) — `projud`
+URL pattern: `POST /ApiEngine/GetLotesLeilao/{leilao_id}/{page}/1/0` com
+body JSON vazio `{}`. Retorna `{Lotes:[...], Paginacao:{...}, Counts...}`
+sem auth. Cada Lote tem `URLlote`, `IconeCategoria`, `ValorAvaliacao`,
+`GetLoteRealTime[].ProximoLance`, `Cidade`/`UF`, `Fotos`, `PracaAtual`.
+
+**XHR-first compensa**: capturei via Playwright em recon manual (ver
+docstring do `spiders/projud.py`), confirmei ausência de auth, escrevi
+spider direto sobre HTTP+JSON. `requires_playwright = False`. Fica
+~10x mais rápido que crawlear via browser.
+
+**Limitação atual**: a API exige `leilao_id` específico — não há
+endpoint global que liste leilões filtráveis por categoria. Spider
+usa um seed manual de IDs conhecidos (`leilao_seeds`); discovery
+automática (Playwright só na home + extração de `/leilao/<slug>/<id>/`)
+é trabalho futuro.
+
+### 4. (não cobertos) outras plataformas dinâmicas
+`flexleiloes`, `grupocarvalholeiloes` (Next.js App Router), `liderleiloes`,
+`lancecertoleiloes`, `nortedeminasleiloes`, `valland`, `superbid`,
+`Mega Leilões`, `kcleiloes` (via bomvalor), `leiloesjudiciaismg`
+(Vue/Nuxt). Cada uma exige investigação XHR própria.
 
 ## Top 10 ordens próximas
 
