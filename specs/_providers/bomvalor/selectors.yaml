@@ -1,0 +1,64 @@
+# Contrato declarativo do recon piloto — provider Bomvalor.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+#
+# Plataforma BOMVALOR (Mercado Bomvalor) — multi-tenant. Tenants têm domínio
+# de fachada (ex.: apabrfleiloes.com.br) que linka para
+# `mercado.bomvalor.com.br/<tenant>/...`. O detalhe e a listagem real ficam
+# no host `mercado.bomvalor.com.br`. HTML server-side (Vue+jQuery+Bootstrap)
+# com `sharedData = {...}` JSON-literal embutido em ATIVOS; lotes
+# encerrados perdem o `sharedData` e expõem só HTML estruturado.
+
+auctioneer_slug: "bomvalor"
+platform_hint: "bomvalor"
+
+listing_active:
+  url_pattern: "https://mercado.bomvalor.com.br/{tenant_slug}/busca/segmento/imoveis"
+  card_selector: "a[href*='/imoveis/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "ver-mais-leiloes?perPage={perPage}&page={page}&eventos="
+
+listing_closed:
+  url_pattern: "https://mercado.bomvalor.com.br/{tenant_slug}/?eventos=encerrados"
+  card_selector: "a[href*='/imoveis/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "ver-mais-leiloes?perPage={perPage}&page={page}&eventos=encerrados"
+
+detail:
+  url_pattern: "https://mercado.bomvalor.com.br/{tenant_slug}/imoveis/{categoria_slug}/{lot_slug}-{lot_id}"
+  field_selectors:
+    title:
+      selector: "h1.titulo-lote, h1.bv-titulo-lote, meta[property='og:title']"
+      kind: css
+    price_minimum:
+      selector: "div.bv-praca div.bv-vl-lance"
+      kind: css
+    price_market:
+      selector: "div.descricao-completa, meta[property='og:description']"
+      kind: css
+    address_block:
+      selector: "p.localizacao-leilao, meta[property='og:description']"
+      kind: css
+    images:
+      selector: "img[src*='cloudfront.net/public/bomvalorjudicial/fotos/imoveis']"
+      kind: css
+    documents:
+      selector: "a[href*='vlance-cdn.com.br'][href$='.pdf'], a[href*='cartoriocomprova']"
+      kind: css
+    bids:
+      selector: "div#log-lances, div.log-lances"
+      kind: css
+      notes: "Hidden d-none for non-authenticated users; placeholders 'X***' / 'XX:XX:XX' / 'R$ XXX,XX'. Bids NOT publicly exposed; bids=[] always for guest scrape."
+    pracas:
+      selector: "div.bv-praca[data-nu-praca]"
+      kind: css
+    status_lote:
+      selector: "div.bv-praca div.status-praca"
+      kind: css
+    shared_data_json:
+      selector: "script:contains('sharedData')"
+      kind: css
+      notes: "Em ATIVOS: JS-literal `sharedData = { lote: {...}, ... }`. Lote tem .id .nm_titulo .nm_descricao .vl_lanceinicial .lances .pracas .fotos .anexos .judicial .vistoria.nm_onus . Em ENCERRADOS o bloco some — usar HTML."

@@ -1,0 +1,57 @@
+{
+  "auctioneer_slug": "bomvalor",
+  "source_listing_url": "https://mercado.bomvalor.com.br/apabrfleiloes/?eventos=encerrados",
+  "source_lot_url": "http://mercado.bomvalor.com.br/apabrfleiloes/imoveis/apartamento/apartamento-75-m-em-belo-oriente-mg-116118",
+  "title": "Apartamento 75 m² em Belo Oriente/MG",
+  "description": "🏡 Apartamento com entrada independente – Belo Oriente/MG. Apartamento construído no segundo piso, com entrada totalmente independente, garantindo mais privacidade e autonomia. O imóvel possui aproximadamente 75 m² de área construída (7,5 x 10 m) e conta com uma distribuição funcional dos ambientes: 02 quartos, sala de estar, cozinha conjugada com copa, banheiro social, corredor de circulação, varanda, sala de chegada (hall). O acesso é feito por escada lateral exclusiva, com área de entrada própria. Piso em cerâmica em todos os ambientes; cozinha revestida com cerâmica até o teto; portas internas em madeira; portas e janelas em vidro. Estrutura em alvenaria, laje e cobertura adicional. 📍 Localização: Rua Rio Grande do Norte, nº 411 – 2º piso, Belo Oriente/MG – CEP 35195-000",
+  "property_type": "apartamento",
+  "address": {
+    "raw_text": "Rua Rio Grande do Norte, nº 411 – 2º piso, Centro, Belo Oriente/MG – CEP 35195-000",
+    "street_name": "Rua Rio Grande do Norte",
+    "number": "411",
+    "complement": "2º piso",
+    "district": "Centro",
+    "municipality_name": "Belo Oriente",
+    "uf": "MG",
+    "cep": "35195-000"
+  },
+  "area_sqm": "75.00",
+  "total_area_sqm": null,
+  "market_value_brl": null,
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-04-23T13:30:00-03:00",
+      "minimum_bid_brl": "180000.00",
+      "status_raw": "Não Vendido"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": "2026-05-07T13:30:00-03:00",
+      "minimum_bid_brl": "180000.00",
+      "status_raw": "Cancelado"
+    }
+  ],
+  "auction_status": "encerrado",
+  "bids": [],
+  "images": [
+    {
+      "url": "https://d3r4ngrkezrhn6.cloudfront.net/public/bomvalorjudicial/fotos/imoveis/327x244/apartamento_belo_oriente_centro-967391-1.jpg",
+      "is_thumbnail": true
+    },
+    {
+      "url": "https://d3r4ngrkezrhn6.cloudfront.net/public/bomvalorjudicial/fotos/imoveis/327x244/apartamento_belo_oriente_centro-967391-2.jpg",
+      "is_thumbnail": true
+    }
+  ],
+  "documents": [
+    {
+      "kind": "laudo",
+      "url": "https://vlance-cdn.com.br/public/bomvalorjudicial/anexo/1774967678.pdf",
+      "label": "Avaliação"
+    }
+  ],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T15:55:00-03:00",
+  "parser_notes": "Provider BOMVALOR (Mercado Bomvalor) — plataforma multi-tenant brasileira. APA & BRF Leilões (apabrfleiloes.com.br) é tenant `apabrfleiloes` em `mercado.bomvalor.com.br`. O domínio público redireciona/linka para o mercado; detalhe e listagem reais ficam no mercado. Plataforma usa Vue + jQuery + Bootstrap server-side. Em lotes ATIVOS o HTML carrega `sharedData = { lote: {...}, ... }` JS-literal (chaves não-quoted; brace-balance + json.loads sub-bloco) com toda a info estruturada (nm_titulo, vl_lanceinicial, pracas, fotos, anexos, lances, judicial, vistoria.nm_onus). Em lotes ENCERRADOS o sharedData some — extrair via HTML (h1.titulo-lote, p.localizacao-leilao, div.bv-praca, etc.). Pilot escolhido: lote 116118, evento ID 34428, 'Apartamento 75m² Belo Oriente/MG' — encerrado SEM ARREMATAÇÃO (1ª praça=Não Vendido, 2ª praça=Cancelado). auction_status=encerrado. PRAÇAS: 2 praças com valores idênticos R$ 180.000,00 (lance inicial 1ª e maior oferta 2ª; o '180.000' na praça 2 é label genérico, não houve lance real). BIDS: histórico de lances NÃO é publicamente exposto neste provider — todo `<div id='log-lances' class='d-none'>` carrega placeholders ('X***', 'XX:XX:XX', 'R$ XXX,XX') e exige login para preencher; modal `mostrarHistoricoDeLances()` também depende de auth. Logo `bids: []` é a leitura honesta. ENDEREÇO: extraído de `p.localizacao-leilao` ('Rua Rio Grande do Norte, 411, Centro, Belo Oriente/MG') + meta og:description (CEP 35195-000 + complemento '2º piso'). area_sqm=75 (de 'aproximadamente 75 m² de área construída (7,5 x 10 m)' na descrição). market_value_brl=null — provider não publica avaliação separadamente neste lote (anexo 'Avaliação' existe mas seu valor não é HTMLizado; SOFT warning aceito). DOCUMENTOS: 1 anexo público (laudo Avaliação em vlance-cdn.com.br); edital não disponível para guest. IMAGENS: 2 thumbnails 327x244 em cloudfront.net/public/bomvalorjudicial/fotos/imoveis (resolução baixa = thumbnails; resoluções maiores podem existir mas só src visível é o 327x244). PII: leiloeira (Adriana Pires Amancio) é agente público; comitente do evento é institucional/judicial; não há nomes PF nem CPF visíveis no HTML. Nada redigido. ROBOTS: mercado.bomvalor.com.br/robots.txt = Allow tudo (User-agent: *, Disallow: vazio). Site da fachada (apabrfleiloes.com.br) só publica content-signal (sem disallows). Rate limit ≥1.5s respeitado. Provider COBRE 10 leiloeiros INNLEI (n_sites_in_provider=10) — mesma estrutura para todos os tenants Mercado Bomvalor (multleiloes.com, oreidosleiloes.com.br, etc.); seletores deste piloto são reutilizáveis trocando apenas {tenant_slug}. URL canônica usa http:// (og:url e shares); manter http como source_lot_url pois é o literal no HTML para passar provenance HARD."
+}

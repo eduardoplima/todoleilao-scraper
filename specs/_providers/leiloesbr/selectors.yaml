@@ -1,0 +1,95 @@
+# Contrato declarativo do recon piloto.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+#
+# Plataforma LEILOESBR (Marcio Pinho — https://www.leiloesbr.com.br).
+# Sinais canônicos:
+#   - Footer "Powered By [logo LeilõesBR]" / link para https://www.leiloesbr.com.br
+#   - <a href="https://www.marciopinho.com.br"> e <a href="https://www.leiloesbr.com.br">
+#   - Stack: ASP Classic / IIS 10 (Microsoft-IIS/10.0), CloudFront p/ imagens
+#     (d1o6h00a1h5k7q.cloudfront.net), assets em
+#     d2khfqh5bqnqgx.cloudfront.net/origin/.
+#   - Rotas-chave (todas .asp, server-side): default.asp, comprar.asp,
+#     catalogo.asp?Num={leilao_id}, peca.asp?ID={lot_id}, pesquisa.asp,
+#     listacatalogo.asp (403 cross-tenant), conta_site.asp, alertas.asp.
+#   - XHR de bid history: POST /ajax/le_historico_peca.asp (form: id={lot_id})
+#     resposta 'total|licitantes|<ul><li><span>data</span><span>R$ valor</span><span>user</span></li>...</ul>'.
+#   - Cookie de sessão: ASPSESSIONIDxxxxx (definido no primeiro hit).
+#
+# Domínio do provider: NÃO é real-estate. LEILOESBR é hub de arte,
+# numismática, filatelia, colecionismo. Nenhum dos 6 tenants do provider
+# (awleiloes, tbaracajuleiloes, prhleiloes, casaamarelaleiloes,
+# evanioalvesleiloeiro, pandacolecoes) tem listing de imóveis. Pilot
+# escolhido em lote filatélico apenas para validar a extração — Fase 2
+# vai filtrar este provider fora do pipeline real-estate.
+#
+# Tenant amostrado: tbaracajuleiloes.com.br (TB Aracaju Leilões — Thiago
+# Barros Cardoso, SE).
+
+auctioneer_slug: "tb-aracaju-leiloes"
+platform_hint: "leiloesbr"
+
+listing_active:
+  url_pattern: "https://www.tbaracajuleiloes.com.br/pesquisa.asp?p=on&pesquisa={termo}&Ativo=1"
+  card_selector: "div.prod-box.ativo-box"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "&Pagina={page}"
+
+# listing_closed: tenant EXPÕE encerrados — pesquisa.asp com Ativo=9.
+# Único filtro disponível é a busca textual (`pesquisa=`); sem filtro
+# por categoria (provider não tem categoria "imóveis", logo não é
+# relevante aqui). Para piloto usamos catalogo.asp?Num={leilao_id}
+# que retorna todos os lotes de um leilão já encerrado preservados no
+# histórico.
+listing_closed:
+  url_pattern: "https://www.tbaracajuleiloes.com.br/catalogo.asp?Num={leilao_id}"
+  card_selector: "div.prod-box.ativo-box, div.prod-box.encerrado-box, a[href*='peca.asp?ID=']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+detail:
+  url_pattern: "https://www.tbaracajuleiloes.com.br/peca.asp?ID={lot_id}"
+  field_selectors:
+    title:
+      # 1ª opção: <meta property="og:description"> (texto canônico, sem
+      # truncar). Fallback: <input type="hidden" name="Peca" value="...">.
+      selector: 'meta[property="og:description"]::attr(content)'
+      kind: css
+    price_minimum:
+      # Lance mínimo atual (próximo lance permitido). Hidden input no form
+      # de lance — server-side render. Reflete o lance corrente + tick.
+      selector: 'form[name="frmLances"] input[name="valor"]::attr(value)'
+      kind: css
+    # LEILOESBR não publica "avaliação" / market_value para lotes de
+    # arte/colecionismo. SOFT — null.
+    price_market: null
+    address_block:
+      # Não há endereço do bem (são lotes de arte/colecionismo). Usar o
+      # endereço do PONTO DE RETIRADA do leilão, exposto no #local-modal
+      # (texto livre dentro de <p><p>...</p></p>).
+      selector: "#local-modal div.handler p"
+      kind: css
+    images:
+      # Todas as fotos do bem ficam em CloudFront sob padrão
+      # imagens/img_{m|g}/{leilao_id}/{lot_id}[_N].jpg.
+      # Filtro: src contém 'cloudfront.net/imagens/' (exclui logos do site
+      # em /custom/imagens/).
+      selector: 'meta[property="og:image"]::attr(content), img[src*="cloudfront.net/imagens/"]'
+      kind: css
+    # LEILOESBR não publica edital/matrícula como anexo PDF — o "edital"
+    # é o texto inline do leilão (modal #leilao-modal h5='LEILÃO',
+    # 'TERMOS E CONDIÇÕES'). SOFT — null.
+    documents: null
+    bids:
+      # XHR-first: histórico de lances vem via POST /ajax/le_historico_peca.asp
+      # com body `id={lot_id}`. Resposta é texto pipe-delimitado:
+      # `total|licitantes|<Li><span>dd/mm/yyyy</span><span>R$ N.NN</span><span>user_or_blank</span></li>...`.
+      # Granularidade: data only (sem hora). Username só vem para licitantes
+      # logados ver — para visitante anônimo o 3º <span> fica vazio.
+      # Hora deve ser aproximada pela hora oficial do pregão (19h20 -03:00
+      # neste tenant; varia por leilão — ler do #leilao-modal).
+      selector: 'div#historico-modal ul li'
+      kind: css

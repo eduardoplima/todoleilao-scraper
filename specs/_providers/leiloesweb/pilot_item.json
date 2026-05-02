@@ -1,0 +1,80 @@
+{
+  "auctioneer_slug": "ricardo-bampi",
+  "source_listing_url": "https://www.bampileiloes.com.br/",
+  "source_lot_url": "https://www.bampileiloes.com.br/principal/sistemas/leilao/lotes_regressivas.php?idLote=1509",
+  "title": "Apartamento - 2 vagas garagem - Jurerê - 4ª Vara Cível de Lages/SC (Leilão 1372/2026)",
+  "description": "Bem 1: Apartamento nº 105, localizado no 1º pavimento tipo, vinculado ao Hobby-Box nº 17, localizado no pavimento subsolo, ambos do Edifício Residencial \"SOLAR DAS ALGAS\", aprovado pelo projeto nº 53.160, situado na Avenida das Algas, nº 1109, bairro Jurerê, Florianópolis/SC. Área real privativa de 152,83m²; área real de uso comum de 37,99m²; área real total de 190,82m²; fração ideal do terreno de 4,09665% ou 76,26m². Matrícula nº 96.172 no 2º Ofício de Registro de Imóveis de Florianópolis/SC. Bem 2: Vaga de garagem nº 37 (matrícula nº 96.223). Bem 3: Vaga de garagem nº 38 (matrícula nº 96.224). Ônus: Penhora em AV-4. Indisponibilidade em AV-5. Débitos de IPTU 2025 R$5.044,01; débito de IPTU parcelado em execução fiscal R$8.210,75 (suspenso até 19/10/2035). Débito de condomínio a consultar. AVALIAÇÃO TOTAL: R$2.101.338,30 (atualizada em 25/09/2024).",
+  "property_type": "apartamento",
+  "address": {
+    "raw_text": "Avenida das Algas, nº 1109, bairro Jurerê Internacional, Florianópolis/SC (Edifício Residencial SOLAR DAS ALGAS, apartamento 105)",
+    "street_name": "Avenida das Algas",
+    "number": "1109",
+    "complement": "Edifício Residencial SOLAR DAS ALGAS, apartamento 105",
+    "district": "Jurerê Internacional",
+    "municipality_name": "Florianópolis",
+    "uf": "SC",
+    "cep": null
+  },
+  "area_sqm": "152.83",
+  "total_area_sqm": "190.82",
+  "market_value_brl": "2101338.30",
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-04-22T14:00:00-03:00",
+      "minimum_bid_brl": "2101338.30",
+      "status_raw": "1ª Praça"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": "2026-04-28T14:00:00-03:00",
+      "minimum_bid_brl": "1470936.81",
+      "status_raw": "2ª Praça — Arrematado"
+    }
+  ],
+  "auction_status": "arrematado",
+  "bids": [
+    {
+      "timestamp": "2026-04-28T10:55:06-03:00",
+      "value_brl": "1570936.81",
+      "bidder_raw": "Zero1"
+    }
+  ],
+  "images": [
+    {
+      "url": "https://www.bampileiloes.com.br/principal/pub/Image/20260323025920FOTO_-_AN_NCIO.jpg",
+      "is_thumbnail": false
+    }
+  ],
+  "documents": [
+    {
+      "kind": "edital",
+      "url": "https://www.bampileiloes.com.br/principal/pub/anexos/20260323113819Edital.pdf",
+      "label": "Edital"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://www.bampileiloes.com.br/principal/pub/Image/20260304052243Matricula_96172_cod58191.pdf",
+      "label": "Matrícula imóvel 96172 (apartamento)"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://www.bampileiloes.com.br/principal/pub/Image/20260304052243Matricula_96223_cod64350.pdf",
+      "label": "Matrícula imóvel 96223 (garagem 37)"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://www.bampileiloes.com.br/principal/pub/Image/20260304052243Matricula_96224_cod12180.pdf",
+      "label": "Matrícula imóvel 96224 (garagem 38)"
+    }
+  ],
+  "encumbrances_raw": [
+    "Penhora em AV-4",
+    "Indisponibilidade em AV-5",
+    "Débitos de IPTU 2025 no valor de R$5.044,01 (consulta em 03/03/2026); IPTU 2026 a vencer",
+    "Débito de IPTU parcelado em execução fiscal R$8.210,75 (Processo 5004493-51.2022.8.24.0023, suspenso até 19/10/2035)",
+    "Débito de condomínio (a consultar)"
+  ],
+  "scraped_at": "2026-05-01T12:00:00-03:00",
+  "parser_notes": "Provider leiloesweb (template ASP/PHP, encoding ISO-8859-1, Leilões Web - www.leiloesweb.com.br). Tenant: bampileiloes.com.br. Recon arquitetural focado em leilão ENCERRADO COM LANCES — encontrado leilão 1233 / lote 1509 (statusLote=Arrematado, R$ 1.570.936,81 em 28/04/2026 10:55:06 por Zero1, único lance no histórico). Decisão `source_lot_url`: a página /leilao/detalhe_leilao/{id} NÃO se auto-referencia (sem og:url, sem canonical), então usei a URL canônica do XHR `/principal/sistemas/leilao/lotes_regressivas.php?idLote=1509` que (a) aparece literalmente em pilot_source.html (proveniência), (b) identifica unicamente o lote 1509, (c) é o endpoint de fetch real para o spider final. PII: bidder_raw='Zero1' é apelido público (mantido). Tabela HTML expõe CPF parcial (697.947.07***) — preferimos o XHR JSON que NÃO expõe CPF nem na tabela mascarada. Ip do bidder (189.34.20.150) descartado para o pilot_item (poderia identificar PF sem necessidade). 1 imagem real (FOTO_-_AN_NCIO.jpg) + 1 banner em /principal/pub/Image; copiado o canonical /principal/. CEP não publicado pelo provider (limitação documentada). 4 documentos PDF (edital + 3 matrículas). Área útil = 152,83m² do apartamento (Bem 1); área total = 190,82m² (privativa+comum) — provider não publica área de terreno; total = útil+comum do apto. /manage/* é Disallow no robots.txt; spider não deve fetchar URLs sob /manage/, mas /principal/pub/ é permitido."
+}

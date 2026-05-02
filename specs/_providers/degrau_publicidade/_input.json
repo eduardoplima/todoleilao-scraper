@@ -1,0 +1,70 @@
+{
+  "provider": "degrau_publicidade",
+  "representative": {
+    "slug": "",
+    "nome": "EDUARDO DOS REIS",
+    "final_url": "https://www.casareisleiloes.com.br/",
+    "site_analysis_row": {
+      "id": "5",
+      "slug": "",
+      "nome": "ROBERTO DOS REIS JUNIOR",
+      "uf": "SP",
+      "cidade": "",
+      "dominio": "https://www.casareisleiloesonline.com.br/",
+      "confidence": "high",
+      "real_estate_score": "28.4",
+      "http_status": "200",
+      "final_url": "https://www.casareisleiloes.com.br/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap",
+      "tech_signals": "jquery | bootstrap | server:cloudflare",
+      "static_link_count": "111",
+      "dynamic_link_count": "156",
+      "static_useful_links": "32",
+      "dynamic_useful_links": "69",
+      "rendering": "dynamic",
+      "requires_js_for_listings": "False",
+      "html_title": "Casa Reis Leilões Online",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/fac83675b4f374a90ea7d97f38bc613854273cda.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "ROBERTO DOS REIS JUNIOR",
+      "final_url": "https://www.casareisleiloes.com.br/",
+      "useful_links": 101,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "IAN GALVÃO FROTA",
+      "final_url": "https://www.amazonasleiloes.com.br/proximos_leiloes/1/1/",
+      "useful_links": 76,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "BRIAN GALVÍO FROTA",
+      "final_url": "https://www.amazonasleiloes.com.br/proximos_leiloes/1/1/",
+      "useful_links": 76,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Pedro Miranda Jinkings",
+      "final_url": "https://www.milhaoleiloes.com.br/proximos_leiloes/1/1/",
+      "useful_links": 69,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Guilherme Caixeta Borges",
+      "final_url": "https://www.milhaoleiloes.com.br/proximos_leiloes/1/1/",
+      "useful_links": 69,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 26
+}

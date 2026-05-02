@@ -1,0 +1,57 @@
+# Sodré Santoro — recon piloto
+# Provider: sodre_santoro (representativo OTAVIO LAURO SODRE SANTORO)
+# Stack: Nuxt SPA na home/listagem (www.sodresantoro.com.br) + páginas de
+# detalhe legacy PHP/Stimulus em leilao.sodresantoro.com.br.
+# A listagem renderiza via Elasticsearch passthrough em
+# POST /api/search-lots; o detalhe entrega HTML completo direto.
+
+auctioneer_slug: "sodre_santoro"
+platform_hint: "sodresantoro-search-lots"   # API ES proprietária + detalhe PHP
+
+listing_active:
+  url_pattern: "https://www.sodresantoro.com.br/imoveis/lotes"
+  card_selector: 'POST /api/search-lots indices=["imoveis","judiciais-imoveis"] auction_status=aberto|online'
+  card_kind: css                              # campo formal; lista vem da API JSON
+  pagination:
+    kind: querystring
+    template: '{"from": <offset>, "size": 48}'   # paginação por offset no body JSON
+
+# null porque o índice Elasticsearch dos imóveis (indices "imoveis" e
+# "judiciais-imoveis") não preserva lotes encerrados — só os 51 encerrados
+# globais residem no índice "veiculos" (lot_status="não vendido", id 6).
+# Provider não publica histórico de imóveis encerrados nem rota
+# /imoveis/encerrados (testadas: 403 Azion). Limitação registrada em recon.md.
+listing_closed: null
+
+detail:
+  url_pattern: "https://leilao.sodresantoro.com.br/leilao/{auction_id}/lote/{lot_id}/"
+  field_selectors:
+    title:
+      selector: 'meta[property="og:title"]::attr(content)'
+      kind: css
+    price_minimum:
+      selector: '.ss-box-lance_atual .valor-lance, [data-lances-target="bidValue"]'
+      kind: css
+    price_market:
+      selector: '#detail_info_property_evaluation strong, regex:Avaliação:\s*R\$\s*([\d.,]+)'
+      kind: css
+    address_block:
+      selector: '#aditionalInfoLot_lot_address, #detail_info_property_address'
+      kind: css
+    images:
+      selector: 'meta[property="og:image"]::attr(content), .gallery img::attr(src)'
+      kind: css
+    documents:
+      selector: 'a.ss-button[href$=".pdf"], a[href*="arquivos.sodresantoro.com.br"][href$=".pdf"]'
+      kind: css
+    description:
+      selector: '#descricao, .lot-description'
+      kind: css
+    bids:
+      selector: '#tabela_lances tbody tr'
+      kind: css
+      notes: 'Tabela mostra apelido + valor + comissão, mas SEM timestamp absoluto. PilotBid exige timestamp tz-aware, então bids[] fica vazia neste provider; apenas bid_user_nickname e bid_actual ficam expostos via API search-lots.'
+    rounds:
+      selector: '#aditionalInfoLot_type_auction, #aditionalInfoLot_date_auction'
+      kind: css
+      notes: 'Round 1 ("1ª Praça") + data 13/05/2026 11:30h. Site não anuncia 2ª praça nesta página — provider trabalha praça única em leilões extrajudiciais.'

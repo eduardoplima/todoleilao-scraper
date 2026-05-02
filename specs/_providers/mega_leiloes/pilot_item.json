@@ -1,0 +1,69 @@
+{
+  "auctioneer_slug": "mega-leiloes",
+  "source_listing_url": "https://www.megaleiloes.com.br/leiloes-realizados/ML33575",
+  "source_lot_url": "https://www.megaleiloes.com.br/leiloes-realizados/imoveis/casas/ms/campo-grande/casa-91-m2-nucleo-habitacional-universitarias-campo-grande-ms-x122302",
+
+  "title": "Casa 91 m² - Núcleo Habitacional Universitárias - Campo Grande - MS",
+  "description": "LOTE 02 – CAMPO GRANDE/MS – BAIRRO ALVES PERERIA – LOTEAMENTO NÚCLEO HABITACIONAL UNIVERSITÁRIAS – CASA - IMÓVEL OCUPADO. Avenida Gomes Carneiro, nº 37 - Casa do tipo MS.B.2.39. Área construída de 39,93m² (cadastro municipal menciona área edificada de 91,80m²); Área de terreno de 200,00m². Matr. nº 72.018 do 2º CRI Local. Eventual regularização de divergência das áreas entre a real construída e do terreno, a cadastrada na prefeitura e a cadastrada na matrícula, bem como a denominação do Bairro, assumindo providências, seus custos e eventuais tributos cobrados retroativamente pelo órgão, ficarão a cargo do arrematante. Em virtude da ocupação, não foi possível obter a distribuição interna da unidade, cabendo ao arrematante esta averiguação, isentando o vendedor de qualquer responsabilidade. A análise do imóvel e de eventuais ações não mencionadas é de responsabilidade do interessado. IPTU (exceto área maior) e Condomínio, serão quitados pelo Vendedor até a data do leilão. Lance mínimo R$ 129.700,00 – Código do imóvel 921600",
+  "property_type": "casa",
+
+  "address": {
+    "raw_text": "Avenida Gomes Carneiro, nº 37, Núcleo Habitacional Universitárias (Bairro Alves Pereira), Campo Grande/MS",
+    "street_name": "Avenida Gomes Carneiro",
+    "number": "37",
+    "complement": "Casa do tipo MS.B.2.39",
+    "district": "Núcleo Habitacional Universitárias",
+    "municipality_name": "Campo Grande",
+    "uf": "MS",
+    "cep": null
+  },
+
+  "area_sqm": "39.93",
+  "total_area_sqm": "200.00",
+  "market_value_brl": null,
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-04-23T15:01:00-03:00",
+      "minimum_bid_brl": "129700.00",
+      "status_raw": "Finalizado — Início 27/03/2026 15:00; Data 23/04/2026 15:01; ARREMATADO em 23/04/2026 15:00 por R$ 164.700,00 (último lance)"
+    }
+  ],
+
+  "auction_status": "arrematado",
+
+  "bids": [
+    { "timestamp": "2026-04-22T14:12:00-03:00", "value_brl": "129700.00", "bidder_raw": "aba*/*/*/*/*" },
+    { "timestamp": "2026-04-23T14:56:00-03:00", "value_brl": "134700.00", "bidder_raw": "juc*/*/*/*/*" },
+    { "timestamp": "2026-04-23T14:57:00-03:00", "value_brl": "139700.00", "bidder_raw": "aba*/*/*/*/*" },
+    { "timestamp": "2026-04-23T14:57:00-03:00", "value_brl": "144700.00", "bidder_raw": "juc*/*/*/*/*" },
+    { "timestamp": "2026-04-23T14:58:00-03:00", "value_brl": "149700.00", "bidder_raw": "aba*/*/*/*/*" },
+    { "timestamp": "2026-04-23T14:58:00-03:00", "value_brl": "154700.00", "bidder_raw": "juc*/*/*/*/*" },
+    { "timestamp": "2026-04-23T14:58:00-03:00", "value_brl": "159700.00", "bidder_raw": "jci*/*/*/*/*" },
+    { "timestamp": "2026-04-23T15:00:00-03:00", "value_brl": "164700.00", "bidder_raw": "juc*/*/*/*/*" }
+  ],
+
+  "images": [
+    { "url": "https://cdn1.megaleiloes.com.br/batches/122302/1cb4afac93ef0789b1207bd8901ffbfd_1024x768.jpg", "is_thumbnail": false },
+    { "url": "https://cdn1.megaleiloes.com.br/batches/122302/1cb4afac93ef0789b1207bd8901ffbfd_670x380.jpg", "is_thumbnail": true }
+  ],
+
+  "documents": [
+    {
+      "kind": "edital",
+      "url": "https://cdn1.megaleiloes.com.br/auctions/33575/megaleiloes_edital_ML33575_260422-143041.pdf",
+      "label": "Edital ML33575"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://cdn1.megaleiloes.com.br/batches/122302/megaleiloes_matricula_X122302_260330-152928.pdf",
+      "label": "Matrícula 72.018 (2º CRI Campo Grande)"
+    }
+  ],
+
+  "encumbrances_raw": ["IMÓVEL OCUPADO — não foi possível obter distribuição interna por ocupação; arrematante assume averiguação."],
+
+  "scraped_at": "2026-05-01T18:00:00-03:00",
+  "parser_notes": "Provider Mega Leilões (megaleiloes.com.br) — plataforma proprietária PHP/Yii (Othis). Pilot ESCOLHIDO em leilão ENCERRADO/ARREMATADO via /leiloes-realizados/ → ML33575 (Banco Itaú: Imóveis Remanescentes do dia 23/04/2026, comitente Itaú, Extrajudicial). Lote X122302 (badge 'Lote 2') com 8 lances públicos pré-arrematação, todos com bidder_raw já obfuscado pelo provider (formato 'juc*/*/*/*/*' — 3 chars + máscara). Página detalhe oferece tabela paginada (5/pg, ?pagina-lances=N) — 2 páginas neste lot, capturadas integralmente. market_value_brl = null porque o site exibe 'R$ 0,00 (Nao informado)' em Valor de Avaliação para este lote — limitação documentada do provider para leilões bancários AF, não bug. minimum_bid_brl = R$ 129.700,00 (Lance Inicial declarado na descrição e no card-instance-value); 'Último Lance' R$ 164.700 = preço de arremate. Single-round (Extrajudicial AF Lei 9.514). PII: bidders já mascarados pelo provider; sem CPF/PF na descrição (apenas referência ao 2º CRI e matrícula). Rendering estático server-side — requires_playwright=False. CEP não exposto na descrição — SOFT acceptable."
+}

@@ -1,0 +1,796 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <script type="text/javascript" language="javascript" src="classes_javascript/jquery-3.7.1.min.js"></script>
+        <script type="text/javascript" language="javascript" src="classes_javascript/jquery.maskMoney.js"></script>
+        <script type="text/javascript" language="javascript" src="classes_javascript/jquery.validate.js"></script>
+        <script type="text/javascript" language="javascript" src="classes_javascript/jquery.alerts.js"></script>
+        <script type="text/javascript" language="javascript" src="classes_javascript/jquery.dataTables.js"></script>
+        <script type="text/javascript" language="javascript" src="classes_javascript/jquery.countdown.min.js"></script>
+        <script type="text/javascript" language="javascript" src="classes_javascript/jquery.maskedinput-1.3.js"></script>
+        <script type="text/javascript" language="javascript" src="classes_javascript/funcoes.js"></script>
+        <script type="text/javascript" language="javascript" src="camada_ajax/index.js"></script>
+        <script type="text/javascript" language="javascript" src="camada_ajax/cabecalho.js"></script>
+        <script type="text/javascript" language="javascript" src="camada_ajax/lotem.js?v=1777669572"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+        <link rel="stylesheet" type="text/css" href="css/jquery.alerts.css" />
+        <link rel="stylesheet" type="text/css" href="css/personal.css?t-5" />
+
+        <style>
+            html, body {
+                padding: 0;
+                margin: 0 1px;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            .div-img {
+                width: 100%; /* Ou qualquer valor desejado */
+                max-height: 600px; /* Ou qualquer valor desejado */
+                overflow: hidden; /* Opcional, para garantir que nada transborde */
+            }
+
+            .div-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: fill;
+            }
+
+            .i-c {
+                width: 100%;
+                height: auto;          /* Altura automática baseada no conteúdo */
+                min-height: 0;         /* Permite que a div encolha */
+                position: relative;
+                overflow: hidden;
+                display: flex;         /* Para melhor controle do posicionamento */
+                justify-content: center;
+                align-items: flex-start; /* Alinha o conteúdo no topo */
+                box-sizing: border-box;
+            }
+
+            .i-c img {
+                width: 100%;
+                height: auto;          /* Altura automática mantendo proporções */
+                max-height: 500px;     /* Limite máximo igual à altura original */
+                object-fit: contain;
+                object-position: center top;
+                display: block;        /* Remove espaços embaixo da imagem */
+            }
+
+            .i-p {
+                width: 80px;            /* Largura fixa */
+                height: 64px;            /* Altura fixa */
+                position: relative;      /* Para posicionamento absoluto da imagem */
+                overflow: hidden;        /* Esconde partes da imagem que ultrapassarem */
+                display: flex;           /* Usa flexbox para centralização fácil */
+                justify-content: center; /* Centraliza horizontalmente */
+                align-items: center;     /* Centraliza verticalmente */
+            }
+
+            .i-p img {
+                max-width: 100%;        /* Limita a largura ao container */
+                max-height: 100%;       /* Limita a altura ao container */
+                object-fit: contain;    /* Mantém proporções da imagem */
+            }
+        </style>
+
+        
+<meta name="robots" content="index, follow">
+        <title>23 - ESPELHO RETROVISO... em leilão - Palácio dos Leilões</title>
+        <meta property="og:title" content="23 - ESPELHO RETROVISO... em leilão - Palácio dos Leilões"/>
+        <meta name="keywords" content="leilão, leilões, palácio dos leilões, leilão online, leilão presencial, veículos, imóveis, máquinas, equipamentos, móveis"/>
+        <meta property="og:url" content="https://www.palaciodosleiloes.com.br/site/lotem.php?cl=1514551"/>
+        <meta property="og:site_name" content="Palácio dos Leilões"/>
+        <meta property="og:type" content="website"/>
+        <meta property="og:description" content="Leilões de oportunidades On-line & Presencial - Veículos, Imóveis, Máquinas, Equipamentos, Móveis e muito mais."/>
+        <meta property="og:image" content="https://www.palaciodosleiloes.com.br/site/imagens_lote/500375/001_5115fd6543af47883e7458b594aa9e57.webp"/>
+        <meta property="og:image:width" content="1200"/>
+        <meta property="og:image:height" content="630"/>
+        <meta name="description" content="Leilões de oportunidades On-line & Presencial - Veículos, Imóveis, Máquinas, Equipamentos, Móveis e muito mais."/>
+        <meta name="author" content="Palácio dos Leilões"/>
+        <link rel="canonical" href="https://www.palaciodosleiloes.com.br/site/lotem.php?cl=1514551"/>
+        
+        <script type="application/ld+json"> { 
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "23 - ESPELHO RETROVISO...",
+            "description": "23 - ESPELHO RETROVISOR SCANIA G44&lt;br /&gt;&lt;br /&gt;13 - ESPELHO SCANIA 1745358 APLICAÇÃO: CAMINHÃO G420 SCANIA&lt;br /&gt;&lt;br /&gt;2 - SUPORTE EMPILHADEIRA HYSTER 2107957",
+            "image": "https://www.palaciodosleiloes.com.br/site/imagens_lote/500375/001_5115fd6543af47883e7458b594aa9e57.webp",
+             
+            "offers": { 
+                "@type": "Offer",
+                "url": "https://www.palaciodosleiloes.com.br/site/lotem.php?cl=1514551",
+                "priceCurrency": "BRL",
+                "price": "300",
+                "availability": "https://schema.org/InStock",
+                "validFrom": "2026-05-01T18:06:12-03:00",
+                "seller": { 
+                    "@type": "Organization",
+                    "name": "Palácio dos Leilões",
+                    "url": "https://www.palaciodosleiloes.com.br",
+                    "logo": "https://www.palaciodosleiloes.com.br/site/images/logos/PALACIO.webp"
+                }
+            },
+            "additionalProperty":[
+                {   "@type": "PropertyValue",
+                    "name": "Lote",
+                    "value": "1" },
+                {   "@type": "PropertyValue",
+                    "name": "Leilão",
+                    "value": "8334" },
+                                {   "@type":"PropertyValue",
+                    "name":"Local do leilão",
+                    "value":"Br-262, Km 375   Juatuba-MG" }
+            ]
+        } </script>
+        
+
+        <script>
+            window.addEventListener("pageshow", function (event) {
+				const historyTraversal = event.persisted || 
+					(typeof window.performance != "undefined" && window.performance.navigation.type === 2 );
+
+				if (historyTraversal) {
+					window.location.reload();
+				}
+			});
+
+            $(document).ready(function() {
+                
+                            // cl
+                            $('#cod_lote').val(1514551);
+                            exibir_lote_m(1514551, 0);
+                                    });
+        </script>
+    </head>
+
+    <body>
+
+        <div class="modal fade" id="modalLoteIndisponivel" tabindex="-1" role="dialog" aria-labelledby="modalLoteIndisponivel" aria-hidden="true">
+            <div class="modal-dialog modal-x" role="document">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h6 class="modal-title"><i class="far fa-bell"></i> Este lote já foi arrematado!</h6>
+                    </div>
+                    <div class="modal-body">
+                        <div class='mt-2'>Mas não se preocupe, temos muitas opções incríveis esperando por você.</div>
+                        <div class='mt-2'>Que tal dar uma olhadinha em nosso site para descobrir novas oportunidades?</div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <a href='index.php' class="btn btn-sm rounded-0 btn-primary">Fechar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalAviso" tabindex="-1" role="dialog" aria-labelledby="avisoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-x" role="document">
+                <div class="modal-content">                    
+                    <div class="modal-body">                        
+                        <div class='row'>
+                            <div class="col-10">&#128276; Olá! Precisamos da sua ajuda.</div>
+                            <div class="col-2 pl-3 text-right"><button type="button" id='btn-fechar-aviso' class="btn btn-sm rounded-0 btn-primary" data-dismiss="modal">X</button></div>                            
+                        </div>
+                        <div class='mt-3 text-justify'>Para concluir uma importante etapa do processo de leilão, preencha os dados do proprietário do(s) lote(s) listado(s) abaixo.</div>
+                        <div class='mt-3' id='div_aviso'></div>
+                        <div class='mt-3'>&#128073; <a href='https://www.palaciodosleiloes.com.br/site/meus_lotes.php' target="_blank">Clique aqui para acessar o formulário de preenchimento.</a></div>
+                        <div class='mt-3'>Estamos entrando em contato com todos os compradores logo após a aquisição do lote.</div>
+                        <div class='mt-3'>Verificamos que o seu número de contato é <strong>&#128222; </strong>. Pedimos que o mantenha disponível para receber nossa ligação após um novo arremate.</div>
+                        <div class='mt-3'>&#128172; Se surgir qualquer dúvida, você pode enviar uma mensagem para o leiloeiro durante o leilão - estaremos à disposição para ajudar!</div>
+                    </div>
+                    <div class="modal-footer border-0 text-left">
+                        <button type="button" id='btn-fechar-aviso' class="btn btn-sm rounded-0 btn-primary" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalmapa" tabindex="-1" role="dialog" aria-labelledby="mapaModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content p-1">
+                    <div class="modal-header p-1">
+                        <h6 class="modal-title" id="mapaModalLabel">Mapa de orientação para visitação</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div id='div_mapa'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+		<input type='hidden' id='cod_leilao_privado' name='cod_leilao_privado' value='' />
+	
+		<nav class='navbar navbar-expand-lg'>
+
+			<div class='container-fluid'>
+
+				<a class='navbar-brand' href='https://www.palaciodosleiloes.com.br/site/index.php'>
+					<img src='https://www.palaciodosleiloes.com.br/site/images/logos/PALACIO.webp' style='height:100px; width:auto;' alt='Palácio dos Leilões'>
+				</a>
+	
+				<button class='navbar-toggler text-dark p-0 m-0' type='button' data-toggle='collapse' data-target='#nav-bar-pdl' aria-controls='nav-bar-pdl' aria-expanded='false' aria-label='Toggle navigation'>					
+					
+					<i class='fas fa-bars fa-lg mb-1'></i><div class='cabeca-peq' style='font-size:10px;'>Menu</div>
+					
+						<div class='mt-2'>
+							<a href='login.php' class='btn btn-sm btn-azul p-1 rounded-0 peqx w-100 btn-block'><i class='fas fa-sign-in-alt'></i> Entrar</a>
+							<a href='https://www.palaciodosleiloes.com.br/site/cadastro_arrematante.php' class='peqx text-azul'><i class='fas fa-user-plus'></i> Quero me cadastrar</a>							
+						</div>
+				</button>
+			
+				<div class='collapse navbar-collapse' id='nav-bar-pdl'>
+
+					<div class='mx-auto'>
+
+						<ul class='navbar-nav pt-1 mb-0 pb-0'>
+							<li class='nav-item pl-0'><a class='nav-link small text-dark' href='embreve.php'>Sobre o Palácio</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='documento.php'>Consulta de Documento</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='editais.php'>Termos Editais</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='publicacoes.php'>Publicações</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='evento.php'>Ouvidoria</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='trabalhe_conosco.php'>Trabalhe Conosco</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='produtos.php'>Produtos</a></li>							
+						</ul>
+
+						<form method='post' name='frm_pesquisa_leilao' id='frm_pesquisa_leilao' action='leilao.php'>
+							<div class='input-group input-group mb-0 mb-2'>
+								<input type='text' id='txt_pesquisa_lote_cab' name='txt_pesquisa_lote_cab' class='form-control rounded-0' placeholder='Pesquise lote, modelo, marca ...'/>
+								<div class='input-group-append'>
+									<span class='input-group-text txt_pesquisa_lote_cab cp' id='basic-addon2'><i class='fas fa-search' onclick='document.frm_pesquisa_leilao.submit();'></i></span>									
+								</div>								
+							</div>
+						</form>
+
+					</div>
+
+					
+					
+						<div>
+							<a href='login.php' class='btn btn-sm btn-azul p-1 rounded-0 peqx w-100 btn-block'><i class='fas fa-sign-in-alt'></i> Entrar</a>
+							<a href='https://www.palaciodosleiloes.com.br/site/cadastro_arrematante.php' class='peqx text-azul'><i class='fas fa-user-plus'></i> Quero me cadastrar</a>
+						</div>
+					
+ 					
+
+				</div>
+
+			</div>
+
+		</nav>
+		
+		<div class='border-bottom'></div>
+
+	
+<form name='frm_lote_pre_lance' id='frm_lote_pre_lance' action='lotem.php' method="post" target="_blank">
+    <input type='hidden' name='cod_lote_pre_lance' id='cod_lote_pre_lance' />
+    <input type='hidden' name='cod_leilao_pre_lance' id='cod_leilao_pre_lance' />
+</form>
+
+<form id='frm_leilao' name='frm_leilao' action='leilao.php' method='get'>
+	<input type='hidden' name='cod_leilao_publicado' 	id='cod_leilao_publicado' />
+	<input type='hidden' name='cod_comitente' 			id='cod_comitente' />
+	<input type='hidden' name='num_lote' 				id='num_lote' />
+	<input type='hidden' name='grupo_site' 				id='grupo_site' />
+	<input type='hidden' name='local' 					id='local' />
+	<input type='hidden' name='tipo_exibicao'			id='tipo_exibicao' />
+</form>
+
+<form id='frm_catalogo' name='frm_catalogo' action='catalogo_pdf.php' method='POST' target="_blank"> 
+	<input type='hidden' name='cod_leilao_catalogo' id='cod_leilao_catalogo' />
+</form>
+
+<form id='frm_listagem' name='frm_listagem' action='listagem_pdf.php' method='POST' target="_blank"> 
+	<input type='hidden' name='cod_listagem_leilao' id='cod_listagem_leilao' />
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="modalTermos" tabindex="-1" role="dialog" aria-labelledby="termoLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoLabel">Termos e Condições do Programa de Recompensa por Indicação - Palácio dos Leilões</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body small">
+				<div class='h3 pt-2'>1. Objetivo do Programa:</div>
+
+				<div class='pl-4'>O programa de Recompensa por Indicação do Palácio dos Leilões tem como objetivo recompensar arrematantes que indicarem novos clientes, os quais venham a realizar arrematações ou compras de materiais em nossos leilões, promovendo, ao mesmo tempo, um impacto positivo na sociedade por meio de doações para instituições sociais.</div>
+
+				<div class='h3 pt-3'>2. Como Funciona:</div>
+
+				<div class='h4 pl-3 mt-3'>2.1 Indicação de Clientes para Arrematação de Veículos:</div>
+
+				<div class='pl-4'>O arrematante (indicador) receberá R$ 200,00 (duzentos reais) por cada novo cliente indicado que efetivamente:</div>
+
+				<div class='pl-5 pt-3'>a) Seja um novo cliente do Palácio dos Leilões;</div>
+				<div class='pl-5'>b) Realize a arrematação de um veículo.</div>
+
+				<div class='pl-4 mt-3'>O crédito de R$ 200,00 (duzentos reais) poderá ser utilizado para abatimento dos seguintes custos:</div>
+
+				<div class='pl-5 pt-3'>a) Taxas administrativas;</div>
+				<div class='pl-5'>b) Serviços de empilhadeira;</div>
+				<div class='pl-5'>c) Serviços de transporte;</div>
+				<div class='pl-5'>d) Serviços de envio via Sedex.</div>
+
+				<div class='h4 pl-3 mt-3'>2.2 Indicação de Clientes para Arrematação de Materiais:</div>
+
+				<div class='pl-4'>Para indicações que resultarem na arrematação de materiais, o arrematante (indicador) receberá R$ 50,00 (cinquenta reais) por cada novo cliente indicado que:</div>
+
+				<div class='pl-5 pt-3'>a) Seja um novo cliente do Palácio dos Leilões;</div>
+				<div class='pl-5'>b) Realize a compra de materiais por meio do site.</div>
+
+				<div class='pl-4 mt-3'>O crédito de R$ 50,00 (cinquenta reais) segue as mesmas condições de utilização descritas no item 2.1, podendo, portanto, ser aplicado para abatimento dos mesmos custos mencionados.</div>
+
+				<div class='h3 pt-3'>3. Impacto Social:</div>
+
+				<div class='h4 pl-3 mt-3'>3.1 Indicações para Arrematação de Veículos e Materiais:</div>
+
+				<div class='pl-4 mt-3'>A cada 10 (dez) novos clientes indicados que realizarem arrematações de veículos, o Palácio dos Leilões realizará uma doação para uma das instituições sociais listadas no site (www.palaciodosleiloes.com.br).</div>
+
+				<div class='pl-4 mt-3'>A escolha da instituição a ser beneficiada será feita pelo arrematante indicador responsável pelas 10 (dez) indicações válidas. O arrematante será comunicado para realizar a escolha da instituição após a validação das 10 indicações.</div>
+
+				<div class='h3 pt-3'>4. Regras de Elegibilidade:</div>
+
+				<div class='pl-4'>Apenas clientes cadastrados no Palácio dos Leilões podem participar como indicadores.</div>
+
+				<div class='pl-4 mt-3'>Novos Clientes Indicados: </div>
+
+				<div class='pl-5 pt-3'>a) Devem ser novos clientes, ou seja, não podem ter realizado cadastro ou arrematações anteriormente.</div>
+				<div class='pl-5'>b) Devem realizar a arrematação de um veículo ou material para que a indicação seja considerada válida.</div>
+
+				<div class='h3 pt-3'>5. Validade do Crédito:</div>
+
+				<div class='pl-4'>O valor da recompensa será creditado ao cliente indicador em até 10 (de) dias úteis após a confirmação da arrematação de veículo ou de material pelo novo cliente indicado.</div>
+				<div class='pl-4'>Os créditos não são cumulativos com outras promoções e devem ser utilizados dentro de um prazo de 12 (doze) meses após o recebimento.</div>
+
+				<div class='h3 pt-3'>6. Disposições Gerais:</div>
+
+				<div class='pl-4'>O Palácio dos Leilões se reserva o direito de auditar e verificar as indicações realizadas.</div>
+				<div class='pl-4'>Em caso de fraude ou tentativa de burlar as regras do programa, o cliente poderá ser desclassificado, e os créditos serão cancelados.</div>
+				<div class='pl-4'>O programa poderá ser alterado ou encerrado a qualquer momento, mediante aviso prévio no site (www.palaciodosleiloes.com.br).</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" id="btn_fechar_termo_indique_amigo" data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalFidelidade" tabindex="-1" role="dialog" aria-labelledby="termoFidelidade" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoFidelidade">Termos e Condições do Programa de Fidelidade - Palácio dos Leilões</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body small">
+				<div class='h3 pt-2'>1. Objetivo do Programa:</div>
+				
+				<div class='pl-4'>O Programa de Fidelidade do Palácio dos Leilões foi criado para premiar os clientes que participam de nossos leilões, permitindo que acumulem pontos e troquem por produtos exclusivos na nossa Loja de Produtos.</div>
+				
+				<div class='h3 pt-2'>2. Como Acumular Pontos:</div>
+				<div class='pl-4'>A cada nota de arremate emitida no Palácio dos Leilões, o arrematante ganhará pontos que serão calculados através do Programa de Fidelidade.</div>
+
+				<div class='h3 pt-2'>3. Troca de Pontos:</div>
+				<div class='pl-4'>Os pontos acumulados podem ser trocados exclusivamente por produtos disponíveis na Loja de Produtos do Palácio dos Leilões.</div>
+				<div class='pl-4'>A troca de pontos deverá ser realizada diretamente pelo site do Palácio dos Leilões, na área dedicada ao Programa de Fidelidade.</div>
+				<div class='pl-4'>Os produtos disponíveis para troca e suas respectivas pontuações necessárias estarão listados em nossa Loja de Produtos Exclusivos.</div>
+
+				<div class='h3 pt-2'>4. Validade dos Pontos:</div>
+				<div class='pl-4'>Os pontos acumulados no Programa de Fidelidade terão validade de 60 (sessenta) meses a partir da data de concessão. Após esse período, os pontos expirados não poderão ser utilizados.</div>
+
+				<div class='h3 pt-2'>5. Regras de Participação:</div>
+
+				<div class='pl-4'>Elegibilidade:</div>
+
+				<div class='pl-5'>a) Somente clientes cadastrados no site do Palácio dos Leilões podem participar do Programa.</div>
+				<div class='pl-5'>b) O cadastro no Programa é automático ao realizar arrematações no site (www.palaciodosleiloes.com.br).</div>
+				
+				<div class='pl-4'>Uso dos Pontos:</div>
+
+				<div class='pl-5'>a) Os pontos são pessoais e intransferíveis;</div>
+				<div class='pl-5'>b) Não poderão ser trocados por dinheiro, descontos em compras ou serviços;</div>
+				<div class='pl-5'>c) Caso ocorra o cancelamento de uma arrematação, os pontos gerados serão automaticamente anulados.</div>
+
+				<div class='h3 pt-2'>6. Disposições Gerais:</div>
+				
+				<div class='pl-4'>O Palácio dos Leilões se reserva o direito de alterar ou encerrar o Programa de Fidelidade a qualquer momento, mediante aviso pelo site (www.palaciodosleiloes.com.br).</div>
+				<div class='pl-4'>Em caso de fraude ou tentativa de manipulação no acúmulo de pontos, o arrematante será desclassificado e os pontos serão cancelados.</div>
+				
+				<div class='h3 pt-2'>7. Consulta de Pontos e Resgate:</div>
+
+				<div class='pl-4'>Os clientes podem consultar o saldo de pontos acumulados, o histórico de transações e realizar resgates diretamente na área do Programa de Fidelidade no site do Palácio dos Leilões (www.palaciodosleiloes.com.br).</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalAmigo" tabindex="-1" role="dialog" aria-labelledby="termoAmigo" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoAmigo"><div class="h2 font-weight-bold text-azul" style="text-shadow: 2px 2px 4px #888;">Recompensa por Indicação</div></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<div class="row">
+						<div class='col-1 pt-3'>
+							<img src="images/logos/lancelote/2.webp" alt="Descrição da imagem" style="width:80px; height:auto;">
+						</div>
+						<div class="col-11">
+							<p class='mb-3'>Juntos, podemos fazer a diferença!</p>
+							<p class='text-justify'>Cada indicação sua é como um tijolo construindo um futuro melhor. Ao completar 10 indicações com arrematação comprovada, você não só garante um super desconto, mas também se torna um herói da sua própria história.</p>
+							<p class='text-justify'>Imagine a alegria de escolher uma instituição de caridade e entregar pessoalmente uma premiação, sabendo que sua ação está mudando vidas!</p>
+							<p><a href='https://www.palaciodosleiloes.com.br/site/meusindicados.php' class='text-azul'>Clique aqui e conheça mais</a></p>
+						</div>
+					</div>
+				</div>				
+									<div class="text-center mt-3">
+						<a href='login.php'><button class='btn btn-sm btn-azul rounded-0'>Para indicar um amigo, entre na sua conta</button></a>
+					</div>
+				            </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" id='btn_fechar_indique_amigo' data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalJuntarPontos" tabindex="-1" role="dialog" aria-labelledby="termoJuntarPontos" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoJuntarPontos">conheça as diversas formas de juntar pontos!</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<ul>
+					<li>Indique novos arrematantes!</li>
+					<li>Participando dos leilões</li>
+					<li>Arrematando lote nos leilões do Palácio dos Leilões</li>
+					<li>Realizando doações para instituições de caridade</li>
+				</ul>
+            </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+        
+        <input type="hidden" id="cod_lote" />
+        <input type="hidden" id="num_lote" />
+        <input type="hidden" id="cod_leilao" />
+        <input type='hidden' id="exibindo_lance_automatico" />
+
+        <!-- TRATAMENTO PARA O LANCE AUTOMATICO -->
+
+        <div class="container" id='div_lance_automatico' style='display:none;'>
+            <div class='font-weight-bold m-2 p-2 bg-light border'>
+                Lance automático
+            </div>
+            <div class='p-2 text-justify small'>
+                <ul>
+                    <li>Ao optar pelo lance automático, seu lance inicial será a metade do valor do lance automático</li>                    
+                    <li>Caso exista um lance acima da metade do valor do seu lance automático, o seu lance automático começará a cobrir o último lance adicionando de acordo com o valor de incremento.</li>                    
+                    <li>O seu último lance pode ser maior que o seu lance automático devido ao valor do incremento no momento.</li>
+                </ul>
+            </div>
+            <div class='m-2'>
+                <table class='table table-sm table-bordered small'>
+                    <tr>
+                        <td>Valor de incremento</td>
+                        <td align='right'><span id='div_valor_incremento'></span></td>
+                    </tr>
+                    <tr>
+                        <td>Despesas do Lote</td>
+                        <td align='right'><span id='div_despesa_lote'></span></td>
+                    </tr>
+                    <tr>
+                        <td>Comissão do leiloeiro</td>
+                        <td align='right'><span id='div_comissao_lote'></span>%</td>
+                    </tr>
+                    <tr>
+                        <td>Lance Atual</td>
+                        <td align='right'>
+                            <div class="input-group input-group-sm">
+                                <input type="text" value='0' name="div_val_atual" id="div_val_atual" readonly class='form-control rounded-0 bg-white font-weight-bold text-right' />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Lance Automático</td>
+                        <td align='right'>
+                            <div class="input-group input-group-sm">
+                                <input type="text" value='0' name="val_lance_automatico" id="val_lance_automatico" readonly class='form-control bg-warning rounded-0 font-weight-bold text-right' />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Utilize os botões para incrementar o seu lance automático</td>
+                        <td style='text-align:center;'>
+
+                            <div class='row'>
+                                <div class='col-6 my-1'><input type='button'   value='+100' onclick='incremento_la(100)' class='btn btn-block btn-sm rounded-0 btn-dark' /></div>
+                                <div class='col-6 my-1'><input type='button'   value='+200' onclick='incremento_la(200)' class='btn btn-block btn-sm rounded-0 btn-dark' /></div>
+                                <div class='col-6 my-1'><input type='button'   value='+500' onclick='incremento_la(500)' class='btn btn-block btn-sm rounded-0 btn-dark' /></div>
+                                <div class='col-6 my-1'><input type='button'  value='+1000' onclick='incremento_la(1000)' class='btn btn-block btn-sm rounded-0 btn-dark' /></div>
+                                <div class='col-6 my-1'><input type='button'  value='+5000' onclick='incremento_la(5000)' class='btn btn-block btn-sm rounded-0 btn-dark' /></div>
+                                <div class='col-6 my-1'><input type='button' value='+10000' onclick='incremento_la(10000)' class='btn btn-block btn-sm rounded-0 btn-dark' /></div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-3'></div>
+                                <div class='col-6 my-1'><input type='button' value='Limpar' onclick='limpar_la()' class='btn btn-block btn-sm rounded-0 btn-info' /></div>
+                                <div class='col-3'></div>
+                            </div>
+
+                        </td>
+                    </tr>
+                </table>
+                <div class='text-right small'>
+                    <input type="button" name="btn_lance_automatico" id="btn_lance_automatico" value="Enviar" onclick="enviar_lance_automatico();" class='btn btn-sm btn-success rounded-0' />
+                    <input type="button" value="Fechar" id="id_fechar_lance_automatico" class='btn btn-sm btn-dark rounded-0' />
+                </div>
+            </div>
+        </div>
+
+        <!-- DIV ENTREGA DE BEM -->
+
+        <div class='container' id='div_entrega_bem' style='display:none;'>
+            <nav class='navbar mb-2 p-1' style='background-image: url(\"./images/estrutura/bg_header.jpg\");'>
+                <form name="frm_entrega_bem" id="frm_entrega_bem">
+                    <div class='bg-dark text-white text-center mt-2'>
+                        Frete para arrematantes
+                    </div>
+                    <div class='p-2 text-center text-primary h2 num_lote_entrega'></div>
+                    <div class='p-2'>
+                        O Palácio dos Leilões entrega o seu veículo com segurança, faça uma reserva preenchendo o formulário abaixo e em caso de
+                        <span style='color:#CC0000; font-family:Oswald; font-size:18px;'>ARREMATE</span> do lote ofertado entraremos em contato.
+                    </div>
+                    <input type="hidden" id="cod_leilao_entrega" name="cod_leilao_entrega" />
+                    <input type="hidden" id="num_lote_entrega" name="num_lote_entrega" />
+                    <input type="hidden" id="dsc_lote_entrega" name="dsc_lote_entrega" />
+                    <div class='p-2'>
+                        <div class="form-group">
+                            <label for="nome_entrega">Nome do Arrematante (Obrigatório)</label>
+                            <input type="text" name="nome_entrega" id="nome_entrega" class='form-control form-control-sm w-75' />
+                        </div>
+                        <div class="form-group">
+                            <label for="cpf_entrega">CPF do Arrematante (Obrigatório)</label>
+                            <input type="text" name="cpf_entrega" id="cpf_entrega" class='form-control form-control-sm w-50' />
+                        </div>
+                        <div class="form-group">
+                            <label for="email_entrega">E-mail</label>
+                            <input type="text" name="email_entrega" id="email_entrega" class='form-control form-control-sm w-75' />
+                        </div>
+                        <div class="form-group">
+                            <label for="email_entrega">Telefone (Obrigatório)</label>
+                            <div class="row">
+                                <div class="col-2">
+                                    <input placeholder="00" maxlength="2" type="text" name="ddd_telefone_entrega" id="ddd_telefone_entrega" class='form-control form-control-sm' />
+                                </div>
+                                <div class="col-10">
+                                    <input placeholder="000000000" maxlength="9" type="text" name="telefone_entrega" id="telefone_entrega" class='form-control form-control-sm w-50' />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado (Obrigatório)</label>
+                            
+				<select name='estado' id='estado'  class='form-control w-50' >
+					<option value='' >Selecione</option>
+					<option value='42'  >ACRE</option><option value='35'  >ALAGOAS</option><option value='41'  >AMAPÁ</option><option value='8'  >AMAZONAS</option><option value='10'  >BAHIA</option><option value='33'  >CEARÁ</option><option value='12'  >DISTRITO FEDERAL</option><option value='2'  >ESPÍRITO SANTO</option><option value='11'  >GOIÁS</option><option value='29'  >MARANHÃO</option><option value='13'  >MATO GROSSO</option><option value='27'  >MATO GROSSO DO SUL</option><option value='1'  >MINAS GERAIS</option><option value='26'  >PARÁ</option><option value='30'  >PARAÍBA</option><option value='9'  >PARANÁ</option><option value='31'  >PERNAMBUCO</option><option value='32'  >PIAUÍ</option><option value='4'  >RIO DE JANEIRO</option><option value='28'  >RIO GRANDE DO NORTE</option><option value='39'  >RIO GRANDE DO SUL</option><option value='36'  >RONDÔNIA</option><option value='37'  >RORAIMA</option><option value='34'  >SANTA CATARINA</option><option value='3'  >SÃO PAULO</option><option value='40'  >SERGIPE</option><option value='43'  >teste</option><option value='38'  >TOCANTINS</option>
+				</select>
+			                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade (Obrigatório)</label>
+                            <div id='div_cidade'>
+                                <select class='form-control form-control-sm w-50' id='cidade' name='cidade'>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="button" name="btn_entrega_bem" id="btn_entrega_bem" value="Enviar" onclick="solicitar_entrega_bem();" class='btn btn-sm btn-primary' />
+                            <input type="button" value="Fechar" id="btn_fechar_entrega_bem" class='btn btn-sm btn-dark' />
+                        </div>
+                    </div>
+                </form>
+            </nav>
+        </div>
+
+        <!-- DADOS DO LOTE SELECIONADO -->
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-1 d-none d-lg-block p-0 m-0"></div>
+                <div class="col p-0 m-0">
+                    <input type="button" id="copyButton" class="d-none" />
+                    <div id='div_exibir_lote' class='my-3'></div>
+                </div>
+                <div class="col-1 d-none d-lg-block p-0 m-0"></div>
+            </div>            
+        </div>
+
+        <footer class="footer border-top mt-auto bg-azul text-white">
+    <div class='container py-3'>
+        <div class='row'>
+            <div class='col-md-5'>
+                <div class='font-weight-bold'>Rogério Lopes Ferreira - JUCEMG 394</div>
+                <div>Palácio dos Leilões ® <script>
+                    document.write(new Date().getFullYear())
+                    </script>
+                </div>
+                <div>BR-262, KM 375, Juatuba - MG, 35675-000</div>
+
+                <div class='small my-3'>
+                    <div class='font-weight-bold mt-2'>Horário de Funcionamento Juatuba</div>
+                    <div class='font-weight-light'>Segunda a Sexta-feira</div>
+                    <div class='font-weight-light'>Horário de Visitação: 08:15 às 17:00</div>
+                    <div class='font-weight-light'>Caixa, Documentação e Retirada de Lote: 08:15 às 17:00</div>
+
+                    <div class='font-weight-bold mt-2'>Horário de Funcionamento Cajamar</div>
+                    <div class='font-weight-light'>Horário de Visitação e Retirada: 08:15 às 17:30</div>
+                    <div class='font-weight-light'>Rod. Anhanguera, via de Acesso Norte, Km 32,5 - Empresarial
+                        Anhanguera - Cajamar/SP - 07753-580</div>
+
+                    <div class='font-weight-bold mt-2'>Horário de Funcionamento Simões Filho</div>
+                    <div class='font-weight-light'>Horário de Visitação e Retirada: 08:30 às 17:00</div>
+                    <div class='font-weight-light'>Via periférica Waldyr Beira, n° 4709, Vila CIA Sul, Simões Filho -
+                        BA, 43700-000</div>
+
+                    <div class='peq font-weight-bold'>* Em caso de feriados, confirme os horários antes de realizar sua
+                        visita.</div>
+                </div>
+
+            </div>
+            <div class='col-md-4 pb-3'>
+                <span class='font-weight-bold'>Contatos</span>
+                <div><a class='text-white' href='tel:(31) 3360-8100'>(31) 3360-8100</a></div>
+                <div><a class='text-white'
+                        href='https://www.palaciodosleiloes.com.br/site/politicadeprivacidade.php'>Política de
+                        Privacidade</a></div>
+            </div>
+            <div class="col-md-3 pb-5">
+                <a href='https://goo.gl/maps/WisQwWV8ZKmttiMH9' target='_blank'><i
+                        class="fas fa-map-marked-alt cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://twitter.com/palaciodleiloes' target='_blank'><i
+                        class="fab fa-twitter cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://www.facebook.com/palaciodosleiloes' target='_blank'><i
+                        class="fab fa-facebook cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://www.youtube.com/@palaciodosleiloes1' target='_blank'><i
+                        class="fab fa-youtube cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://www.instagram.com/palacio_dos_leiloes' target='_blank'><i
+                        class="fab fa-instagram cp float-right mr-2 text-white fa-2x"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Cookies -->
+
+<div class="rodape_cookies rounded" style="display: none;">
+    <p>Usamos cookies e outras tecnologias semelhantes para garantir que vocé tenha a melhor experiência em nosso site.
+        Ao continuar navegando, você concorda com o uso dessas tecnologias descritas em nossos <a
+            href="./politicadeprivacidade.php">termos e políticas de privacidade</a>.</p>
+    <div class="rodape_cookies_close"><button id="rodape_cookies_button_close" class="btn btn-block btn-light">Concordar
+            e Fechar</button></div>
+</div>
+
+<style>
+div.rodape_cookies {
+    position: fixed;
+    max-width: 999px;
+    bottom: 15px;
+    left: 5%;
+    right: 5%;
+    padding: 5px 18px;
+    background: linear-gradient(90deg, rgb(3, 62, 124) 0%, rgb(6, 87, 173) 30%, rgb(6, 87, 173) 69%, rgb(242, 86, 86) 100%);
+    margin: 0 auto;
+    color: #FFF;
+    z-index: 9999;
+}
+
+div.rodape_cookies a {
+    color: #FFF;
+}
+
+div.rodape_cookies div.rodape_cookies_close {
+    display: flex;
+    flex-direction: column;
+    justify-content: center !important;
+    text-align: center;
+    margin: 10px 0px;
+}
+</style>
+
+<script>
+// Função para copiar o conteúdo do input para a área de transferência
+document.getElementById('copyButton').addEventListener('click', function() {
+
+    // Seleciona o input
+    var linkInput = document.getElementById('linkToCopy');
+
+    // Seleciona o texto do input
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999); // Para dispositivos móveis
+
+    // Copia o texto para a área de transferência
+    document.execCommand('copy');
+
+    // Exibe um alerta ou mensagem para confirmar que o link foi copiado
+    alert('Link copiado para a área de transferência!');
+
+});
+
+$(document).ready(function() {
+    let aceite_cookies = localStorage.getItem("aceite_cookies");
+    if (isNaN(aceite_cookies) || !aceite_cookies) {
+        localStorage.removeItem('aceite_cookies');
+        $(".rodape_cookies").show();
+        aceite_cookies = false;
+    }
+
+    if (aceite_cookies) {
+        const data_aceite = new Date(parseInt(aceite_cookies));
+        const data_atual = new Date();
+
+        if (data_aceite.getDate() != data_atual.getDate() || data_aceite.getMonth() != data_atual.getMonth() ||
+            data_aceite.getFullYear() != data_atual.getFullYear()) {
+            localStorage.removeItem('aceite_cookies');
+            aceite_cookies = false;
+
+            $(".rodape_cookies").show();
+        } else {
+            $(".rodape_cookies").hide();
+        }
+    }
+
+    $("#rodape_cookies_button_close").click(() => {
+        localStorage.setItem('aceite_cookies', Date.now());
+        $(".rodape_cookies").hide();
+    })
+});
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CRXLJ6DL4P"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+
+function gtag() {
+    dataLayer.push(arguments);
+}
+gtag('js', new Date());
+gtag('config', 'G-CRXLJ6DL4P');
+</script>
+
+<script src="https://wbot.chat/index.js" token="2626d5b5b9445a45b9ac35928041c07b"></script>        
+        
+    </body>
+</html>

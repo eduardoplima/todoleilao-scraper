@@ -1,0 +1,55 @@
+{
+  "auctioneer_slug": "leilao-brasil",
+  "source_listing_url": "https://www.leilaobrasil.com.br/",
+  "source_lot_url": "https://leilaobrasil.com.br/eventos/leilao/casa-no-bairro-paineiras-do-morumbi-no-ibirapuera/lote/17523/casa-no-bairro-paineiras-do-morumbi-no-ibirapuera",
+  "title": "Lote 7698 - Casa no bairro Paineiras do Morumbi no Ibirapuera",
+  "description": "Prédio na Rua Joaquim Cândido Azevedo Marques n° 1026, pertencente ao executado e seu respectivo lote de terreno sob n° 12 da quadra 03, antiga Rua A, situado no bairro de Paineiras do Morumbi, no 30° subdistrito Ibirapuera, com a área de 958 m², com forma irregular. Edificado um prédio com 318,89 m² na Av.2 da matrícula. Avaliação histórica R$ 1.648.000,00 (Jun/2010); Avaliação atualizada R$ 3.921.027,19. Débito do exequente fls. 1716: R$ 6.027.122,23 (jul/2026). Comitente: TRIBUNAL DE JUSTIÇA DO ESTADO DE SÃO PAULO. Tipo: Judicial. Leiloeiro: IRANI FLORES (JUCESP Nª 792). Executado: [PF].",
+  "property_type": "casa",
+  "address": {
+    "raw_text": "Rua Joaquim Cândido de Azevedo Marques 1026, Vila Morumbi, São Paulo - SP. CEP 05688-021",
+    "street_name": "Rua Joaquim Cândido de Azevedo Marques",
+    "number": "1026",
+    "complement": null,
+    "district": "Vila Morumbi",
+    "municipality_name": "São Paulo",
+    "uf": "SP",
+    "cep": "05688-021"
+  },
+  "area_sqm": "318.89",
+  "total_area_sqm": "958.00",
+  "market_value_brl": "3921027.19",
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-05-01T10:04:00-03:00",
+      "minimum_bid_brl": "3964434.97",
+      "status_raw": "1º Leilão Aberto para lances — Abertura 01/05/2026 10:04, Fechamento 04/05/2026 10:04 (status-3)"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": "2026-05-04T10:04:00-03:00",
+      "minimum_bid_brl": "1982217.49",
+      "status_raw": "2º Leilão — Abertura 04/05/2026 10:04, Fechamento 29/05/2026 10:04 (50% da avaliação)"
+    }
+  ],
+  "auction_status": "ativo",
+  "bids": [],
+  "images": [
+    { "url": "https://static.suporteleiloes.com.br/leilaobrasil/leiloes/lotes/imagens/0652978802ef37.jpg", "is_thumbnail": false }
+  ],
+  "documents": [
+    {
+      "kind": "edital",
+      "url": "https://static.suporteleiloes.com.br/leilaobrasilcombr/leiloes/1325/documentos/sl-doc-1325-699c67fe16b44-699c67fe17436.doc",
+      "label": "Edital de Leilão"
+    },
+    {
+      "kind": "edital",
+      "url": "https://static.suporteleiloes.com.br/leilaobrasilcombr/bens/14187/arquivos/sl-bem-14187-699c68668d4a3-699c68668d7f7.pdf",
+      "label": "EDITAL"
+    }
+  ],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T23:00:00-03:00",
+  "parser_notes": "Recon arquitetural do provider suporte_leiloes (Suporte Leilões / SL). 51 sites em data/intermediate/site_analysis.csv apontam para esta plataforma; representante do _input.json é Irani Flores / leilaobrasil.com.br (auctioneer_slug=leilao-brasil). Plataforma: SPA Symfony-like server-side render com bundles em /build/*.js, CDN externa static.suporteleiloes.com.br. tech_signals=server:cloudflare; static_useful_links=1345 — rendering=static, requires_playwright=False. Sinais SL: var SL_USER inline, dominio static.suporteleiloes.com.br, auditório virtual em arrematante.leilaobrasil.com.br (subdomínio do tenant). LIMITAÇÃO CRÍTICA: provider NÃO expõe leilão encerrado com lances publicamente — (1) sem rota /encerrados/realizados/historico (todas 404 ou 302→/), (2) home apenas com status-1 'Em breve' / status-3 'Aberto para lances' / status-96 'Cancelado', sem 'Encerrado'/'Arrematado', (3) lots passados acessíveis por id direto mas sem strong-status badge, sem Avaliação, sem Valor inicial, e (4) Histórico de Lances do detalhe sempre mostra 'Nenhum lance até o momento' (boilerplate de 3 propostas R$ 1,00 do TiagoFelipe em 14/04/2025 18:43 aparece em TODOS os lots — dados de teste do site, não lances reais), (5) pesquisa por filtros ?status=encerrado é silenciosamente ignorada (mesma resposta da home). Lots com data passada são REGENERADOS para datas futuras (lot 138 'Casa no Butantã' criado em 2018 está com 1ª praça em 04/05/2026), inviabilizando 'closed_url'. Por isso o pilot é um lot ATIVO (1ª praça abrindo hoje 01/05/2026) — lance encerrado com bids = NÃO disponível neste provider. PILOT LOT: lot 17523 (Casa no Morumbi, leilão 1325 / Lote 7698 — ID interno do leilão), judicial 2-praças TJSP. minimum_bid_brl=3964434.97 (1ª praça = avaliação atualizada R$3.921.027,19 + ~1% custas) e 1982217.49 (2ª praça = 50%); market_value_brl=3.921.027,19 (Avaliação estruturada em div.line-04 ul.ul-01); area_sqm=318.89 (área construída do prédio, extraída de descrição); total_area_sqm=958.00 (área do terreno); CEP 05688-021 do site. NB: a Avaliação no detalhe é R$ 3.921.027,19 (atualizada/corrigida) — descrição também menciona avaliação histórica R$ 1.648.000,00 (Jun/2010), descartada. Valor inicial NÃO renderiza no detalhe — só em <small.valInit> da listagem (home/agenda/mapa). Spider de produção precisa correlacionar listing → detail via leilao_id (4-digit, na URL da listagem) → lot_id (5-digit, na URL canônica do detalhe após redirect). PII redigida: 1 menção 'pertencente ao executado' (sem nome PF na descrição visível — apenas referência ao 'executado' anônimo). Nenhum CPF na página. PII potencial em PDFs (não baixados). bids=[] explicitamente — provider não expõe. status=ativo (1ª praça em curso). Rate limit 1.5s mantido em ~25 requests do recon (home + 5 detalhes + ~10 probes 404/302 + agenda/mapa + sitemap probes). robots.txt sem regras (apenas comentário sobre content-signals: search/ai-input/ai-train sem yes/no — neither grants nor restricts; agregação respeitada). Não baixei nenhum binário."
+}

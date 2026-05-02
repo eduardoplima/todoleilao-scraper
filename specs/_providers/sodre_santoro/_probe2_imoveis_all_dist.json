@@ -1,0 +1,1 @@
+{"results":[],"aggs":{"auction_status":{"doc_count_error_upper_bound":0,"sum_other_doc_count":0,"buckets":[{"key":"aberto","doc_count":47}]},"lot_status":{"doc_count_error_upper_bound":0,"sum_other_doc_count":0,"buckets":[{"key":"andamento","doc_count":47}]}},"total":47,"page":1,"perPage":0}

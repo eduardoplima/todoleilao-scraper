@@ -1,0 +1,70 @@
+{
+  "provider": "leilao_pro",
+  "representative": {
+    "slug": "",
+    "nome": "JEFFERSON ADRIANO DA COSTA",
+    "final_url": "https://www.jacleiloes.com.br/",
+    "site_analysis_row": {
+      "id": "245",
+      "slug": "",
+      "nome": "JEFFERSON ADRIANO DA COSTA",
+      "uf": "PR",
+      "cidade": "",
+      "dominio": "https://www.jacleiloes.com.br",
+      "confidence": "high",
+      "real_estate_score": "19.4",
+      "http_status": "200",
+      "final_url": "https://www.jacleiloes.com.br/",
+      "error": "",
+      "tech_stack": "",
+      "tech_signals": "server:cloudflare | pw=pw_networkidle_timeout",
+      "static_link_count": "703",
+      "dynamic_link_count": "701",
+      "static_useful_links": "675",
+      "dynamic_useful_links": "675",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "JAC Leilões | Site do leiloeiro oficial de Cascavel/PR - Jefferson Adriano Costa",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/d697b18a5c5dced7693ef1efe3b94e8b1b75f8e1.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "MARCELO SOUZA SCHONARDIE",
+      "final_url": "https://www.marceloleiloeiro.com.br/",
+      "useful_links": 912,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Jorge Vinicius De Moura Correa",
+      "final_url": "https://www.renovarleiloes.com.br/",
+      "useful_links": 724,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Rafael Ceretta Alegranzzi",
+      "final_url": "https://www.renovarleiloes.com.br/",
+      "useful_links": 724,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "LUIZ FERNANDO MORAES DA CRUZ",
+      "final_url": "https://www.santamarialeiloes.com.br/",
+      "useful_links": 667,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "JOSE LAZARO RIBEIRO MENEZES JUNIOR",
+      "final_url": "https://www.santamarialeiloes.com.br/",
+      "useful_links": 667,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 83
+}

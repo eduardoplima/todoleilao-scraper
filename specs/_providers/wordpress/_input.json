@@ -1,0 +1,70 @@
+{
+  "provider": "wordpress",
+  "representative": {
+    "slug": "",
+    "nome": "VALÉRIA PONTES BRAGA KAHN",
+    "final_url": "https://mvleiloes.com.br/",
+    "site_analysis_row": {
+      "id": "6666",
+      "slug": "",
+      "nome": "VALÉRIA PONTES BRAGA KAHN",
+      "uf": "RJ",
+      "cidade": "",
+      "dominio": "HTTPS://MVLEILOES.COM.BR",
+      "confidence": "high",
+      "real_estate_score": "9.9",
+      "http_status": "200",
+      "final_url": "https://mvleiloes.com.br/",
+      "error": "",
+      "tech_stack": "WordPress; jQuery; Bootstrap",
+      "tech_signals": "generator=WordPress 6.9.4 | generator=WordPress 6.9.4 | wp-content/wp-includes | jquery | bootstrap | server:cloudflare",
+      "static_link_count": "68",
+      "dynamic_link_count": "67",
+      "static_useful_links": "66",
+      "dynamic_useful_links": "66",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "Maicon &amp; Valéria Kahn – Leilões do Rio de Janeiro. – Os melhores leilões Judiciais e Extrajudiciais do Rio de Janeiro estão aqui.",
+      "html_meta_generator": "WordPress 6.9.4",
+      "screenshot_path": "data/intermediate/cache/sites/c67b7ce0d3dabc315b09088aeac4b5dc5711aa6a.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Fábio Guimarães de Carvalho",
+      "final_url": "http://www.fabioguimaraesleiloes.com.br/portal/category/leiloes/",
+      "useful_links": 110,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Luiz Washington Campolina Santos",
+      "final_url": "https://luizcampolina.com.br/",
+      "useful_links": 86,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "ANDRÉ ANTONIO FAUTH",
+      "final_url": "https://fauthleiloes.com.br/",
+      "useful_links": 58,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "ANTÔNIO CARLOS FAUTH",
+      "final_url": "https://fauthleiloes.com.br/",
+      "useful_links": 58,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "RENI JOSÉ BONFANDINI",
+      "final_url": "https://leiloesbonfadini.com.br/",
+      "useful_links": 46,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 10
+}

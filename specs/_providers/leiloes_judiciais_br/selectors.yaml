@@ -1,0 +1,83 @@
+# Contrato declarativo do recon piloto.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+# Plataforma leiloes_judiciais_br — canonical: leiloesjudiciais.com.br
+# (com subdomínios state-specific: leiloesjudiciaismg.com.br, etc., todos
+# servindo a MESMA base de dados via Nuxt 3 SSR).
+# Sinais canônicos:
+#   <meta name="author" content="Jean Everton <jeanever39@gmail.com>" />
+#   /_nuxt/*.js (Nuxt 3 build assets, com __NUXT_DATA__ JSON inline)
+#   NUXT_ENV_URL_API="https://api.leiloesjudiciais.com.br/" (API privada, fechada)
+#   schema.org Organization name="Leilões Judiciais"
+#   PrimeVue + Vue 3 + S3 sa-east-1 (bucket 906de634c48fb7d34136160b4c353ae4)
+#
+# Tenant escolhido p/ piloto: leiloesjudiciaismg.com.br (subdomínio MG).
+# auctioneer_slug é a representação canônica do site, não do leiloeiro
+# individual (cada lote traz seu próprio nm_url_leiloeiro embutido).
+
+auctioneer_slug: "leiloesjudiciaismg"
+platform_hint: "leiloes_judiciais_br"
+
+listing_active:
+  url_pattern: "https://www.leiloesjudiciaismg.com.br/imoveis"
+  card_selector: "div.base-card:has(a[href^='/lote/'])"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?pagina={page}"
+
+# Provider NÃO expõe leilões encerrados publicamente.
+# Probes sistemáticas: /encerrados, /finalizados, /vendidos, /realizados,
+# /historico, /imoveis-encerrados → todas 500. /imoveis/encerrados,
+# /imoveis/finalizados → 200 mas servem o listing default. Filtros
+# ?status=encerrado, ?status=finalizado, ?status=vendido, ?fase=encerrado
+# → todos retornam o listing default (parâmetro ignorado pelo backend).
+# Scan completo das 27 páginas de /imoveis confirma: zero lots com
+# status finalizado/vendido/condicional/encerrado. Sitemap.xml inclui
+# apenas lots ativos. Justificativa em recon.md "Listing encerrada".
+listing_closed: null
+
+detail:
+  url_pattern: "https://www.leiloesjudiciaismg.com.br/lote/{leilao_id}/{lot_id}"
+  field_selectors:
+    title:
+      # h1 carrega "Cidade/UF - Título"; h2 carrega "Título - Cidade/UF".
+      # Fallback: meta og:title.
+      selector: "h1, h2"
+      kind: css
+    price_minimum:
+      # vl-minimo = lance mínimo atual; texto "Lance mínimo: R$ ..."
+      selector: "button.vl-minimo, div.vl-minimo"
+      kind: css
+    price_market:
+      # vl-avaliacao = avaliação; texto "Avaliação: R$ ..."
+      selector: "div.vl-avaliacao"
+      kind: css
+    address_block:
+      # Não há campo estruturado de endereço — descrição livre. O texto
+      # útil está em descricao-lote__container (corpo HTML rich text).
+      # cidade/UF estruturados em div.cidade-avaliacao-minimo-atual.
+      # Fonte mais robusta: __NUXT_DATA__ inline (lot dict tem
+      # nm_cidade, nm_estado, nm_descricao). Spider de produção deve
+      # parsear NUXT_DATA preferencialmente.
+      selector: "div.descricao-lote__container, div.descricao-max-content, div.cidade-avaliacao-minimo-atual"
+      kind: css
+    images:
+      # Fotos em S3: /public/fotos/imoveis/{size}/I_{imovel_id}_{photo_id}_{seq}.jpg
+      # Tamanhos disponíveis: 196x146 (thumb), 640x480 (médio), 800x600 etc.
+      # Filtrar para 640x480 ou usar nm_path direto do __NUXT_DATA__.
+      selector: "img[src*='/fotos/imoveis/']"
+      kind: css
+    documents:
+      # Anexos: /public/anexo/{timestamp}.pdf — incluem MATRÍCULA, LAUDO,
+      # gráficos. Edital geralmente NÃO é exposto na página pública.
+      # Fonte estruturada: __NUXT_DATA__ → lot.anexos[].nm + .nm_path_completo.
+      selector: "a[href*='/public/anexo/'][href$='.pdf']"
+      kind: css
+    bids:
+      # Histórico de lances NÃO é exposto publicamente. A página renderiza
+      # apenas o contador (div.nu-lances → texto "lances {N}"). A tabela/
+      # lista de lances individuais exige login (gate de visualização).
+      # Mensageria em tempo real (WebSocket/Mercure) também só liga após
+      # login. Para Fase 3 — recuperar histórico exige autenticação.
+      selector: null
+      kind: css

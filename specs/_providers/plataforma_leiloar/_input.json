@@ -1,0 +1,70 @@
+{
+  "provider": "plataforma_leiloar",
+  "representative": {
+    "slug": "",
+    "nome": "JUSSIARA SANTOS ERMANO SUKIENNIK",
+    "final_url": "https://www.jussiaraleiloes.com/externo/",
+    "site_analysis_row": {
+      "id": "197",
+      "slug": "",
+      "nome": "JUSSIARA SANTOS ERMANO SUKIENNIK",
+      "uf": "DF",
+      "cidade": "",
+      "dominio": "https://www.jussiaraleiloes.com",
+      "confidence": "high",
+      "real_estate_score": "13.9",
+      "http_status": "200",
+      "final_url": "https://www.jussiaraleiloes.com/externo/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap",
+      "tech_signals": "jquery | bootstrap | server:cloudflare",
+      "static_link_count": "88",
+      "dynamic_link_count": "87",
+      "static_useful_links": "57",
+      "dynamic_useful_links": "57",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": ".: Jussiara Leilões :.",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/2d5d3e35495d666984904ba2304873664162a9f7.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "VANESSA GOELZER DE ARAÚJO VARGAS E PINTO",
+      "final_url": "https://www.vargasepintoleiloes.com.br/externo/",
+      "useful_links": 78,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "JEAN CARLO ROSA",
+      "final_url": "https://www.prosperarleiloes.com.br/externo/",
+      "useful_links": 62,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "KAIO ALBUQUERQUE ROSA BOTELHO",
+      "final_url": "https://www.duxleiloes.com.br/",
+      "useful_links": 52,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "BRUNO DUARTE ARAÚJO DOS SANTOS",
+      "final_url": "https://www.oaleiloes.com.br/",
+      "useful_links": 42,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "ORLANDO ARAÚJO DOS SANTOS",
+      "final_url": "https://www.oaleiloes.com.br/",
+      "useful_links": 42,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 21
+}

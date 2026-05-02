@@ -1,0 +1,333 @@
+{
+  "auctioneer_slug": "casa-reis-leiloes",
+  "source_listing_url": "https://www.casareisleiloes.com.br/busca/",
+  "source_lot_url": "https://www.casareisleiloes.com.br/lote/terreno-no-altavis-aldeia-santana-de-parnaiba/4580/",
+  "title": "Terreno - Estrada Municipal Marechal Mascarenhas de Moraes, 5.800, Santana de Parnaíba",
+  "description": "Estrada Municipal Marechal Mascarenhas de Moraes, 5800 - sentido Santana de Parnaíba. Livre de Ônus e com 50% de desconto. Lote em Hastas Públicas. 01 (um) Terreno Residencial Urbano, situado na Rua \"N\", constituído pelo Lote nº 17, da quadra nº 13 (residencial), do loteamento denominado \"Residencial e Comercial Serra do Sol\", localizado no Bairro Chácara Boa Vista, Distrito e Município de Santana de Parnaíba, Comarca de Barueri, encerrando a área total de 509,73m². Matrícula nº 172.060 do 01º Cartório de Registro de Imóveis de Barueri. Detentor da propriedade: Nova Aldeia Empreendimentos Imobiliários Ltda. (CNPJ 08.405.960/0001-43). Hipoteca judicial (R. 03) e penhora (Av. 04) oriunda do processo nº 0001003-86.2022.8.26.0529. A executada permanece no exercício da posse do imóvel. Débitos: IPTU 2025 R$ 3.218,71 + R$ 12.950,39 em dívida ativa (2020-2024); taxas associativas Altavis Aldeia R$ 49.807,91 (set/2025). Avaliação: R$ 638.333,33 (set/2025); R$ 641.845,15 atualizado para nov/2025.",
+  "property_type": "terreno",
+  "address": {
+    "raw_text": "Estrada Marechal Mascarenhas de Moraes, 5800 - Sítio do Morro - Santana de Parnaíba - SP - CEP: 06517-520",
+    "street_name": "Estrada Marechal Mascarenhas de Moraes",
+    "number": "5800",
+    "complement": "Rua N, Lote 17 da Quadra 13",
+    "district": "Sítio do Morro",
+    "municipality_name": "Santana de Parnaíba",
+    "uf": "SP",
+    "cep": "06517-520"
+  },
+  "area_sqm": null,
+  "total_area_sqm": "509.73",
+  "market_value_brl": "638333.33",
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2025-12-19T13:00:00-03:00",
+      "minimum_bid_brl": "322947.59",
+      "status_raw": "Praça Única — Arrematado por R$ 462.947,59 em 19/03/2026 13:02 (paulochagas)"
+    }
+  ],
+  "auction_status": "arrematado",
+  "bids": [
+    {
+      "timestamp": "2026-03-19T11:15:08.97-03:00",
+      "value_brl": "327947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:15:19.6-03:00",
+      "value_brl": "332947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:29:06.367-03:00",
+      "value_brl": "337947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:41:26.477-03:00",
+      "value_brl": "342947.59",
+      "bidder_raw": "acmpc"
+    },
+    {
+      "timestamp": "2026-03-19T12:45:02.167-03:00",
+      "value_brl": "347947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:46:55.993-03:00",
+      "value_brl": "352947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:50:43.87-03:00",
+      "value_brl": "357947.59",
+      "bidder_raw": "acmpc"
+    },
+    {
+      "timestamp": "2026-03-19T12:51:18.087-03:00",
+      "value_brl": "362947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:54:34.68-03:00",
+      "value_brl": "367947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:55:40.23-03:00",
+      "value_brl": "372947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:55:50.823-03:00",
+      "value_brl": "377947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:56:09.98-03:00",
+      "value_brl": "382947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:56:17.34-03:00",
+      "value_brl": "387947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:56:43.713-03:00",
+      "value_brl": "397947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:56:46.743-03:00",
+      "value_brl": "402947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:57:06.73-03:00",
+      "value_brl": "407947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:57:10.26-03:00",
+      "value_brl": "412947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:58:13.43-03:00",
+      "value_brl": "417947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:58:19.307-03:00",
+      "value_brl": "422947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:58:22.59-03:00",
+      "value_brl": "427947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:58:30.04-03:00",
+      "value_brl": "432947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T12:59:15.18-03:00",
+      "value_brl": "437947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T12:59:18.01-03:00",
+      "value_brl": "442947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T13:00:04.277-03:00",
+      "value_brl": "447947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T13:00:05.887-03:00",
+      "value_brl": "452947.59",
+      "bidder_raw": "paulochagas"
+    },
+    {
+      "timestamp": "2026-03-19T13:02:25.637-03:00",
+      "value_brl": "457947.59",
+      "bidder_raw": "felipemacedo"
+    },
+    {
+      "timestamp": "2026-03-19T13:02:27.307-03:00",
+      "value_brl": "462947.59",
+      "bidder_raw": "paulochagas"
+    }
+  ],
+  "images": [
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/63c4645c-f4d3-4123-a9fd-1e8138332098.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/2ee22a5a-e0ea-4c5d-9a7c-c1e38a4bb244.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/a254037a-9013-4baf-acb1-d771683e3203.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/0228e5ef-b0ca-46dd-98eb-104589aa766f.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/098684f1-99c6-4bad-8226-508466c300c5.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/acbb613e-6d34-479a-8d5e-90eede5a6481.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/a912fa92-96f3-4a6f-921a-5d7feebc5917.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/bc479832-5cff-4065-9681-bb37378cbbad.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/846d35e1-8ae6-473b-85e9-89c806b0ec11.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/dfb9da7f-4d39-4db6-98e6-c1e2ed464ee1.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/b04521dc-16f1-4b89-9493-3cd5ef76f63f.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/94b0d986-07b3-4aad-a959-4a09b755a735.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/441e4d3d-e84b-43c5-81f6-b7948a171bcb.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/a10a2dcf-ebb1-4b51-8fb5-f1ac9cadb5ac.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/46ec4d9e-ff99-4d56-9fd5-53e307dd6e16.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/27c2b0c8-6060-4ddc-a8df-7a284dd170e5.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/fc7b8984-8bdf-4727-befd-06210ca9e74a.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/b98578b7-38a4-4f2a-a2ec-189cfe6d30b6.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/5d78fd44-5a35-46b6-88e6-fe88246b5015.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/2a2ec436-5cd5-4a92-acb1-869ca642b5a8.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/87d321a6-9a98-4c97-97a1-66c6ae2b3136.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/5754d276-2934-4744-802d-daad7b7be7ac.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/89c7e482-f310-478e-a4e0-a049e9f93fb6.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/fcb4db58-e70f-4923-94a1-1077b83d584c.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/fdc3924b-4d01-4443-8ce7-d9f1b62fc0fc.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/7d46a8f2-cb0f-44e1-8301-202b6b961043.png",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://www.casareisleiloes.com.br/imagens/1300x1300/1305064f-2546-441c-9540-d8eacc55bf6a.jpg",
+      "is_thumbnail": false
+    }
+  ],
+  "documents": [
+    {
+      "kind": "outro",
+      "url": "https://www.casareisleiloes.com.br/preview/e70999ed-0a74-4c06-99eb-f9e2e7f276d4.pdf",
+      "label": "Considerações"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.casareisleiloes.com.br/preview/e8e9a4da-0199-425e-b5fd-ef1c74f6473c.pdf",
+      "label": "Lote"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://www.casareisleiloes.com.br/preview/4b76424d-8107-4dbf-b2b8-fe3bb72ad1ca.pdf",
+      "label": "Matrícula"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.casareisleiloes.com.br/preview/06defc62-bb11-4df1-a65a-1bce9ed155a5.pdf",
+      "label": "IPTU"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.casareisleiloes.com.br/preview/6d7a6a40-2809-48d5-b115-b1c6fb505f8e.pdf",
+      "label": "Débito Condominial"
+    },
+    {
+      "kind": "certidao",
+      "url": "https://www.casareisleiloes.com.br/preview/6ce38c83-6478-4963-a903-a841b961cf1c.pdf",
+      "label": "Certidões de Condomínio"
+    },
+    {
+      "kind": "laudo",
+      "url": "https://www.casareisleiloes.com.br/preview/cc64f2a8-5a30-4770-981b-28fe37334838.pdf",
+      "label": "Laudo de Avaliação"
+    },
+    {
+      "kind": "laudo",
+      "url": "https://www.casareisleiloes.com.br/preview/3ea494d7-6d46-4412-8b0d-f971b9c55c07.pdf",
+      "label": "Atualização da Avaliação"
+    },
+    {
+      "kind": "edital",
+      "url": "https://www.casareisleiloes.com.br/preview/98efc366-256e-4dc4-86de-d56a825181dc.pdf",
+      "label": "Edital Assinado"
+    }
+  ],
+  "encumbrances_raw": [
+    "Hipoteca judicial oriunda do processo nº 1097708-97.2018.8.26.0100 (R. 03 da matrícula 172.060)",
+    "Penhora oriunda do Cumprimento de Sentença nº 0001003-86.2022.8.26.0529 (Av. 04 da matrícula)",
+    "A executada (Nova Aldeia Empreendimentos Imobiliários Ltda.) permanece no exercício da posse do imóvel",
+    "Débitos tributários: IPTU/2025 R$ 3.218,71 + R$ 12.950,39 inscritos em dívida ativa (2020-2024)",
+    "Débitos de taxas associativas (Associação Residencial Serra do Sol — Altavis Aldeia): R$ 49.807,91 acumulados desde nov/2022 (referência 18/09/2025)"
+  ],
+  "scraped_at": "2026-05-01T16:10:00-03:00",
+  "parser_notes": "Provider Degrau Publicidade (footer/meta 'Sua Plataforma de Leilão | Degrau Publicidade e Internet'). Multi-tenant com domínios próprios por leiloeiro (casareisleiloes, amazonasleiloes, milhaoleiloes, suporteleiloes...). Pilot site: Casa Reis (representativo do provider; leiloeiros oficiais Eduardo dos Reis / Roberto dos Reis Junior, JUCESP). Frontend: jQuery + Bootstrap + jquery-tmpl + signalr (real-time). Listagem é SPA hash-driven (/busca/#Engine=Start&...). Backend: ASP.NET-style endpoints '/ApiEngine/*' (multi-tenant, mesmo path em todos os domínios). XHR-first dispensa Playwright: POST /ApiEngine/GetBusca/{Pagina}/{PaginaIndex}/{IndexOut} (listagem com filtros), POST /ApiEngine/GetLancesPropostasLote/{ID_Leilao}/{ID_Leiloes_Lote} (histórico de lances). Sem auth. Pilot lote ENCERRADO (arrematado, ID_Leiloes_Lotes_SubStatus=5): 27 lances reais coletados via API, todos via apelido público (paulochagas, felipemacedo, acmpc) — sem PII a redigir. property_type=terreno (categoria_lote=12; SubCategoria 'IMÓVEIS'). QtdPracas=1 (Praça Única, modalidade Hastas Públicas judicial); valorAvaliacao=R$ 638.333,33 (original set/2025) e ValorMinimoLancePrimeiraPraca=R$ 322.947,59 (~50% da avaliação, padrão de 1ª praça TJ-SP) — colocado no único round. Vencedor=paulochagas a R$ 462.947,59 em 2026-03-19 13:02 BRT. Detentor PJ (Nova Aldeia Empreendimentos Imobiliários Ltda. - CNPJ); executada PJ; comitente E.TJ-SP; nada redigido. Imagens são URLs internas /imagens/1300x1300/{guid}.{ext} (mistura .jpg .jpeg .png; 27 únicas). Documentos em /preview/{guid}.pdf — capturados 9 docs (Considerações, Lote, Matrícula, IPTU, Débito Condominial, Certidões Condomínio, Laudo Avaliação, Atualização Avaliação, Edital Assinado). robots.txt: apenas 'content-signals' (no Disallow). Rate-limit ≥1.5s respeitado em todos os fetches. area_sqm=null deliberado: terreno sem distinção área útil/construída; 509,73m² é o total."
+}

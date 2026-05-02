@@ -1,0 +1,107 @@
+# Contrato declarativo do recon piloto.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+#
+# Provider: s4b_digital — multi-tenant SPA construída sobre a infraestrutura
+# Superbid (`offer-query.superbid.net`, `event-query.superbid.net`,
+# `api.s4bdigital.net`). Cada leiloeiro tem um `storeId` próprio dentro
+# do mesmo backend; o frontend é uma SPA React (Material-UI/MUI), com
+# rotas SEO-friendly do tipo `/oferta/{slug}-{offerId}`.
+#
+# Tenant escolhido para o piloto: `eckertleiloes.com.br` (storeId=16063,
+# Marciano Mauro Pagliarini, SC) — único tenant amostrado com:
+#   1. inventário de imóveis (productType.id=13) abundante (37 abertos,
+#      123 encerrados);
+#   2. lots encerrados com lances reais (até 165 lances, 14 bidders).
+# Tenant representativo do `_input.json` original: `npleiloes.com.br`
+# (storeId=16147, Josiane N. Pinotti) — não tem imóveis no catálogo
+# atual (foco PME / logística reversa). Selectors abaixo são portáveis
+# entre tenants do provider; basta trocar `storeId` e `host`.
+
+auctioneer_slug: "eckert-leiloes"
+platform_hint: "s4b_digital"
+
+listing_active:
+  # Listing de imóveis abertos — categoria id=13 (Imóveis) na URL como
+  # filter param. SPA hidrata via GET offer-query.superbid.net/offers/.
+  url_pattern: "https://www.eckertleiloes.com.br/?searchType=opened&pageNumber=1&pageSize=30&orderBy=endDate:asc&filter=product.productType.id:13"
+  # Cada card ancora-se em `<a href="/oferta/{slug}-{offerId}">`. SPA
+  # renderiza após hidratação; em recon estático o anchor é detectável
+  # após Playwright `networkidle`. O backend de produção deve consumir
+  # a API JSON diretamente (ver "XHRs descobertas" em recon.md).
+  card_selector: "a[href*='/oferta/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?pageNumber={page}&pageSize=30"
+
+listing_closed:
+  # Mesmo schema, com searchType=closed. Diferente de leilao_pro/SOLEON,
+  # o provider expõe encerrados publicamente — 5.389 closed offers em
+  # NP, 123 em Eckert (categoria imóveis), com paginação completa.
+  url_pattern: "https://www.eckertleiloes.com.br/?searchType=closed&pageNumber=1&pageSize=30&orderBy=endDate:desc&filter=product.productType.id:13"
+  card_selector: "a[href*='/oferta/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?pageNumber={page}&pageSize=30"
+
+detail:
+  # Rota SEO `/oferta/{slug-com-shortDesc}-{offerId}`. O slug não é
+  # estável (depende de produto.shortDesc no momento da publicação);
+  # `offerId` é o anchor canônico — extrair via regex /-(\d+)$/.
+  url_pattern: "https://www.eckertleiloes.com.br/oferta/{slug}-{offer_id}"
+  field_selectors:
+    # CSS abaixo é defensivo: documenta como achar o campo no HTML
+    # server-rendered (SPA hidrata os mesmos blocos com classes
+    # MUI auto-geradas — `jss*`/`css-*` mudam a cada build). Em
+    # produção, o spider deve consumir DIRETAMENTE a API
+    # offer-query.superbid.net/seo/offers/?filter=id:{offerId} e
+    # ler campos JSON (ver "Decisões e limitações" em recon.md).
+    title:
+      # h1 do detalhe ou meta og:title
+      selector: 'meta[name="og:title"]'
+      kind: css
+    price_minimum:
+      # Texto "Lance Inicial: R$ X" ou "Lance atual: R$ X" no DOM.
+      # JSON: offer.offerDetail.initialBidValue (BRL).
+      selector: "p.MuiTypography-root:has-text('Lance')"
+      kind: css
+    price_market:
+      # Provider NÃO expõe avaliação/market_value separado. O campo
+      # offer.offerDetail.reservedPrice é o preço-mínimo-de-reserva,
+      # não a avaliação técnica do bem. Documentado como limitação.
+      # null = ausente, lint admite.
+      selector: "[data-field='market-value-not-exposed']"
+      kind: css
+    address_block:
+      # Endereço estruturado vem em product.location (city, state, lat/lon).
+      # Endereço completo (rua, número) só está no detailedDescription
+      # como texto livre — parsear regex em Fase 2. No DOM:
+      selector: "div#descricao p, p.MuiTypography-body1"
+      kind: css
+    images:
+      # Galeria server-rendered + JSON product.galleryJson[].link.
+      # Filtrar por host ms.sbwebservices.net/photos/ (foto do bem)
+      # vs static.s4bdigital.net/logos_empresas/ (logo do leiloeiro).
+      selector: "img[src*='ms.sbwebservices.net/photos/']"
+      kind: css
+    documents:
+      # Provider NÃO publica edital/matrícula como anchor PDF separado
+      # no detail page. Matrícula aparece como texto na descrição
+      # (ex.: "MATRÍCULA N° 24.338"); edital, quando existe, está no
+      # nível do EVENTO (auction), via /event/{auctionId}/edital ou
+      # equivalente — sondado em probes mas retorna 401 (auth-only).
+      selector: "a[href$='.pdf']"
+      kind: css
+    bids:
+      # Container reservado #boxclassificacaolances — SEMPRE vazio
+      # para usuários anônimos. Bid history é AUTH-ONLY:
+      #   GET api.s4bdigital.net/auction-event/offer/{offerId}/bids → 401
+      # Provider expõe apenas o agregado público:
+      #   offer.totalBids (int), offer.totalBidders (int),
+      #   offer.hasBids (bool), offer.winnerBid.currentWinnerLogin
+      #   (string já ofuscada server-side, e.g. "m*****la").
+      # bids[] no PilotItem é necessariamente vazio em Fase 1.
+      selector: "div#boxclassificacaolances"
+      kind: css
+      notes: "Container existe mas é vazio para anônimos. Bid history requer auth (api.s4bdigital.net 401)."

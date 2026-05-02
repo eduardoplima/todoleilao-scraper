@@ -1,0 +1,70 @@
+{
+  "provider": "bomvalor",
+  "representative": {
+    "slug": "",
+    "nome": "Adriana Pires Amancio",
+    "final_url": "https://www.apabrfleiloes.com.br/proximos_leiloes/1/1/",
+    "site_analysis_row": {
+      "id": "334",
+      "slug": "",
+      "nome": "Adriana Pires Amancio",
+      "uf": "MG",
+      "cidade": "",
+      "dominio": "https://www.apaleiloes.com.br/",
+      "confidence": "high",
+      "real_estate_score": "23.4",
+      "http_status": "200",
+      "final_url": "https://www.apabrfleiloes.com.br/proximos_leiloes/1/1/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap",
+      "tech_signals": "jquery | bootstrap | server:cloudflare",
+      "static_link_count": "75",
+      "dynamic_link_count": "89",
+      "static_useful_links": "27",
+      "dynamic_useful_links": "34",
+      "rendering": "hybrid",
+      "requires_js_for_listings": "False",
+      "html_title": "APA &amp; BRF Leilões | Leilões judiciais e extrajudiciais",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/a01982581e84186673e2a2bf88f7d4a426de7c15.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "FERNANDO GONÇALVES COSTA",
+      "final_url": "https://multleiloes.com/",
+      "useful_links": 42,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "EDER JORDAN DE SOUZA",
+      "final_url": "https://oreidosleiloes.com.br/",
+      "useful_links": 38,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Francisco David Batista de Souza",
+      "final_url": "https://franciscodavidleiloeiro.com.br/",
+      "useful_links": 34,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Dênis de Oliveira Fernandes",
+      "final_url": "https://leiloeirodenis.com.br/",
+      "useful_links": 34,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "SEBASTIÍO FELIX DA COSTA NETO",
+      "final_url": "https://costanetoleiloeiro.com.br/",
+      "useful_links": 34,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 10
+}

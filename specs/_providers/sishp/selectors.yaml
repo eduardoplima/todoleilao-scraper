@@ -1,0 +1,106 @@
+# Contrato declarativo do recon piloto — provider SISHP.
+# Plataforma PHP server-side render usada por SFrazão Leiloeiros Oficiais e
+# outros leiloeiros (lancenoleilao.com.br, lancetotal.com.br) — assinatura
+# canônica é o prefixo /sishp/ nos paths estáticos (fotos, anexos, logos).
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+
+auctioneer_slug: "sfrazao-leiloeiros-oficiais"
+platform_hint: "sishp"
+
+listing_active:
+  url_pattern: "https://www.sfrazao.com.br/"
+  # Cards são <div class="card card-1"> com onClick="goTo('leilao.php?idLeilao=N')"
+  # Não há <a href> direto — o anchor está no atributo onClick.
+  card_selector: "div.card.card-1[onclick*='leilao.php?idLeilao=']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+# Encerrados aparecem na MESMA home, interleaved com ativos. O sinal
+# diferenciador é o <span>Encerrado</span> dentro do .card-footer do card.
+# Sem rota dedicada `/encerrados.php` (testada — 404). Único filtro
+# server-side disponível é a busca em pesquisa.php sobre BENS ATIVOS
+# (não cobre encerrados).
+listing_closed:
+  url_pattern: "https://www.sfrazao.com.br/"
+  # mesmo card, distinguindo pelo descendant text 'Encerrado'
+  card_selector: "//div[contains(@class,'card-1')][.//span[normalize-space(.)='Encerrado']]"
+  card_kind: xpath
+  pagination:
+    kind: none
+    template: null
+
+detail:
+  # leilao.php?idLeilao=N é a "página de leilão" (lista os lotes do leilão)
+  # lote.php?idLote=N é o detalhe do lote individual.
+  url_pattern: "https://www.sfrazao.com.br/lote.php?idLote={lot_id}"
+  field_selectors:
+    title:
+      selector: "h1::text"
+      kind: css
+    price_minimum:
+      # 'Lance Mínimo:' label, sibling span tem 'R$ N.NNN,NN'
+      selector: "//span[normalize-space(.)='Lance Mínimo:']/ancestor::div[@class='row'][1]/div[2]/span/text()"
+      kind: xpath
+    price_market:
+      # 'Avaliação:' label
+      selector: "//span[normalize-space(.)='Avaliação:']/ancestor::div[@class='row'][1]/div[2]/span/text()"
+      kind: xpath
+    address_block:
+      # 'Localização do bem' tem anchor para Google Maps com endereço no texto
+      selector: "//span[contains(@class,'form-title') and normalize-space(.)='Localização do bem']/following-sibling::div[1]//a[contains(@href,'maps')]/text()"
+      kind: xpath
+    images:
+      # Carrossel: <div class="carousel-item"> > <a> > <img src="sishp/leilao/{leilao_id}/fotos/{lote_id}_NN.{ext}">
+      selector: "div#carrosselSite img.snapshot-shadow::attr(src)"
+      kind: css
+    documents:
+      # Edital (leilão-level) e anexos (lote-level) NÃO estão inline na
+      # página do lote — vêm de iframes carregados sob demanda. O spider
+      # precisa fazer 2 requests adicionais:
+      #   GET /leilaoAnexos.php?idLeilao={N}&action=0
+      #   GET /loteAnexos.php?idLote={N}
+      # e parsear os <a onClick="anexoCarregar('./sishp/.../{id}.pdf')"> em ambos.
+      # Selector abaixo cobre os dois iframes (anchors com handler anexoCarregar).
+      selector: "a[onclick*='anexoCarregar']"
+      kind: css
+
+    # --- selectors auxiliares (informativos; não exigidos pelo lint) ---
+    lot_number:
+      selector: "ol.breadcrumb li.breadcrumb-item.active a::text"
+      kind: css
+    description:
+      selector: "//span[contains(@class,'form-title') and normalize-space(.)='Descrição do lote']/following-sibling::div[1]//div[contains(@class,'card-body')]"
+      kind: xpath
+    encerramento_date:
+      selector: "//span[normalize-space(.)='Encerramento:']/ancestor::div[@class='row'][1]/div[2]/span/text()"
+      kind: xpath
+    abertura_encerramento_block:
+      # 'Data:\nAbertura: 07/Mar/2024, 10h00\nEncerramento: 21/Mar/2024, 11h00'
+      selector: "//strong[normalize-space(.)='Data:']/parent::span"
+      kind: xpath
+    incremento_minimo:
+      selector: "//span[normalize-space(.)='Incremento mínimo:']/ancestor::div[@class='row'][1]/div[2]/span/text()"
+      kind: xpath
+    n_lances:
+      selector: "//span[normalize-space(.)='Nº de lances:']/ancestor::div[@class='row'][1]/div[2]/span/text()"
+      kind: xpath
+    status_badge:
+      # Badge 'Vendido' (back-1), 'Sem licitantes' (back-11), 'Encerrado' etc.
+      # Localizado em row.back-3 do bloco de header de lote.
+      selector: "div.row.back-3 div.p-2.rounded"
+      kind: css
+    bids:
+      # tabela de lances inline, dentro do card 'Encerramento, valores e lances'
+      # cada lance é um <div class="row small"> dentro do col-lg-7 (border-left).
+      # Cada bid-row tem 4 colunas em ordem fixa:
+      #   col-3 pr-0   -> bidder_raw  (sempre 'id NNNN' anonimizado pelo provider)
+      #   col-3 px-0   -> 'VALOR R$<br>Tipo de pagamento' (split em <br>)
+      #   col-3 px-0   -> 'DD/MM/YYYY às HH:MM:SS'
+      #   col-3 pl-0   -> Origem ('Internet' | 'Programado' | 'Auditório')
+      # Timestamp em America/Sao_Paulo (BRT, -03:00 fixo).
+      # position()>1 pula header (a 1ª row é header USUÁRIO/VALOR/DATA/TIPO).
+      # 'Nenhum lance para o lote' aparece numa única row se 0 bids.
+      selector: "//div[contains(@class,'col-lg-7') and contains(@class,'border-left')]/div[contains(@class,'row') and contains(@class,'small')][position()>1]"
+      kind: xpath

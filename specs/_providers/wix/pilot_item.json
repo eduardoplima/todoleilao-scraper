@@ -1,0 +1,42 @@
+{
+  "auctioneer_slug": "_providers/wix",
+  "source_listing_url": "https://www.arquimedesleiloes.com.br/leiloesarealizar",
+  "source_lot_url": "https://www.arquimedesleiloes.com.br/leiloesarealizar",
+  "title": "Casa residencial colonial - Bairro Todos os Santos, Montes Claros/MG",
+  "description": "Casa estilo colonial, com todas as suas dependências e instalações em perfeito estado de conservação e funcionamento: 3 quartos (1 suite); 3 salas; 2 banheiros; cozinha, 2 vagas na garagem, jardim e quintal. Área construída: 164 m². Área do lote de terreno: 360 m². Localização nobre no bairro Todos os Santos (praça Wanderlei Fagundes), em leilão judicial na Comarca de Montes Claros/MG (TJMG). Primeiro leilão e segundo leilão adiados.",
+  "property_type": "casa",
+  "address": {
+    "raw_text": "Rua Santa Lúcia, nº 519, esquina com rua São Marcos, bairro Todos os Santos (praça Wanderlei Fagundes), Montes Claros/MG",
+    "street_name": "Rua Santa Lúcia",
+    "number": "519",
+    "complement": "esquina com rua São Marcos",
+    "district": "Todos os Santos",
+    "municipality_name": "Montes Claros",
+    "uf": "MG",
+    "cep": null
+  },
+  "area_sqm": "164.00",
+  "total_area_sqm": "360.00",
+  "market_value_brl": "740000.00",
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": null,
+      "minimum_bid_brl": "740000.00",
+      "status_raw": "PRIMEIRO LEILÃO: adiado"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": null,
+      "minimum_bid_brl": null,
+      "status_raw": "SEGUNDO LEILÃO: adiado"
+    }
+  ],
+  "auction_status": "suspenso",
+  "bids": [],
+  "images": [],
+  "documents": [],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T23:10:00-03:00",
+  "parser_notes": "Provider 'wix' = tech-stack detector (Wix.com Website Builder), nao plataforma de leilao. Site arquimedesleiloes.com.br e pagina estatica de marketing com texto manual descrevendo leiloes presenciais; nao expoe URLs por lote, fotos por lote, edital direto, nem historico de lances. Pilot extraido do bloco 'CASA RESIDENCIAL' em /leiloesarealizar; avaliacao R$ 740.000,00 usada como minimum_bid round 1 (1a praca = preco igual ou superior ao da avaliacao, padrao judicial brasileiro). Listing closed=null (provider nao publica encerrados com dados estruturados). Bids=[] (provider nao expoe historico). Sem PII no item."
+}

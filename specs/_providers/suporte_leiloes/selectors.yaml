@@ -1,0 +1,187 @@
+# Contrato declarativo do recon arquitetural do provider suporte_leiloes.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+#
+# Plataforma Suporte Leilões (SL) — multi-tenant. 51 sites em
+# data/intermediate/site_analysis.csv apontam para esta stack.
+# Sinais canônicos:
+#   - var SL_USER inline em <script>
+#   - CDN externa: static.suporteleiloes.com.br/{tenant_slug}/{leiloes|bens}/
+#   - bundles em /build/runtime.{hash}.js + /build/app.{hash}.js + /build/lote.{hash}.js
+#   - auditório virtual em arrematante.{tenant}.com.br
+#   - rotas /eventos/leilao/{leilao_id}/{slug}/lote (lista lots de 1 leilão; redireciona
+#     para detalhe se single-lot) e /eventos/leilao/{slug}/lote/{lot_id}/{slug}
+#   - status badges visuais (na listagem): status-1 (Em breve), status-3
+#     (Aberto para lances), status-96 (Cancelado). Nenhum status para
+#     encerrado/arrematado — ver listing_closed.
+# Tenant escolhido p/ piloto: leilao-brasil (Irani Flores / DAGMAR FLORES,
+# representativo do _input.json). 51 sites suportados pelo provider neste lote.
+
+auctioneer_slug: "leilao-brasil"
+platform_hint: "suporte_leiloes"
+
+listing_active:
+  url_pattern: "https://www.leilaobrasil.com.br/"
+  card_selector: "article[class^='evento-index-']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+  notes: |
+    Home é a listagem ativa do tenant — 248 cards na home do leilao-brasil
+    (mistura imóveis + veículos + máquinas + bens diversos). Não há
+    paginação visível: backend devolve todos os leilões com data futura
+    em uma única resposta. Cada card-article expõe:
+      - strong.strong-cod      → 'Lote {leilao_id}' (4 dígitos = ID do
+                                  evento) ou 'Lote {N} lotes' em
+                                  multi-lote.
+      - strong.strong-status   → status-1/3/96 (badge visual).
+      - h3                     → título do leilão/lote.
+      - span.c-localizacao     → 'UF  - Cidade'.
+      - ul.cont-datas li       → 1+ praças com Abertura/Fechamento e
+                                  small.valInit ('Valor inicial: R$ X,XX')
+                                  por praça. minimum_bid_brl da Fase 2
+                                  vem daqui.
+      - a[href^='/eventos/leilao/{leilao_id}/']
+                              → link canônico do evento (segue para o
+                                  primeiro lote em single-lot, ou para
+                                  lista de lotes em multi-lote).
+    Filtros server-side: dropdowns ?tipo=leilao|vendaDireta|judicial|
+    extrajudicial existem mas são apenas client-side.
+    ?status=encerrado/realizado/etc. é silenciosamente ignorado pelo
+    backend (resposta idêntica). Único filtro funcional: navegação por
+    UF/cidade/categoria via dropdowns no formulário de busca.
+
+# Provider NÃO expõe encerrados publicamente.
+# Justificativa em recon.md "Listing encerrada":
+#   1. /eventos/encerrados, /encerrados, /realizados → 404
+#   2. /leiloes/encerrados, /leiloes/realizados → 302 → /
+#   3. /sitemap.xml → 404 (sem sitemap público)
+#   4. ?status=encerrado e similares ignorados pelo backend
+#   5. status badges expostos: 1 (Em breve), 3 (Aberto), 96 (Cancelado).
+#      Nenhum status 'Encerrado' ou 'Arrematado' é renderizado na
+#      listagem.
+#   6. Lots passados acessíveis por id direto, mas SEM:
+#      - status badge (strong-status ausente)
+#      - Avaliação (line-04 vazio)
+#      - Valor inicial (small.valInit ausente)
+#      - Histórico de Lances ('Nenhum lance até o momento' em todos)
+#   7. Lots antigos são REGENERADOS para datas futuras (lot 138 'Casa
+#      Butantã' criado em 2018 hoje aparece com 1ª praça 04/05/2026).
+listing_closed: null
+
+detail:
+  url_pattern: "https://www.leilaobrasil.com.br/eventos/leilao/{leilao_slug}/lote/{lot_id}/{lot_slug}"
+  field_selectors:
+    title:
+      selector: "h1"
+      kind: css
+      notes: |
+        Há 2 <h1> idênticos no layout (header desktop + mobile);
+        usar o primeiro. Padrão do título: extrai o nome do imóvel
+        sem 'Lote N' — combinar com strong.strong-cod da listagem
+        para construir 'Lote {N} - {h1}'.
+    price_market:
+      # AVALIAÇÃO no painel principal do detalhe.
+      selector: "div.line-04 ul.ul-01 li:has(strong:contains('Avaliação')) p"
+      kind: css
+      notes: |
+        Padrão: 'R$ N.NNN.NNN,NN'. Em judiciais 2-praças, a Avaliação
+        aqui é a *atualizada* (corrigida); descrição às vezes traz
+        a histórica e a atualizada — usar a estruturada como
+        market_value_brl e ignorar as do texto livre.
+    price_minimum:
+      # Valor inicial NÃO existe no detalhe — só na listagem.
+      # Spider de produção precisa fazer join listing→detail por
+      # leilao_id (4-digit) na URL.
+      selector: "small.valInit"
+      kind: css
+      notes: |
+        APENAS na listagem (home/card). 'Valor inicial: R$ N.NNN.NNN,NN'.
+        Em judiciais 2-praças, há 1 small.valInit por <li> em
+        ul.cont-datas — minimum_bid_brl[round].
+    rounds_dates:
+      selector: "div.c-right ul.cont-datas li"
+      kind: css
+      notes: |
+        Cada <li> = 1 praça. line-1 strong = '1º Leilão'/'2º Leilão'
+        (ou 'Leilão' single-praça/venda direta). line-2 col-line:
+        Abertura + Fechamento ('DD/MM/YYYY HH:MM' BRT, -03:00).
+        AVISO: tenant tem typos no HTML (e.g. '29/05/0226' em lot
+        16883) — Fase 2 spider deve ter regex permissivo + ignorar
+        datas inválidas em vez de quebrar.
+    address_block:
+      # Bloco 'Localização e Proximidades' tem o endereço em texto livre
+      # com CEP no formato 'NNNNNNNN' ou 'NNNNN-NNN'.
+      selector: "h3:contains('Localização'), h2:contains('Localização')"
+      kind: css
+      notes: |
+        Endereço aparece como texto após o cabeçalho 'Localização e
+        Proximidades', formato canônico: '{rua} {número}, {bairro},
+        {cidade} - {UF}. CEP {NNNNNNNN}'. Parse com regex em Python.
+    description_block:
+      selector: "li:has(strong:contains('Descrição')) ~ *, h3:contains('Descrição') + div"
+      kind: css
+      notes: |
+        Descrição em texto livre, frequentemente com cláusulas do edital
+        embutidas (CPF, processo, executado, vínculo com matrícula).
+        PII (CPF, nome PF do executado) deve ser redigida para [CPF]
+        e [PF] — pseudonimização na extração (PLANOMESTRE §4).
+    images:
+      # CDN externa. Dois padrões coexistem (legado + novo):
+      #   /leilaobrasil/leiloes/lotes/imagens/{hash}.jpg  (legado)
+      #   /leilaobrasilcombr/bens/{bem_id}/arquivos/sl-bem-{bem_id}-{ts1}-{ts2}.{jpg|png}  (novo)
+      selector: "img[src*='static.suporteleiloes.com.br'][src*='/leiloes/'], img[src*='static.suporteleiloes.com.br'][src*='/bens/']"
+      kind: css
+      notes: |
+        Fotos do bem em static.suporteleiloes.com.br. Algumas imagens
+        são placeholders (sl-bem-...png com 'Imagem meramente
+        ilustrativa'). Extensões: .jpg|.jpeg|.png|.webp. Deduplicar
+        por URL (carousel + thumbs renderizam a mesma imagem 2-3x).
+        AVISO: tenant leilao-brasil em vários lots imobile só serve 1
+        imagem (placeholder ilustrativo) — fill rate de imagens é
+        baixo no provider; spider não deve falhar por isso.
+    documents:
+      # Edital, matrícula, avaliação. Padrão CDN:
+      #   /leilaobrasilcombr/leiloes/{leilao_id}/documentos/sl-doc-{leilao_id}-{ts1}-{ts2}.{pdf|doc|docx}
+      #   /leilaobrasilcombr/bens/{bem_id}/arquivos/sl-bem-{bem_id}-{ts1}-{ts2}.pdf
+      selector: "a[href*='static.suporteleiloes.com.br/'][href*='.pdf'], a[href*='static.suporteleiloes.com.br/'][href*='.doc'], a[href*='static.suporteleiloes.com.br/'][href*='.docx']"
+      kind: css
+      notes: |
+        Label do <a> identifica kind:
+          - 'EDITAL' / 'Edital de Leilão' → kind=edital
+          - 'MATRÍCULA*' → kind=matricula
+          - 'AVALIAÇÃO' / 'LAUDO*' → kind=laudo
+          - 'CERTIDÃO*' / 'ÔNUS' / 'IPTU' / 'CONDOMINIAL' → kind=certidao
+          - outros → kind=outro
+        AVISO: 'Ver Edital' do header e 'Edital de Leilão'/'EDITAL' do
+        bloco Documentos podem apontar para o MESMO arquivo (versão
+        .doc legacy + .pdf novo) — deduplicar por hash de URL.
+    bids:
+      # NÃO EXPOSTO. Histórico de Lances do detalhe sempre mostra
+      # 'Nenhum lance até o momento' em todos os lots probed.
+      # Boilerplate de 3 propostas R$ 1,00 do TiagoFelipe em
+      # 14/04/2025 18:43:11 aparece em TODOS os lots — dados de
+      # teste do site, descartar.
+      selector: null
+      kind: null
+      notes: |
+        Provider não expõe histórico de lances publicamente. Tabela
+        'Histórico de Propostas' contém apenas dados de teste
+        (TiagoFelipe R$ 1,00 ×3) reutilizados em todos os lots.
+        Lances reais ficam atrás de login (auditório virtual em
+        arrematante.{tenant}.com.br/#/auditorio/{leilao_id}).
+        Em Fase 3, monitor SSE/WebSocket no auditório para captura
+        em tempo real, com auth — fora do escopo do recon.
+    status_badge:
+      # APENAS na listagem (card-article); detail page não renderiza
+      # strong-status.
+      selector: "strong.strong-status"
+      kind: css
+      notes: |
+        Classes:
+          - status-1  → Em breve     (auction_status=ativo, futuro)
+          - status-3  → Aberto       (auction_status=ativo, em curso)
+          - status-96 → Cancelado    (auction_status=cancelado)
+        Nenhum status para encerrado/arrematado/sustado emitido pelo
+        provider publicamente. Em produção: lots que somem do índice
+        sem badge → auction_status=desconhecido.

@@ -1,0 +1,73 @@
+{
+  "auctioneer_slug": "leiloesjudiciaismg",
+  "source_listing_url": "https://www.leiloesjudiciaismg.com.br/imoveis",
+  "source_lot_url": "https://www.leiloesjudiciaismg.com.br/lote/29525/95911",
+
+  "title": "LOTE 1 - Fazenda São Bento c/ 16.040 hectares - Alto Parnaíba/MA",
+  "description": "Fazenda São Bento c/ 16.040 hectares, localizada no Km 90 da Vicinal via Povoado Figuras (Código Incra 114014.009717-9), 100% documentada, a propriedade reúne excelentes condições para agricultura e pecuária. Conta com 400 hectares já formados em pasto, outros 200 hectares em reforma e licença ambiental de 2019 garantindo que toda a área esteja aberta. A topografia é levemente ondulada, com solos de argila variando entre 8% e 30%, favorecendo diferentes culturas. A fazenda dispõe ainda de dois rios com grande volume de água, ideais para irrigação. ALTO PARNAÍBA/MA. AVALIAÇÃO: R$ 160.000.000,00. Possibilidade de agricultura para 7500 hectares e pecuária para 1650 hectares. O imóvel possui pista para pouso. Leiloeiro oficial: Conceição Maria Fixer. Comitente: Maria Fixer Leilões.",
+  "property_type": "rural",
+
+  "address": {
+    "raw_text": "Fazenda São Bento, Km 90 da Vicinal via Povoado Figuras (Código INCRA 114014.009717-9), Alto Parnaíba/MA",
+    "street_name": null,
+    "number": null,
+    "complement": "Km 90 da Vicinal via Povoado Figuras (Código INCRA 114014.009717-9)",
+    "district": null,
+    "municipality_name": "Alto Parnaíba",
+    "uf": "MA",
+    "cep": null
+  },
+
+  "area_sqm": null,
+  "total_area_sqm": "160400000.00",
+  "market_value_brl": "160000000.00",
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-12-18T14:00:00-03:00",
+      "minimum_bid_brl": "160000000.00",
+      "status_raw": "Aberto para Lance — Encerramento 18/12/2026 14:00 (Extrajudicial Online, single-round / venda particular)"
+    }
+  ],
+
+  "auction_status": "ativo",
+
+  "bids": [],
+
+  "images": [
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832012_A.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832020_B.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832027_C.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832040_D.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832058_E.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832060_F.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832062_G.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832064_H.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_832066_I.jpg", "is_thumbnail": false },
+    { "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/fotos/imoveis/640x480/I_18864_620596_AB.jpg", "is_thumbnail": false }
+  ],
+
+  "documents": [
+    {
+      "kind": "matricula",
+      "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/anexo/1758823077.pdf",
+      "label": "MATRÍCULA"
+    },
+    {
+      "kind": "outro",
+      "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/anexo/1758822956.pdf",
+      "label": "Gráfico Meteorológico (anexo 268786)"
+    },
+    {
+      "kind": "outro",
+      "url": "https://s3-sa-east-1.amazonaws.com/906de634c48fb7d34136160b4c353ae4/public/anexo/1758823012.pdf",
+      "label": "Gráfico Meteorológico (anexo 268787)"
+    }
+  ],
+
+  "encumbrances_raw": [],
+
+  "scraped_at": "2026-05-01T15:30:00-03:00",
+  "parser_notes": "Provider leiloes_judiciais_br (canonical: leiloesjudiciais.com.br + state-specific subdomains tipo leiloesjudiciaismg.com.br). Plataforma Nuxt 3 SSR — HTML estático rico, Vue/PrimeVue + S3 (AWS sa-east-1) para fotos/anexos. Bid history NÃO é exposto publicamente (lance count 'lances 0' visível, mas tabela de lances exige login). Listing encerrado também NÃO é exposto: filtros ?status=encerrado, ?fase=finalizado, /encerrados, /finalizados, /vendidos, /historico, /imoveis/encerrados — todos retornam o listing default ou 500. Scan completo das 27 páginas de /imoveis: 1057 'aberto-para-lances' + 4 'aguardando', zero finalizado/vendido/condicional. Sitemap (/sitemap.xml) inclui só lots ativos (2553 lots). Pilot escolhido: lot ATIVO Fazenda 16.040 ha em Alto Parnaíba/MA (lote_id 95911, leilão 29525), VENDA PARTICULAR EXTRAJUDICIAL single-round; vl_lanceinicial = vl_lanceminimo = avaliação = R$ 160M, lance atual R$ 0 (0 lances públicos). area_sqm/total_area_sqm: usei total_area_sqm = 160400000 m² (16.040 ha); area_sqm null pois fazenda rural sem área útil distinta. address.raw_text é descritivo (rural, sem CEP/logradouro). Comitente: Maria Fixer Leilões. Sem CPF/PF identificada na descrição — agentes públicos (leiloeira oficial Conceição Maria Fixer) não redigidos. Sem PII redigida."
+}

@@ -1,0 +1,76 @@
+{
+  "auctioneer_slug": "sfrazao-leiloeiros-oficiais",
+  "source_listing_url": "https://www.sfrazao.com.br/",
+  "source_lot_url": "https://www.sfrazao.com.br/lote.php?idLote=2830",
+
+  "title": "Lote 001 - TERRENO C/8.831,53M² AT, EM NAZARÉ PAULISTA /SP (CÓDIGO 193)",
+  "description": "Lote C/8.831,53m² AR, em Nazaré Paulista/SP. O perímetro do imóvel descrito acima tem início no Ponto (P-01) que confronta com a Rua Abrahão Farhat e a Gleba 9-A4 (matrícula 113.875), seguindo confrontando com a Rua Abrahão Farhat, com Azimute de 59°26'59'', numa distância de 79,53 metros até o Ponto (P-02), confrontando com Área em Permuta entre a Prefeitura Municipal de Nazaré Paulista e a Empresa Glassec Vidros de Segurança LTDA; deflete à esquerda, Azimute 329°46'47'', 111,33 m até o Ponto (P-03), confrontando com Área da Glassec Vidros (matrícula 87.093); deflete à esquerda, Azimute 239°58'55'', 78,60 m até o Ponto (P-04), confrontando com Gleba 9-A3 (matrícula 113.874); deflete à esquerda, Azimute 150°15'10'', 51,41 m até o Ponto (P-05), confrontando com Gleba 9-A4 (matrícula 113.875), 60,66 m, fechando no Ponto (P-01). Área de 8.831,53m². OBS: imóvel pertencente à Prefeitura Municipal de Nazaré Paulista. CONFORME PARECER TÉCNICO, O IMÓVEL ENCONTRA-SE EM PROCESSO DE REGULARIZAÇÃO DE ÁREA, PORTANTO, NÃO FOI APRESENTADA A CERTIDÃO DE REGISTRO DE IMÓVEL.",
+  "property_type": "terreno",
+
+  "address": {
+    "raw_text": "Rua Abrahão Farhat - Mascate - Nazaré Paulista/SP",
+    "street_name": "Rua Abrahão Farhat",
+    "number": null,
+    "complement": null,
+    "district": "Mascate",
+    "municipality_name": "Nazaré Paulista",
+    "uf": "SP",
+    "cep": null
+  },
+
+  "area_sqm": null,
+  "total_area_sqm": "8831.53",
+  "market_value_brl": "2000000.00",
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2024-03-21T11:00:00-03:00",
+      "minimum_bid_brl": "1586474.10",
+      "status_raw": "Vendido. Encerramento 21/03/2024 a partir das 11:00:00; Abertura 07/Mar/2024 10h00. Maior Lance R$ 1.586.474,10 — usuário id 9240, Internet, à vista, em 12/03/2024 14:54:49. Avaliação R$ 2.000.000,00."
+    }
+  ],
+
+  "auction_status": "arrematado",
+
+  "bids": [
+    {
+      "timestamp": "2024-03-12T14:54:49-03:00",
+      "value_brl": "1586474.10",
+      "bidder_raw": "id 9240"
+    }
+  ],
+
+  "images": [
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_01.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_02.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_03.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_04.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_05.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_06.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_07.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_08.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_09.jpg", "is_thumbnail": false },
+    { "url": "https://www.sfrazao.com.br/sishp/leilao/193/fotos/2830_10.jpg", "is_thumbnail": false }
+  ],
+
+  "documents": [
+    {
+      "kind": "edital",
+      "url": "https://www.sfrazao.com.br/sishp/arquivoAnexo/561.pdf",
+      "label": "Edital do leilão ID 193"
+    },
+    {
+      "kind": "outro",
+      "url": "https://www.sfrazao.com.br/sishp/leilao/193/anexos/560.pdf",
+      "label": "Anexo do lote 001"
+    }
+  ],
+
+  "encumbrances_raw": [
+    "IMÓVEL EM PROCESSO DE REGULARIZAÇÃO DE ÁREA — NÃO APRESENTADA CERTIDÃO DE REGISTRO DE IMÓVEL"
+  ],
+
+  "scraped_at": "2026-05-01T18:15:00-03:00",
+  "parser_notes": "Plataforma SISHP (URLs /sishp/{leilao,arquivoAnexo,arquivoLogomarca}/...). Site sfrazao.com.br (Antônio Carlos Celso Santos Frazão / Victor Alberto Severino Frazão, MT/SP). Rendering server-side (PHP), classificação 'static' do CSV correta apesar de 'jQuery; Bootstrap'. Listing: home agrupa cards de LEILÕES (não lotes) com onClick=goTo('leilao.php?idLeilao=N'); badge 'Encerrado' aparece no card-footer dos encerrados, espaço vazio nos ativos (heurística active vs closed). Detalhe: lote.php?idLote=N — bloco 'Encerramento, valores e lances' traz Avaliação, Lance Mínimo, Encerramento, Nº de lances + tabela inline de lances. Bidder mostrado como 'id NNNN' (pseudonimização nativa do provider — nada a redigir). Pilot escolhido: leilao 193 (Terreno em Nazaré Paulista/SP, 8.831,53m², avaliado R$ 2M, vendido por R$ 1.586.474,10 ao usuário 'id 9240' em 12/03/2024 14:54:49 — single-bid arrematação à vista). Status badge 'Vendido' (back-1 class) -> auction_status=arrematado. property_type=terreno (extraído do título 'TERRENO C/...'). Sem PII para redigir (nem CPF nem nome PF na descrição; CPF do leiloeiro 048.979.008-91 estava nas Observações de outro lote, não neste). Não baixei nenhum binário (regra dura). Single-round Lei 21.981/1932; sem 1ª/2ª praça anunciadas no card."
+}

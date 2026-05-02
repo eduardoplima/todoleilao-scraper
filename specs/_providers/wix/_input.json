@@ -1,0 +1,49 @@
+{
+  "provider": "wix",
+  "representative": {
+    "slug": "",
+    "nome": "José Arquimedes Câmara",
+    "final_url": "https://www.arquimedesleiloes.com.br/",
+    "site_analysis_row": {
+      "id": "381",
+      "slug": "",
+      "nome": "José Arquimedes Câmara",
+      "uf": "MG",
+      "cidade": "",
+      "dominio": "https://www.arquimedesleiloes.com.br",
+      "confidence": "medium",
+      "real_estate_score": "2.3",
+      "http_status": "200",
+      "final_url": "https://www.arquimedesleiloes.com.br/",
+      "error": "",
+      "tech_stack": "Wix; React; Bootstrap",
+      "tech_signals": "generator=Wix.com Website Builder | generator=Wix.com Website Builder | data-reactroot/react-dom | bootstrap | pw=pw_networkidle_timeout",
+      "static_link_count": "24",
+      "dynamic_link_count": "24",
+      "static_useful_links": "17",
+      "dynamic_useful_links": "17",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "arquimedesleilões",
+      "html_meta_generator": "Wix.com Website Builder",
+      "screenshot_path": "data/intermediate/cache/sites/0f103b2383e66edb91e0106aec4d913527195ea6.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Tânia Maria de Abreu",
+      "final_url": "https://leiloestaniaabreu.wixsite.com/leiloes/home",
+      "useful_links": 16,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Tatiane Dos Santos Duarte",
+      "final_url": "https://www.dloficiais.com.br/",
+      "useful_links": 6,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 3
+}

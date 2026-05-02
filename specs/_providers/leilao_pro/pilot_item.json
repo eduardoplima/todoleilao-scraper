@@ -1,0 +1,68 @@
+{
+  "auctioneer_slug": "renovar-leiloes",
+  "source_listing_url": "https://www.renovarleiloes.com.br/leilao/lotes/imoveis",
+  "source_lot_url": "https://www.renovarleiloes.com.br/leilao/leilao-de-imoveis-10-04-2026-17-52-12/lote_id/9110",
+
+  "title": "LOTE 002 - TERRENO C/ 620,17 M² - TAPERA / RS",
+  "description": "TERRENO COM 620,17 M² SEM BENFEITORIA, LOCALIZADO NA RUA 120, LOTE 22, QUADRA 48, ZONA E, NO LOTEAMENTO CRISTAL, NO MUNICÍPIO E CRI DE TAPERA - RS. Google Maps: https://maps.app.goo.gl/wStfDMrbMkhw17rS9",
+  "property_type": "terreno",
+
+  "address": {
+    "raw_text": "RUA 120, LOTE 22, QUADRA 48, ZONA E, LOTEAMENTO CRISTAL, TAPERA/RS",
+    "street_name": "RUA 120",
+    "number": "LOTE 22 QUADRA 48",
+    "complement": null,
+    "district": "LOTEAMENTO CRISTAL",
+    "municipality_name": "TAPERA",
+    "uf": "RS",
+    "cep": null
+  },
+
+  "area_sqm": null,
+  "total_area_sqm": "620.17",
+  "market_value_brl": "40000.00",
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-05-12T08:00:00-03:00",
+      "minimum_bid_brl": "40000.00",
+      "status_raw": "Data do Leilão TER 12/05/2026 08h00min — modalidade ONLINE; lance atual R$ 41.000,00 (acima da avaliação)"
+    }
+  ],
+
+  "auction_status": "ativo",
+
+  "bids": [
+    {
+      "timestamp": "2026-04-20T19:17:29-03:00",
+      "value_brl": "41000.00",
+      "bidder_raw": "mmagni"
+    }
+  ],
+
+  "images": [
+    { "url": "https://www.renovarleiloes.com.br/uploads/media/default/0001/67/0704414c89034962ed07de1fadaebbc70a53fae6.jpg", "is_thumbnail": false },
+    { "url": "https://www.renovarleiloes.com.br/uploads/media/default/0001/67/0c60eb1f4a2c02466ac0333343652e196826de19.jpg", "is_thumbnail": false },
+    { "url": "https://www.renovarleiloes.com.br/uploads/media/default/0001/67/6d5529347adcb248a18d269ffa522008d4a81c56.jpg", "is_thumbnail": false },
+    { "url": "https://www.renovarleiloes.com.br/uploads/media/default/0001/67/64ce15af32d9b34a44521a3eff7b05540ecf3a09.jpg", "is_thumbnail": false }
+  ],
+
+  "documents": [
+    {
+      "kind": "edital",
+      "url": "https://www.renovarleiloes.com.br/uploads/media/documentos_leilao/0001/67/92ae9c58467e5b0bfdbe7bb4507266720b9be559.pdf",
+      "label": "Edital de Leilão"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://www.renovarleiloes.com.br/uploads/media/documentos_bem/0001/59/30078f05b5a08711ac2ede6d72d55e9f6d832141.pdf",
+      "label": "Documento do bem (matrícula 9481)"
+    }
+  ],
+
+  "encumbrances_raw": [],
+
+  "scraped_at": "2026-05-01T12:00:00-03:00",
+  "parser_notes": "Plataforma leilao_pro (Leilão Pro / leilao.pro). Provider NÃO expõe leilões encerrados publicamente — lots desaparecem do listing após o término. Pilot escolhido em lot ATIVO com 1 lance antecipado público (mmagni R$ 41.000,00 em 20/04/2026 19:17:29). Rendering estático (server-side); lances renderizados inline em <div class='lance-item'>; updates em tempo real via Mercure SSE (Symfony). Single-round (Lei 9.514). market_value_brl = AVALIAÇÃO (R$ 40.000); minimum_bid_brl = lance inicial original (= avaliação); current Lance Atual está em R$ 41.000 após bid. Sem CPF/PF na descrição."
+}

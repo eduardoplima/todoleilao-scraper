@@ -1,0 +1,88 @@
+# Contrato declarativo do recon piloto.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+# Plataforma proprietária Mega Leilões (megaleiloes.com.br). Sinais:
+#   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=yyQpGp9A3x"
+#   <meta property="og:site_name" content="Mega Leilões">
+#   "Desenvolvido por Othis desde 2011" (comentário HTML topo)
+#   pjax (data-pjax-container, data-pjax-timeout) — Yii2 framework
+#   CDN: cdn1.megaleiloes.com.br/{batches|auctions|bank_icons}
+# Tenant: monolito centralizado (não multi-tenant). 1 leiloeiro
+# (FERNANDO JOSÉ CERELLO GONÇALVES PEREIRA) + leiloeira filial MS
+# (Milena Rosa Di Giacomo Adri em /ms) operam sob o mesmo dominio.
+
+auctioneer_slug: "mega-leiloes"
+platform_hint: "mega_leiloes"
+
+# Listing ATIVA — categoria imóveis (server-side render, paginado).
+listing_active:
+  url_pattern: "https://www.megaleiloes.com.br/imoveis"
+  card_selector: "div.card.open"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?pagina={page}"
+
+# Listing ENCERRADA — provider EXPÕE encerrados via /leiloes-realizados.
+# Estrutura: /leiloes-realizados retorna lista de LEILÕES (ML{id} cards
+# com class='card card-auction finalized'); cada ML expande para lista
+# de lotes em /leiloes-realizados/ML{id}?pagina=N (mesmo template de
+# /imoveis, com URLs de detail prefixadas por /leiloes-realizados/).
+# Para o piloto usei a página interna do leilão (ML33575) como
+# "listing_closed" — é o nível onde aparecem cards de lotes
+# imobiliários encerrados com bid count.
+listing_closed:
+  url_pattern: "https://www.megaleiloes.com.br/leiloes-realizados/ML{auction_id}"
+  card_selector: "div.card.finalized"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?pagina={page}"
+
+detail:
+  url_pattern: "https://www.megaleiloes.com.br/leiloes-realizados/imoveis/{categoria}/{uf}/{municipio}/{slug}-{lot_code}"
+  field_selectors:
+    title:
+      # H1 principal do lote (após breadcrumb).
+      selector: "h1.section-header"
+      kind: css
+    price_minimum:
+      # Lance inicial = card-instance-value dentro de div.instance.passed.
+      # Também aparece na descrição como "Lance mínimo R$ X" (texto livre).
+      selector: "div.instance span.card-instance-value"
+      kind: css
+    price_market:
+      # Valor de Avaliação em div.rating-value.item — frequentemente R$ 0,00
+      # com '(Não informado)' em leilões bancários AF (Itaú/Bradesco/Santander).
+      # Quando preenchido, formato 'R$ X.XXX,XX'.
+      selector: "div.rating-value.item div.value"
+      kind: css
+    address_block:
+      # Não há campo estruturado; endereço é texto livre dentro da descrição
+      # (div#tab-description.tab-pane.active div.content). Parse via regex
+      # — primeira linha após "LOTE NN – CIDADE/UF –" frequentemente traz
+      # "Avenida X, nº Y" ou "Rua X, nº Y".
+      selector: "div#tab-description div.content"
+      kind: css
+    images:
+      # Fotos do lote em /batches/{lot_id}/{hash}_{wxh}.jpg|jpeg|png.
+      # Filtrar /bank_icons/ (logo do banco), /megaleiloes-logotipo (header).
+      # Sites residenciais bancários costumam ter apenas 1 foto.
+      selector: "img[src*='cdn1.megaleiloes.com.br/batches/'][src*='.jpg'], img[src*='cdn1.megaleiloes.com.br/batches/'][src*='.jpeg'], img[src*='cdn1.megaleiloes.com.br/batches/'][src*='.png']"
+      kind: css
+    documents:
+      # Editais em /auctions/{ML_id}/...edital...pdf;
+      # matrículas em /batches/{lot_id}/...matricula...pdf;
+      # laudos em /batches/{lot_id}/...laudo...pdf (quando publicados).
+      selector: "a[href*='cdn1.megaleiloes.com.br/'][href$='.pdf']"
+      kind: css
+    bids:
+      # Histórico de lances em <div id='tab-bids'> > <table.table-condensed>.
+      # 1 PilotBid por <tr data-key='{bid_id}'>: 7 colunas (Usuário, Placa,
+      # Automático, Criado em, Valor do Lance, Comissão, Valor Total).
+      # Bidder names já vem MASCARADO pelo provider ('juc*/*/*/*/*' — 3
+      # chars + máscara fixa). Datas em DD/MM/YYYY às HH:MM (BRT, -03:00).
+      # Paginação: 5 lances/pg, ?pagina-lances=N (querystring distinta de
+      # ?pagina=N usado para listing). Total de lances exibido em
+      # div.bids-count > div.value.
+      selector: "div#tab-bids table.table-condensed tbody tr"
+      kind: css

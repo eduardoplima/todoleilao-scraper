@@ -1,0 +1,231 @@
+{
+  "auctioneer_slug": "guilherme-eduardo-stutz-toporoski",
+  "source_listing_url": "https://topoleiloes.com.br/encerrados",
+  "source_lot_url": "https://topoleiloes.com.br/lote/33128/apartamento-com-vaga-ed-independencia-av-dom-pedro-i-219-cambuci-sao-paulosp",
+  "title": "Apartamento com vaga - Ed. Independência - Av. Dom Pedro I, 219 - Cambuci - São Paulo/SP",
+  "description": "LOTE: Apartamento n. 112 no 1º andar do Edifício Independência, à Av. D. Pedro I n. 219, no Cambuci, 12º Subdistrito, tendo a área útil de uso exclusivo de 53,13 m², mais 29,94 m², de área comum, totalizando 83,07 m², de área construída, cabendo-lhe a quota de 0,55385% no terreno. O terreno onde se acha construído o Edifício encerra a área de 3.127,00 m². Contribuinte n. 035.099.0078-2. Matrícula n. 11.653 do 6º Cartório de Registro de Imóveis de São Paulo/SP. OBSERVAÇÃO: O condomínio possui vagas de estacionamento distribuídas entre o térreo e o subsolo, sendo 01 vaga para cada apartamento, inclusive para o imóvel avaliado, conforme avaliação de fls. 934/976. LOCALIZAÇÃO: Avenida Dom Pedro I, n. 219, apartamento 112, bairro Cambuci, São Paulo/SP, 01552-001. AVALIAÇÃO: R$320.000,00, em agosto/2018 (fls. 934/976). AVALIAÇÃO ATUALIZADA: R$470.700,91, em fevereiro/2026.",
+  "property_type": "apartamento",
+  "address": {
+    "raw_text": "Avenida Dom Pedro I, n. 219, apartamento 112, bairro Cambuci, São Paulo/SP, 01552-001.",
+    "street_name": "Av. Dom Pedro I",
+    "number": "219",
+    "complement": "Apartamento 112",
+    "district": "Cambuci",
+    "municipality_name": "São Paulo",
+    "uf": "SP",
+    "cep": "01552-001"
+  },
+  "area_sqm": "53.13",
+  "total_area_sqm": "83.07",
+  "market_value_brl": "470700.91",
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-04-10T10:00:00-03:00",
+      "minimum_bid_brl": "470700.91",
+      "status_raw": "1ª praça encerrada"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": "2026-04-30T10:00:00-03:00",
+      "minimum_bid_brl": "282420.55",
+      "status_raw": "Arrematado por THE BIG — R$ 318.420,55 (Total de lances: 17)"
+    }
+  ],
+  "auction_status": "arrematado",
+  "bids": [],
+  "images": [
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_miv5NzQsAHPK2pBOjeQei9GzNs2qdQEnEGkB4ML0OurkvwvVUgHcBL4Vh98X.png",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_K7emRCQZt51DTR4doaL8bad1Lueo4Drf8Z1cx0idznBzcU5fYpzmC7UqaN0r.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_9f4PC1ML7e2dUASh0fPLd4iym3HSitcnwLdXueXKEuzjKINJleNH3950otPi.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_fxtTTWcic8hGNxCkiKp19wVHyW2cV57sKLOvuRU1ScQn4uqfD6m79OSSwHpB.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_vNg2BdRH1KMxxwrHHWuRzPOM0JWqIpuMCxNDWcS3iiln37eLz2XZgaTFPcmH.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_8j0JDQlPBpreBLcc1oJEDggk3h6IvsaUPtdot9y2bxcPu80W2mZMk1lpsrAK.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_Ik24yGnaC51q2Tti1q46WMrpFHBJlfY5bGASG49XUVwCWmXrkmEMGxxMTFVJ.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_36fbgkf3KjTk13tO2y3j7lpq2h6NgL6AFBlcrwZHUlKpAZdJ8opK5AY7wbLD.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_kN5TAKelyHgHc1pWFXCfAo4sG9A0jYA7Rg5BjOzQLY6yjoAvhVwgzxVuttf4.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_wCcHjTw42nYsyDi5ydGHbLhbo6RrKp3OMYmMoUAtOJz8sdnusNOXiUgtx88t.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_bI1ZrBgsn8v2Z6hSBwtPNIzm5XIhUHbIH6MJkLQV9p3fKTPEdOoRmGKCkzV2.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_D3UufTAMEGAjWdfS7fxMAJ5B6WgyuamnrbTuSjo0uxg6XiHLlmAlDzm9ZHon.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_Z0JMM1n1kZLd4cBrnWG8GgVTjkYb18OoISzXtKxJqe2N21Gpo0pyXrLj6374.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_DHlkslHbj0kaa2DI39zGyBXS7ij7MBDWAJ4YjErI94ZIkDh0WJEbegTWAxcj.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_NISNfbrbdEUE4y4LL7HsmVLTizzGYlXL2EBDk8jVHXATY6j725wUwXuVWQWU.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_RAdoYr2bVKq2axrVCjkelgHkridrJpmgFgka47PQRiIAQVsxoy2BB1dzbtPq.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_LxE3hxiXUUfG3gNAM5pEYG38EU8MoaL11CmvRQtwLattnXv8ClbQv2FQ2jAA.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_zHhmtZyDu2byzS0yxpTeC4SLQVD6NAQhLte6K2sgk8ppaojV7Ofa9gzy6Fr1.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_yiXb0a1j3ovPNAjWVDTMqfAH30pD4vsxEcgSVocd6geMicF0LwXPIk1Ymb1N.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_2SZBu9dFLKhFtHjcLBkkt9CXcD1z2I7gT7YAXioIZUyEkolv5qWnN0uzpuOO.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_eVDfQwMBnfaEXAi7jBwRZaH89vCNQH6pvJ0tzPGzYyLpZDrKO7LONQEDZqZ0.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_oPxFdg2Q4BiduxfGxUDgLbzAmSS3anJu8EH8P1KCiLDDhkQ0OhudIrNQQgAU.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_bPUs5lHeEyOe48ggusCDzXFBD3UabQzuaDfYo7phbwlLyLZO61kkUt0pSQRo.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_M1EZk7ijGAkKJrwUf6E3OcUtevKDq8XuwNskQiTDCXixHgQrBJhU8c58uELP.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_NsyLiBHYVjThr59ljGr0c6Bupsx8g43mnlHIqIrdMuVBTwGHAKjECgadADXC.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_OrCL7UkWgeJ95om4G2WP4PgWgLdafyODePOEm5SSKUksWNCJ1uq9mmLufpok.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_utIsL2mLARzNpvhKSWQl8MDEtK6QgQP5sKhSluX1sQ4ZMMjXkf3WvYxPU0Ow.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_CLpK3XHsECW3XmRGHWpMo8q4jTG6uKBhnR0xEHZDYiYpgkr2t225FscXk3jT.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_7PMU69826Z7J9cbMUlTOpLNRGWELLLGaYgQonWbGmtO2wC76chI7HWXbV5C1.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_eXwjVrAI8dziJr5fD7nLmNtxdZfiWngqRlIlD3AJOeNjKzbGc5DJlGrJmE2v.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_xuugHliAIq7uWVv4WCfNrY6oC4ytDdtSnhG16zqXGLBaIFlCYiAI4MUzBWLY.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_7ba1QhfyusgCWr6S7szCiFpr8HaWQCUzKpRO2npPhNwkoRHlREx7hMZrD2F7.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_cXB4dkSAGJ6lTF6ACmp0CMGZ5yZQasOzKwaNu6xiVJ3QVoZofUlEA7WePndG.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_ADDnRiDxrh60ChozmHZplGWl37hNDczW2TbvyJYHVJqUYF5sY3kPHiiYW5Tx.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_NNtMBxYntiIiaH3MKTNN9YN2x7RkRvuwq1vFq2nVblYs02cCHrgoXLpac2OJ.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_ycDlFWaqRl4rHDR8egz4H5bAHklUjH3hQNNKmpwFwJ8k6nPxjpSTfGQeb9Qn.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_Z7GHhOUE2R1cyzOL1dJhpaq9eTNvNMzrY3SNQoAbi66QVhZChwdUqAmAkWFf.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_zjxRBDmt7dWS2vsYCRO3na23dAAvVqJhe1toixoIHKmg9wdwr5AVGkaGgPmm.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_Dl87B6S3AiAsGw02326SietTdQzbVb6C7JjU8pCypwhQ3XtoINNa8U6j7iya.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_4WqeJ4R5VSYOiHlsYGNsEMdWWUlbv3wgtAjTl8FgRXLHWUzDTZopBM9ChehE.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_TMGc8dXM7y0YjLWngRoylNq3ikzogzLnx0ZyiuVNy4PBRpO5FtRyhpD8INSJ.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_XtsNL9c6d5RIqzNXZzmHGmXoyxJ4huI4yIDLzSkEsAW4lYoyVCPZYcKhswXm.jpeg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/lote/33128/fotos/fotos_Pk6k5kjFbFLP6PZdkoO0oNFblYwKLaSHe3d9gzemoPVyRNzpSzYK67ztxoP9.jpeg",
+      "is_thumbnail": false
+    }
+  ],
+  "documents": [
+    {
+      "kind": "laudo",
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/documentos/leilao/2872/LFaeb6aeK5jX2iY6mE2fpl7F04TtPoW3dFMOA4CAF4Q6QSCMO9c1FE0JmnGz.pdf",
+      "label": "Avaliação"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://cdn.leilotech.workers.dev/topoleiloes/documentos/leilao/2872/0GoUTawZ4VPVh3omjqKIt3YLX7BuZtH4rzRu3o3c5uYYBpyWLqlAMmO7f8aO.pdf",
+      "label": "Matrícula"
+    },
+    {
+      "kind": "edital",
+      "url": "https://topoleiloes.com.br/7045/publicacao",
+      "label": "EDITAL"
+    }
+  ],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T17:48:11.091718-03:00",
+  "parser_notes": "Provider leilotech (Laravel + Livewire, CDN cdn.leilotech.workers.dev). Estado completo do lote em <... wire:snapshot=\"...\"> no HTML inicial — Livewire/Volt JSON inline; nenhuma chamada XHR adicional necessária. Histórico de lances NÃO exposto publicamente: snapshot só traz agregados (Maior Lance, Apelido vencedor, Total de lances). bids=[] por design. status final em rounds[-1].status_raw."
+}

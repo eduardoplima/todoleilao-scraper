@@ -1,0 +1,63 @@
+{
+  "provider": "palacio_dos_leiloes",
+  "representative": {
+    "slug": "",
+    "nome": "RAFAELA MELO FERREIRA MARZANO",
+    "final_url": "https://www.palaciodosleiloes.com.br/site/",
+    "site_analysis_row": {
+      "id": "8",
+      "slug": "",
+      "nome": "Rogério Lopes Ferreira",
+      "uf": "MG",
+      "cidade": "",
+      "dominio": "https://www.palaciodosleiloes.com.br/",
+      "confidence": "high",
+      "real_estate_score": "13.1",
+      "http_status": "200",
+      "final_url": "https://www.palaciodosleiloes.com.br/site/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap",
+      "tech_signals": "jquery | bootstrap",
+      "static_link_count": "21",
+      "dynamic_link_count": "35",
+      "static_useful_links": "10",
+      "dynamic_useful_links": "23",
+      "rendering": "dynamic",
+      "requires_js_for_listings": "False",
+      "html_title": "Palácio dos Leilões",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/56af52c5ec105d763446b907e926d4354cc54aa3.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "IZABELLA MELO FERREIRA PRAES",
+      "final_url": "https://www.palaciodosleiloes.com.br/site/",
+      "useful_links": 33,
+      "cache_used": "static"
+    },
+    {
+      "slug": "cristiano-gomes-ferreira",
+      "nome": "CRISTIANO GOMES FERREIRA",
+      "final_url": "https://www.palaciodosleiloes.com.br/site/",
+      "useful_links": 33,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "HELIANA MARIA OLIVEIRA MELO FERREIRA",
+      "final_url": "https://www.palaciodosleiloes.com.br/site/",
+      "useful_links": 33,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Rogério Lopes Ferreira",
+      "final_url": "https://www.palaciodosleiloes.com.br/site/",
+      "useful_links": 33,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 5
+}

@@ -1,0 +1,67 @@
+{
+  "auctioneer_slug": "jussiara-santos-ermano-sukiennik",
+  "source_listing_url": "https://www.jussiaraleiloes.com/externo/bens/pesquisaAvancada",
+  "source_lot_url": "https://www.jussiaraleiloes.com/externo/lote/5196",
+
+  "title": "Sala nº 608 e vaga em ÁGUAS CLARAS - Distrito Federal",
+  "description": "Sala nº 608 e vaga de garagem nº 16, Lote 1, Quadra 206, Praça Tuim, Águas Claras/DF, com área privativa de 29,15m², área comum de divisão não proporcional de 12,00m², área comum de divisão proporcional de 20,87m², área total de 62,02m², registrada no 3º Ofício do Registro Imobiliário do Distrito Federal sob matrícula nº 229812. Conforme o laudo de avaliação, o imóvel (sala) foi convertido em apartamento residencial; o local onde se encontra o imóvel tem vias asfaltadas, cobertura de internet, rede de esgoto, rede de abastecimento de água, rede de energia elétrica bivolt, iluminação pública, coleta de lixo, entrega postal, escolas privadas nas proximidades; contando com hotéis, rede bancária, shoppings, supermercados, padarias, farmácias, restaurantes, parque público, serviços públicos, transporte coletivo (ônibus e metrô) e de fácil acesso.",
+  "property_type": "comercial",
+
+  "address": {
+    "raw_text": "Sala nº 608 e vaga de garagem nº 16, Lote 1, Quadra 206, Praça Tuim, Águas Claras/DF",
+    "street_name": "Praça Tuim",
+    "number": "Lote 1, Quadra 206",
+    "complement": "Sala nº 608, vaga de garagem nº 16",
+    "district": "Águas Claras",
+    "municipality_name": "Brasília",
+    "uf": "DF",
+    "cep": null
+  },
+
+  "area_sqm": "29.15",
+  "total_area_sqm": "62.02",
+  "market_value_brl": "211687.00",
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2025-08-05T12:30:00-03:00",
+      "minimum_bid_brl": "211687.00",
+      "status_raw": "1º Leilão"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": "2025-08-08T12:30:00-03:00",
+      "minimum_bid_brl": "105843.50",
+      "status_raw": "2º Leilão — SUSPENSO (lote)/CANCELADO (leilão); 2 lances ofertados"
+    }
+  ],
+
+  "auction_status": "suspenso",
+
+  "bids": [
+    {
+      "timestamp": "2025-08-07T11:05:33-03:00",
+      "value_brl": "105843.50",
+      "bidder_raw": "NENE"
+    },
+    {
+      "timestamp": "2025-08-08T09:44:43-03:00",
+      "value_brl": "108343.50",
+      "bidder_raw": "freddf77"
+    }
+  ],
+
+  "images": [
+    { "url": "https://www.jussiaraleiloes.com/arquivos/bem_foto/0655669001751400474.jpg", "is_thumbnail": false }
+  ],
+
+  "documents": [
+    { "kind": "edital", "url": "https://www.jussiaraleiloes.com/externo/bens/arquivos/5196/1", "label": "Edital e Informações" }
+  ],
+
+  "encumbrances_raw": [],
+
+  "scraped_at": "2026-05-01T20:48:00-03:00",
+  "parser_notes": "Provider plataforma_leiloar (CakePHP 'Leiloar'). Pilot é leilão encerrado/suspenso com 2 lances públicos (NENE 07/08, freddf77 08/08 R$108.343,50). Lote do TJDFT (2ª Vara Faz. Pública DF, processo 0712884-57.2024) — agente público; mantido. Bidder handles 'NENE' e 'freddf77' são apelidos públicos do contexto de leilão; não redigidos. Property_type='comercial' (sala convertida em residencial conforme laudo, mas a categoria oficial do site é 'SALAS COMERCIAIS' id=255). Endereço sem CEP no HTML (CEP 70040-911 que aparece em outro ponto é da Secretaria de Fazenda, não do imóvel). Round1 minimum_bid = avaliação (1ª praça padrão); round2 = 50% (2ª praça com lances). source_lot_url só aparece relativa no HTML; pilot_source.html prefixa comment com URL absoluta para proveniência."
+}

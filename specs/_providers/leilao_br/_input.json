@@ -1,0 +1,70 @@
+{
+  "provider": "leilao_br",
+  "representative": {
+    "slug": "Leiloeira_marilaine",
+    "nome": "MARILAINE BORGES DE PAULA",
+    "final_url": "https://www.confiancaleiloes.leilao.br/",
+    "site_analysis_row": {
+      "id": "2",
+      "slug": "Leiloeira_marilaine",
+      "nome": "MARILAINE BORGES DE PAULA",
+      "uf": "PR",
+      "cidade": "RIBEIRÃO PRETO",
+      "dominio": "https://www.confiancaleiloes.leilao.br/",
+      "confidence": "high",
+      "real_estate_score": "21.4",
+      "http_status": "200",
+      "final_url": "https://www.confiancaleiloes.leilao.br/",
+      "error": "",
+      "tech_stack": "WordPress; jQuery; Bootstrap; leilao.br platform",
+      "tech_signals": "wp-content/wp-includes | jquery | bootstrap | leilao.br | server:cloudflare",
+      "static_link_count": "137",
+      "dynamic_link_count": "159",
+      "static_useful_links": "129",
+      "dynamic_useful_links": "152",
+      "rendering": "hybrid",
+      "requires_js_for_listings": "False",
+      "html_title": "CONFIANCALEILOES | Leilões on-line para quem quer comprar ou vender.",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/a1cf3de52edd202afac4622500574c7e03d21078.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "andderson-lopes-de-paula",
+      "nome": "ANDERSON LOPES DE PAULA",
+      "final_url": "https://www.e-leiloeiro.leilao.br/",
+      "useful_links": 279,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "ANDERSON LOPES DE PAULA",
+      "final_url": "https://www.e-leiloeiro.leilao.br/",
+      "useful_links": 279,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Ulisses Donizete Ramos",
+      "final_url": "https://donizetteleiloes.leilao.br/",
+      "useful_links": 198,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "GIULIANO FERRONATO",
+      "final_url": "https://www.ferronato.leilao.br/",
+      "useful_links": 194,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "SÉRGIO AUGUSTO DOS SANTOS",
+      "final_url": "https://www.nsleiloes.leilao.br/",
+      "useful_links": 149,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 18
+}

@@ -1,0 +1,70 @@
+{
+  "provider": "softgt",
+  "representative": {
+    "slug": "",
+    "nome": "PLINIO BARROSO DE CASTRO FILHO",
+    "final_url": "https://www.pbcastro.com.br/",
+    "site_analysis_row": {
+      "id": "270",
+      "slug": "",
+      "nome": "PLINIO BARROSO DE CASTRO FILHO",
+      "uf": "PR",
+      "cidade": "",
+      "dominio": "https://www.pbcastro.com.br/",
+      "confidence": "medium",
+      "real_estate_score": "3.9",
+      "http_status": "200",
+      "final_url": "https://www.pbcastro.com.br/",
+      "error": "",
+      "tech_stack": "jQuery",
+      "tech_signals": "jquery | server:cloudflare",
+      "static_link_count": "102",
+      "dynamic_link_count": "101",
+      "static_useful_links": "84",
+      "dynamic_useful_links": "84",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "PB Castro",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/ae83e2c8fd9047b93d49aa970f5667f1db585f85.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "José Luiz Pereira Vizeu",
+      "final_url": "https://www.flexleiloes.com.br/",
+      "useful_links": 130,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "SIDNEY BELARMINO FERREIRA JUNIOR",
+      "final_url": "https://www.sfleiloes.com.br/",
+      "useful_links": 34,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "LUIZ BARBOSA DE LIMA JUNIOR",
+      "final_url": "https://www.lbleiloes.com.br/",
+      "useful_links": 18,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "LUCAS EDUARDO DALCANALE",
+      "final_url": "https://dalcanaleleiloes.com.br/",
+      "useful_links": 18,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Luiz Ubiratã de Carvalho",
+      "final_url": "https://www.luizleiloes.com.br/",
+      "useful_links": 12,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 8
+}

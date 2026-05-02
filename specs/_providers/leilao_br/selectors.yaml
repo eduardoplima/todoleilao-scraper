@@ -1,0 +1,79 @@
+# Contrato declarativo do recon arquitetural — provider leilao_br (Nuxt SSR variant).
+#
+# IMPORTANTE: o domínio *.leilao.br é uma branding/DNS umbrella; nem todo
+# subdomínio usa o mesmo stack. Este blueprint cobre o stack "e-leiloes
+# Nuxt SSR" (confiancaleiloes.leilao.br + e-leiloeiro.leilao.br).
+# Sites em donizetteleiloes.leilao.br / ferronato.leilao.br / nsleiloes.leilao.br
+# rodam stack diferente (Laravel/leilao_pro com /build/ e /leilao/encerrados);
+# precisarão de blueprint próprio. Ver recon.md > Portabilidade.
+#
+# Estratégia primária: parsear `<script id="__NUXT_DATA__">` no HTML SSR.
+# Não há CSS/XPath útil para os campos de negócio — a UI é renderizada
+# por Vue após hidratação, então selectors DOM são frágeis. O HTML SSR
+# já entrega `__NUXT_DATA__` com tudo: lote, bem, leilão, imagens,
+# documentos, datas das praças, valores. O spider em produção pode
+# operar 100% via httpx + json (sem Playwright).
+
+auctioneer_slug: "Leiloeira_marilaine"
+platform_hint: "leilao_br-eleiloes-nuxt"
+
+# Listing ativa: home expõe leilões em `<a class="listing-card-wrapper" href="/eventos/leilao/{id}/{slug}">`.
+# A listagem por categoria (`/leilao/imoveis`) também existe.
+# Paginação via querystring `?page=N`.
+# Portável para: andderson-lopes-de-paula (e-leiloeiro.leilao.br) — mesmo stack.
+listing_active:
+  url_pattern: "https://www.confiancaleiloes.leilao.br/leilao/imoveis"
+  card_selector: "a.listing-card-wrapper[href*='/eventos/leilao/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?page={page}"
+
+# Listing encerrada: `/editais?aba=encerrados` (também `?aba=abertos|futuros|tudo`).
+# Cada card linka para `/eventos/leilao/{id}/{slug}` do leilão encerrado;
+# dentro do leilão, anchors para `/lotes/{lot_id}/{slug}` (em links de
+# compartilhamento WhatsApp/Twitter — não há card direto no SSR; o spider
+# extrai os IDs do `__NUXT_DATA__` de cada página de evento).
+listing_closed:
+  url_pattern: "https://www.confiancaleiloes.leilao.br/editais?aba=encerrados"
+  card_selector: "a[href^='/eventos/leilao/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?aba=encerrados&page={page}"
+
+# Detalhe: `/lotes/{lot_id}/{slug}`. Todos os campos vêm de `__NUXT_DATA__`.
+# Os "selectors" abaixo apontam o script tag; o parser real lê JSON e
+# resolve refs (Nuxt usa array flat com índices inteiros como ponteiros).
+detail:
+  url_pattern: "https://www.confiancaleiloes.leilao.br/lotes/{lot_id}/{slug}"
+  field_selectors:
+    title:
+      selector: "script#__NUXT_DATA__::text"
+      kind: css
+    price_minimum:
+      # data.lote.valorInicial2 (2ª praça) ou .valorInicial (1ª) ou
+      # .valorInicialAtual (praça vigente). Ver `descontoSegundaPraca`
+      # para o cálculo automático.
+      selector: "script#__NUXT_DATA__::text"
+      kind: css
+    price_market:
+      # data.lote.valorAvaliacao (== bem.valorAvaliacao)
+      selector: "script#__NUXT_DATA__::text"
+      kind: css
+    address_block:
+      # data.lote.bem: {endereco, numero, bairro, cidade, uf, cep,
+      # endComplemento, localizacaoUrlGoogleMaps}.
+      selector: "script#__NUXT_DATA__::text"
+      kind: css
+    images:
+      # data.lote.bem.arquivos[] filtrado por mimeType='image/*'
+      # (campo `url` é absoluto em static.e-leiloes.com.br).
+      selector: "script#__NUXT_DATA__::text"
+      kind: css
+    documents:
+      # data.lote.bem.arquivos[] filtrado por mimeType='application/pdf';
+      # data.lote.leilao.documentos[] traz edital e jornal do leilão.
+      # Mapear 'nome' do arquivo para document_kind (matrícula, edital, ata).
+      selector: "script#__NUXT_DATA__::text"
+      kind: css

@@ -1,0 +1,70 @@
+{
+  "provider": "suporte_leiloes",
+  "representative": {
+    "slug": "",
+    "nome": "Irani Flores",
+    "final_url": "https://www.leilaobrasil.com.br/",
+    "site_analysis_row": {
+      "id": "752",
+      "slug": "",
+      "nome": "DAGMAR CONCEICAO DE SOUZA FLORES",
+      "uf": "MT",
+      "cidade": "",
+      "dominio": "https://www.leilaobrasil.com.br",
+      "confidence": "medium",
+      "real_estate_score": "5.9",
+      "http_status": "200",
+      "final_url": "https://www.leilaobrasil.com.br/",
+      "error": "",
+      "tech_stack": "",
+      "tech_signals": "server:cloudflare",
+      "static_link_count": "1662",
+      "dynamic_link_count": "1395",
+      "static_useful_links": "1345",
+      "dynamic_useful_links": "1345",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "Leilão Brasil",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/09a85372c29a7126714a4cd871e0b0f6722800f3.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Murilo Paes Lopes Lourenço",
+      "final_url": "https://www.leilaobrasil.com.br/",
+      "useful_links": 2690,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "DAGMAR CONCEICAO DE SOUZA FLORES",
+      "final_url": "https://www.leilaobrasil.com.br/",
+      "useful_links": 2690,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Marco Antônio Barbosa de Oliveira Junior",
+      "final_url": "https://www.marcoantonioleiloeiro.com.br/",
+      "useful_links": 716,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Rodrigo Collyer Santos de Oliveira",
+      "final_url": "https://www.rodrigoleiloeiro.com.br/",
+      "useful_links": 716,
+      "cache_used": "static"
+    },
+    {
+      "slug": "jorge-vitorio-espolador",
+      "nome": "JORGE VITORIO ESPOLADOR",
+      "final_url": "https://www.jeleiloes.com.br/",
+      "useful_links": 348,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 51
+}

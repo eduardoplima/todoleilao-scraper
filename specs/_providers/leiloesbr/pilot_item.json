@@ -1,0 +1,60 @@
+{
+  "auctioneer_slug": "tb-aracaju-leiloes",
+  "source_listing_url": "https://www.tbaracajuleiloes.com.br/catalogo.asp?Num=56423",
+  "source_lot_url": "https://www.tbaracajuleiloes.com.br/peca.asp?ID=27650382",
+
+  "title": "Alemanha Reich - Deutsche Luftpost 2 M Deutsches Reich 1931 - usado.",
+  "description": "Lote 27650382 / Leilão 56423 (Filatelia estrangeira). Alemanha Reich - Deutsche Luftpost 2 M Deutsches Reich 1931 - usado. Lote de filatelia/colecionismo do provider LEILOESBR (não real-estate). Pregão online em 11/11/2025 às 19h20 BRT (TER) — leilão de 4 dias 11-14/11/2025.",
+  "property_type": "outro",
+
+  "address": {
+    "raw_text": "Rua Santa Luzia, 180 Sala 02 - Galeria Nobre - Centro - Aracaju - SE",
+    "street_name": "Rua Santa Luzia",
+    "number": "180",
+    "complement": "Sala 02 - Galeria Nobre",
+    "district": "Centro",
+    "municipality_name": "Aracaju",
+    "uf": "SE",
+    "cep": null
+  },
+
+  "area_sqm": null,
+  "total_area_sqm": null,
+  "market_value_brl": null,
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2025-11-11T19:20:00-03:00",
+      "minimum_bid_brl": "20.00",
+      "status_raw": "Arrematado por R$ 125,00 — leilão encerrado em 11/11/2025 (data oficial do pregão); 2 lances; lance inicial R$ 20,00 (input hidden valor=145 = lance MIN para próxima oferta após o último de R$ 125,00)."
+    }
+  ],
+
+  "auction_status": "arrematado",
+
+  "bids": [
+    {
+      "timestamp": "2025-10-30T19:20:00-03:00",
+      "value_brl": "20.00",
+      "bidder_raw": null
+    },
+    {
+      "timestamp": "2025-11-11T19:20:00-03:00",
+      "value_brl": "125.00",
+      "bidder_raw": null
+    }
+  ],
+
+  "images": [
+    { "url": "https://d1o6h00a1h5k7q.cloudfront.net/imagens/img_g/56423/27650382.jpg", "is_thumbnail": false },
+    { "url": "https://d1o6h00a1h5k7q.cloudfront.net/imagens/img_m/56423/27650382.jpg", "is_thumbnail": true }
+  ],
+
+  "documents": [],
+
+  "encumbrances_raw": [],
+
+  "scraped_at": "2026-05-01T17:30:00-03:00",
+  "parser_notes": "Provider LEILOESBR (Marcio Pinho — leiloesbr.com.br) NÃO trabalha com imóveis. Tenant amostrado: tbaracajuleiloes.com.br (Thiago Barros Cardoso, SE). Categoria do lote piloto: Filatelia estrangeira. property_type=outro porque PilotItem não tem categoria filatelia/colecionismo. address.raw_text usa o ENDEREÇO DE RETIRADA do leiloeiro (#local-modal) — não há endereço de bem em lotes de colecionismo. Bids: 2 lances, ambos em datas distintas (30/10 e 11/11/2025) no formato dd/mm/yyyy sem hora — hora aproximada para 19:20 -03:00 (horário oficial do pregão segundo #leilao-modal). bidder_raw=null porque o XHR /ajax/le_historico_peca.asp retorna o 3º <span> vazio para visitantes não-logados (privacidade). auction_status=arrematado: last bid R$ 125,00 em 11/11/2025 (mesma data do pregão = dia oficial do encerramento); valor=145 no form é next-min (=125 + 20 tick), não bid registrado. market_value_brl=null: LEILOESBR não publica avaliação para lotes de arte. documents=[]: provider não anexa edital/matrícula como PDF. PII: sem CPF nem nome PF na descrição/lance (provider obfusca usernames para visitantes anônimos). Rendering=static (ASP server-side); IIS bloqueia UA contendo 'TodoLeilaoBot' (403); recon usou Firefox UA. Robots.txt = Allow: /. Rate limit ≥1.5s mantido (~80 requests no recon)."
+}

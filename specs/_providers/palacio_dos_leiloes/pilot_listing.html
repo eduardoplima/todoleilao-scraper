@@ -1,0 +1,923 @@
+
+<!doctype html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script language="javascript" src="classes_javascript/jquery-3.7.1.min.js" type="text/javascript"></script>
+    <script language="javascript" src="classes_javascript/jquery.mask.js" type="text/javascript"></script>
+    <script language="javascript" src="classes_javascript/jquery.validate.js" type="text/javascript"></script>
+    <script language="javascript" src="classes_javascript/jquery.maskMoney.js" type="text/javascript"></script>
+    <script language="javascript" src="camada_ajax/cabecalho.js" type="text/javascript"></script>
+    <script language="javascript" src="camada_ajax/lote.js" type="text/javascript"></script>
+    <script language="javascript" src="classes_javascript/funcoes.js" type="text/javascript"></script>
+    <script language="javascript" src="camada_ajax/index_m.js?v=1.0.45" type="text/javascript"></script>
+    <script language="javascript" src="camada_ajax/coluna_esquerda_m.js" type="text/javascript"></script>
+
+    <!-- Principal CSS do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <!-- Estilos customizados para este template -->
+    <link rel="stylesheet" type="text/css" href="css/personal.css" />
+    <link rel="stylesheet" type="text/css" href="css/slide.css" media="screen" />
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"
+        integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous">
+    </script>
+
+    <!-- Swiper JS -->
+    <script src=" https://cdn.jsdelivr.net/npm/swiper@11.1.9/swiper-bundle.min.js "></script>
+    <link href=" https://cdn.jsdelivr.net/npm/swiper@11.1.9/swiper-bundle.min.css " rel="stylesheet">
+
+    <!-- jquery-confirm JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+
+    <style>
+    .swiper-slide {
+        width: fit-content !important;
+        flex-shrink: initial !important;
+    }
+
+    .sn_btn {
+        color: #FFF !important;
+    }
+
+    .sn_btn::after {
+        font-size: 25px !important;
+        font-weight: bold !important;
+        -webkit-text-stroke: 2px #888;
+    }
+
+    .container_i {
+        height: 90px;
+        /* Altura do quadrado */
+        border: 1px solid #555;
+    }
+
+    .modal-transparent .modal-content {
+        background-color: rgba(255, 255, 255, 0.8);
+        /* Ajustar a opacidade conforme necessário */
+        border: none;
+    }
+
+    .degrade-banner {
+        position: relative;
+        /* Permite posicionar o pseudo-elemento */
+        width: 100%;
+        /* Largura desejada */
+        height: auto;
+        /* Altura conforme a imagem */
+        overflow: hidden;
+        /* Garante que o degradê não ultrapasse a div */
+    }
+
+    .degrade-banner::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 30%;
+        /* Altura do degradê (ajuste conforme necessário) */
+        background: linear-gradient(to bottom,
+                transparent,
+                /* Início do degradê (transparente) */
+                rgba(255, 255, 255, 0.5)
+                /* Final do degradê (preto com 70% de opacidade) */
+            );
+        pointer-events: none;
+        /* Permite clicar na imagem */
+    }
+
+    .i-c {
+        height: 170px;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        /* Ativa flexbox */
+        align-items: center;
+        /* Centraliza verticalmente */
+        justify-content: center;
+        /* Centraliza horizontalmente */
+    }
+
+    .i-p-l {
+        max-height: 100%;
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+    </style>
+
+    
+
+    <title>Palácio dos Leilões</title>
+    <meta property="og:title" content="Palácio dos Leilões" />
+    <meta name="keywords"
+        content="leilão, leilões, palácio dos leilões, leilão online, leilão presencial, veículos, imóveis, máquinas, equipamentos, móveis" />
+    <meta property="og:url" content="https://www.palaciodosleiloes.com.br/site/index.php?" />
+    <meta property="og:site_name" content="Palácio dos Leilões" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description"
+        content="Leilões de oportunidades On-line & Presencial - Veículos, Imóveis, Máquinas, Equipamentos, Móveis e muito mais." />
+    <meta property="og:image" content="https://www.palaciodosleiloes.com.br/site/images/logos/PALACIO.webp" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="description"
+        content="Leilões de oportunidades On-line & Presencial - Veículos, Imóveis, Máquinas, Equipamentos, Móveis e muito mais." />
+    <meta name="author" content="Palácio dos Leilões" />
+    <link rel="canonical" href="https://www.palaciodosleiloes.com.br/site/index.php?" />
+
+    <script>
+    window.addEventListener("pageshow", function(event) {
+        const historyTraversal = event.persisted || (typeof window.performance != "undefined" && window
+            .performance.navigation.type === 2);
+        if (historyTraversal) {
+            window.location.reload();
+        }
+    });
+    </script>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+</head>
+
+<body>
+
+    <input type="hidden" name="cod_usu" id="cod_usu" value='' />
+    <input type='button' id='copyButton' class='d-none' />
+
+    
+
+		<input type='hidden' id='cod_leilao_privado' name='cod_leilao_privado' value='' />
+	
+		<nav class='navbar navbar-expand-lg'>
+
+			<div class='container-fluid'>
+
+				<a class='navbar-brand' href='https://www.palaciodosleiloes.com.br/site/index.php'>
+					<img src='https://www.palaciodosleiloes.com.br/site/images/logos/PALACIO.webp' style='height:100px; width:auto;' alt='Palácio dos Leilões'>
+				</a>
+	
+				<button class='navbar-toggler text-dark p-0 m-0' type='button' data-toggle='collapse' data-target='#nav-bar-pdl' aria-controls='nav-bar-pdl' aria-expanded='false' aria-label='Toggle navigation'>					
+					
+					<i class='fas fa-bars fa-lg mb-1'></i><div class='cabeca-peq' style='font-size:10px;'>Menu</div>
+					
+						<div class='mt-2'>
+							<a href='login.php' class='btn btn-sm btn-azul p-1 rounded-0 peqx w-100 btn-block'><i class='fas fa-sign-in-alt'></i> Entrar</a>
+							<a href='https://www.palaciodosleiloes.com.br/site/cadastro_arrematante.php' class='peqx text-azul'><i class='fas fa-user-plus'></i> Quero me cadastrar</a>							
+						</div>
+				</button>
+			
+				<div class='collapse navbar-collapse' id='nav-bar-pdl'>
+
+					<div class='mx-auto'>
+
+						<ul class='navbar-nav pt-1 mb-0 pb-0'>
+							<li class='nav-item pl-0'><a class='nav-link small text-dark' href='embreve.php'>Sobre o Palácio</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='documento.php'>Consulta de Documento</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='editais.php'>Termos Editais</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='publicacoes.php'>Publicações</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='evento.php'>Ouvidoria</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='trabalhe_conosco.php'>Trabalhe Conosco</a></li>
+							<li class='nav-item'><a class='nav-link small text-dark' href='produtos.php'>Produtos</a></li>							
+						</ul>
+
+						<form method='post' name='frm_pesquisa_leilao' id='frm_pesquisa_leilao' action='leilao.php'>
+							<div class='input-group input-group mb-0 mb-2'>
+								<input type='text' id='txt_pesquisa_lote_cab' name='txt_pesquisa_lote_cab' class='form-control rounded-0' placeholder='Pesquise lote, modelo, marca ...'/>
+								<div class='input-group-append'>
+									<span class='input-group-text txt_pesquisa_lote_cab cp' id='basic-addon2'><i class='fas fa-search' onclick='document.frm_pesquisa_leilao.submit();'></i></span>									
+								</div>								
+							</div>
+						</form>
+
+					</div>
+
+					
+					
+						<div>
+							<a href='login.php' class='btn btn-sm btn-azul p-1 rounded-0 peqx w-100 btn-block'><i class='fas fa-sign-in-alt'></i> Entrar</a>
+							<a href='https://www.palaciodosleiloes.com.br/site/cadastro_arrematante.php' class='peqx text-azul'><i class='fas fa-user-plus'></i> Quero me cadastrar</a>
+						</div>
+					
+ 					
+
+				</div>
+
+			</div>
+
+		</nav>
+		
+		<div class='border-bottom'></div>
+
+	
+<form name='frm_lote_pre_lance' id='frm_lote_pre_lance' action='lotem.php' method="post" target="_blank">
+    <input type='hidden' name='cod_lote_pre_lance' id='cod_lote_pre_lance' />
+    <input type='hidden' name='cod_leilao_pre_lance' id='cod_leilao_pre_lance' />
+</form>
+
+<form id='frm_leilao' name='frm_leilao' action='leilao.php' method='get'>
+	<input type='hidden' name='cod_leilao_publicado' 	id='cod_leilao_publicado' />
+	<input type='hidden' name='cod_comitente' 			id='cod_comitente' />
+	<input type='hidden' name='num_lote' 				id='num_lote' />
+	<input type='hidden' name='grupo_site' 				id='grupo_site' />
+	<input type='hidden' name='local' 					id='local' />
+	<input type='hidden' name='tipo_exibicao'			id='tipo_exibicao' />
+</form>
+
+<form id='frm_catalogo' name='frm_catalogo' action='catalogo_pdf.php' method='POST' target="_blank"> 
+	<input type='hidden' name='cod_leilao_catalogo' id='cod_leilao_catalogo' />
+</form>
+
+<form id='frm_listagem' name='frm_listagem' action='listagem_pdf.php' method='POST' target="_blank"> 
+	<input type='hidden' name='cod_listagem_leilao' id='cod_listagem_leilao' />
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="modalTermos" tabindex="-1" role="dialog" aria-labelledby="termoLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoLabel">Termos e Condições do Programa de Recompensa por Indicação - Palácio dos Leilões</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body small">
+				<div class='h3 pt-2'>1. Objetivo do Programa:</div>
+
+				<div class='pl-4'>O programa de Recompensa por Indicação do Palácio dos Leilões tem como objetivo recompensar arrematantes que indicarem novos clientes, os quais venham a realizar arrematações ou compras de materiais em nossos leilões, promovendo, ao mesmo tempo, um impacto positivo na sociedade por meio de doações para instituições sociais.</div>
+
+				<div class='h3 pt-3'>2. Como Funciona:</div>
+
+				<div class='h4 pl-3 mt-3'>2.1 Indicação de Clientes para Arrematação de Veículos:</div>
+
+				<div class='pl-4'>O arrematante (indicador) receberá R$ 200,00 (duzentos reais) por cada novo cliente indicado que efetivamente:</div>
+
+				<div class='pl-5 pt-3'>a) Seja um novo cliente do Palácio dos Leilões;</div>
+				<div class='pl-5'>b) Realize a arrematação de um veículo.</div>
+
+				<div class='pl-4 mt-3'>O crédito de R$ 200,00 (duzentos reais) poderá ser utilizado para abatimento dos seguintes custos:</div>
+
+				<div class='pl-5 pt-3'>a) Taxas administrativas;</div>
+				<div class='pl-5'>b) Serviços de empilhadeira;</div>
+				<div class='pl-5'>c) Serviços de transporte;</div>
+				<div class='pl-5'>d) Serviços de envio via Sedex.</div>
+
+				<div class='h4 pl-3 mt-3'>2.2 Indicação de Clientes para Arrematação de Materiais:</div>
+
+				<div class='pl-4'>Para indicações que resultarem na arrematação de materiais, o arrematante (indicador) receberá R$ 50,00 (cinquenta reais) por cada novo cliente indicado que:</div>
+
+				<div class='pl-5 pt-3'>a) Seja um novo cliente do Palácio dos Leilões;</div>
+				<div class='pl-5'>b) Realize a compra de materiais por meio do site.</div>
+
+				<div class='pl-4 mt-3'>O crédito de R$ 50,00 (cinquenta reais) segue as mesmas condições de utilização descritas no item 2.1, podendo, portanto, ser aplicado para abatimento dos mesmos custos mencionados.</div>
+
+				<div class='h3 pt-3'>3. Impacto Social:</div>
+
+				<div class='h4 pl-3 mt-3'>3.1 Indicações para Arrematação de Veículos e Materiais:</div>
+
+				<div class='pl-4 mt-3'>A cada 10 (dez) novos clientes indicados que realizarem arrematações de veículos, o Palácio dos Leilões realizará uma doação para uma das instituições sociais listadas no site (www.palaciodosleiloes.com.br).</div>
+
+				<div class='pl-4 mt-3'>A escolha da instituição a ser beneficiada será feita pelo arrematante indicador responsável pelas 10 (dez) indicações válidas. O arrematante será comunicado para realizar a escolha da instituição após a validação das 10 indicações.</div>
+
+				<div class='h3 pt-3'>4. Regras de Elegibilidade:</div>
+
+				<div class='pl-4'>Apenas clientes cadastrados no Palácio dos Leilões podem participar como indicadores.</div>
+
+				<div class='pl-4 mt-3'>Novos Clientes Indicados: </div>
+
+				<div class='pl-5 pt-3'>a) Devem ser novos clientes, ou seja, não podem ter realizado cadastro ou arrematações anteriormente.</div>
+				<div class='pl-5'>b) Devem realizar a arrematação de um veículo ou material para que a indicação seja considerada válida.</div>
+
+				<div class='h3 pt-3'>5. Validade do Crédito:</div>
+
+				<div class='pl-4'>O valor da recompensa será creditado ao cliente indicador em até 10 (de) dias úteis após a confirmação da arrematação de veículo ou de material pelo novo cliente indicado.</div>
+				<div class='pl-4'>Os créditos não são cumulativos com outras promoções e devem ser utilizados dentro de um prazo de 12 (doze) meses após o recebimento.</div>
+
+				<div class='h3 pt-3'>6. Disposições Gerais:</div>
+
+				<div class='pl-4'>O Palácio dos Leilões se reserva o direito de auditar e verificar as indicações realizadas.</div>
+				<div class='pl-4'>Em caso de fraude ou tentativa de burlar as regras do programa, o cliente poderá ser desclassificado, e os créditos serão cancelados.</div>
+				<div class='pl-4'>O programa poderá ser alterado ou encerrado a qualquer momento, mediante aviso prévio no site (www.palaciodosleiloes.com.br).</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" id="btn_fechar_termo_indique_amigo" data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalFidelidade" tabindex="-1" role="dialog" aria-labelledby="termoFidelidade" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoFidelidade">Termos e Condições do Programa de Fidelidade - Palácio dos Leilões</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body small">
+				<div class='h3 pt-2'>1. Objetivo do Programa:</div>
+				
+				<div class='pl-4'>O Programa de Fidelidade do Palácio dos Leilões foi criado para premiar os clientes que participam de nossos leilões, permitindo que acumulem pontos e troquem por produtos exclusivos na nossa Loja de Produtos.</div>
+				
+				<div class='h3 pt-2'>2. Como Acumular Pontos:</div>
+				<div class='pl-4'>A cada nota de arremate emitida no Palácio dos Leilões, o arrematante ganhará pontos que serão calculados através do Programa de Fidelidade.</div>
+
+				<div class='h3 pt-2'>3. Troca de Pontos:</div>
+				<div class='pl-4'>Os pontos acumulados podem ser trocados exclusivamente por produtos disponíveis na Loja de Produtos do Palácio dos Leilões.</div>
+				<div class='pl-4'>A troca de pontos deverá ser realizada diretamente pelo site do Palácio dos Leilões, na área dedicada ao Programa de Fidelidade.</div>
+				<div class='pl-4'>Os produtos disponíveis para troca e suas respectivas pontuações necessárias estarão listados em nossa Loja de Produtos Exclusivos.</div>
+
+				<div class='h3 pt-2'>4. Validade dos Pontos:</div>
+				<div class='pl-4'>Os pontos acumulados no Programa de Fidelidade terão validade de 60 (sessenta) meses a partir da data de concessão. Após esse período, os pontos expirados não poderão ser utilizados.</div>
+
+				<div class='h3 pt-2'>5. Regras de Participação:</div>
+
+				<div class='pl-4'>Elegibilidade:</div>
+
+				<div class='pl-5'>a) Somente clientes cadastrados no site do Palácio dos Leilões podem participar do Programa.</div>
+				<div class='pl-5'>b) O cadastro no Programa é automático ao realizar arrematações no site (www.palaciodosleiloes.com.br).</div>
+				
+				<div class='pl-4'>Uso dos Pontos:</div>
+
+				<div class='pl-5'>a) Os pontos são pessoais e intransferíveis;</div>
+				<div class='pl-5'>b) Não poderão ser trocados por dinheiro, descontos em compras ou serviços;</div>
+				<div class='pl-5'>c) Caso ocorra o cancelamento de uma arrematação, os pontos gerados serão automaticamente anulados.</div>
+
+				<div class='h3 pt-2'>6. Disposições Gerais:</div>
+				
+				<div class='pl-4'>O Palácio dos Leilões se reserva o direito de alterar ou encerrar o Programa de Fidelidade a qualquer momento, mediante aviso pelo site (www.palaciodosleiloes.com.br).</div>
+				<div class='pl-4'>Em caso de fraude ou tentativa de manipulação no acúmulo de pontos, o arrematante será desclassificado e os pontos serão cancelados.</div>
+				
+				<div class='h3 pt-2'>7. Consulta de Pontos e Resgate:</div>
+
+				<div class='pl-4'>Os clientes podem consultar o saldo de pontos acumulados, o histórico de transações e realizar resgates diretamente na área do Programa de Fidelidade no site do Palácio dos Leilões (www.palaciodosleiloes.com.br).</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalAmigo" tabindex="-1" role="dialog" aria-labelledby="termoAmigo" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoAmigo"><div class="h2 font-weight-bold text-azul" style="text-shadow: 2px 2px 4px #888;">Recompensa por Indicação</div></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<div class="row">
+						<div class='col-1 pt-3'>
+							<img src="images/logos/lancelote/2.webp" alt="Descrição da imagem" style="width:80px; height:auto;">
+						</div>
+						<div class="col-11">
+							<p class='mb-3'>Juntos, podemos fazer a diferença!</p>
+							<p class='text-justify'>Cada indicação sua é como um tijolo construindo um futuro melhor. Ao completar 10 indicações com arrematação comprovada, você não só garante um super desconto, mas também se torna um herói da sua própria história.</p>
+							<p class='text-justify'>Imagine a alegria de escolher uma instituição de caridade e entregar pessoalmente uma premiação, sabendo que sua ação está mudando vidas!</p>
+							<p><a href='https://www.palaciodosleiloes.com.br/site/meusindicados.php' class='text-azul'>Clique aqui e conheça mais</a></p>
+						</div>
+					</div>
+				</div>				
+									<div class="text-center mt-3">
+						<a href='login.php'><button class='btn btn-sm btn-azul rounded-0'>Para indicar um amigo, entre na sua conta</button></a>
+					</div>
+				            </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" id='btn_fechar_indique_amigo' data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalJuntarPontos" tabindex="-1" role="dialog" aria-labelledby="termoJuntarPontos" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="termoJuntarPontos">conheça as diversas formas de juntar pontos!</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<ul>
+					<li>Indique novos arrematantes!</li>
+					<li>Participando dos leilões</li>
+					<li>Arrematando lote nos leilões do Palácio dos Leilões</li>
+					<li>Realizando doações para instituições de caridade</li>
+				</ul>
+            </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-azul" data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+    <div id='div_palacio'>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col p-0 m-0"></div>
+                <div id="myCarousel" class="carousel slide container-fluid rounded" data-ride="carousel">
+                    <div class="row">
+                        <div class="col mb-5 p-0 text-center">
+                            <ol class="carousel-indicators" id="banners_indicators"></ol>
+                            <div class="carousel-inner" id="banners_list"></div>
+                            <button class="carousel-control-prev" type="button" data-target="#myCarousel"
+                                data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-target="#myCarousel"
+                                data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid bg-white mt-2">
+        <div class="row">
+            <div class="col-md-1 col-lg-1 col-xl-1 p-0 m-0"></div>
+            <div class="col-md-3 col-lg-3 col-xl-2 rounded-lg">
+                
+<form id='frm_lote' name='frm_lote' action='lance_online.php' method='post' target='_blank'>
+    <input type='hidden' name='cod_lote' id='cod_lote' />
+</form>
+
+<script>
+    function primeiro_arremate(){
+        localStorage.removeItem('wbot.chat-sessionid');
+        WBOTgetSessionId();
+
+        WBOTdata.token= '2626d5b5b9445a45b9ac35928041c07b',
+        WBOTdata.messagesBeingSentCount= 0,
+        WBOTdata.isChatOpenedBefore= false,
+        WBOTdata.isChatOpen= false,
+        WBOTdata.isFirstAccess= true,
+        WBOTdata.messagesToUpdateStatus= [],
+        WBOTdata.api= 'https://app.mzworkspace.com',
+        WBOTdata.url= 'https://wbot.chat'
+
+        setTimeout(() => {WBOTopenChat()}, 100)
+        setTimeout(() => {WBOTonMessageClickableClick('','')}, 1500)
+        setTimeout(() => {WBOTonMessageClickableClick('4','1º Arremate')}, 4000)
+    }
+</script>
+
+<form id='frm_pesquisa_lote' name='frm_pesquisa_lote' action="leilao.php" method="post" class='rounded-lg'>
+
+    <input type="hidden" name="favoritos" id='favoritos' value=''>
+    <input type="hidden" name="somente_pesquisa" id='somente_pesquisa' value='0'>
+
+    <!-- BUSCAR PRODUTO -->
+
+    
+    <div class='p-3 mb-5 bg-white shadow-lg border' style='border-radius:10px;'>
+
+        <style>
+            .shorts-container {
+                max-width: 405px;
+                margin: auto;
+                cursor: pointer;
+            }
+
+            iframe {
+                width: 100%;
+                height: 480px; /* proporção 9:16 */
+                border: none;
+                display: block;
+            }
+        </style>
+
+        <div id='leiloes_em_andamento' class="mb-1"></div>
+
+        <div class='row'>            
+            <div class='col'>
+                <div class='l_l'></div>
+                <div class='mt-0 peqx pb-3'>Localizar ofertas</div>
+            </div>            
+        </div>
+
+        <div>
+
+            <input type='hidden' id='paginacao' name='paginacao' value='0' />
+            <input type='hidden' id='total_paginas' name='total_paginas' value='1' />
+
+            <div class='mb-4 py-0'>
+                <div class="input-group input-group mb-2">
+                    <input type="text" id="txt_pesquisa_lote" name="txt_pesquisa_lote" value="" class='form-control rounded-0' placeholder='Digite marca, modelo, lote...'/>
+                    <div class="input-group-append">
+                        <span class="input-group-text btn_txt_pesquisa_lote cp" id="basic-addon2"><i class="fas fa-search"></i></span>
+                    </div>
+                </div>                
+                <input type="hidden" id="aux_local" name="aux_local" value="" />
+                <input type="hidden" id="filtro_tipo" name="filtro_tipo" value="" />
+                <input type="hidden" id="tipo_exibicao_pesquisa" name="tipo_exibicao_pesquisa" value="grid" />
+                <div class='d-block d-sm-block d-md-block d-lg-none mt-1 mb-0 pb-0' id='btn_exibir_filtro'>
+                    <div class="row" style="gap: 0.5rem">
+                        <div class="col-12">
+                            <button type="button" value="Localizar lotes" class="btn_txt_pesquisa_lote cp btn-block btn-dark rounded-0 border-0 btn-sm p-1">Localizar lotes</button>
+                        </div>
+                        <div class="col-12">
+                            <button type="button" id='btn_exibir_filtros' value="Exibir filtros" class="cp btn-block btn-success rounded-0 border-0 btn-sm p-1">Exibir filtros</button>
+                            <button type="button" id='btn_ocultar_filtro' value="Ocultar filtros" class="cp btn-block btn-primary rounded-0 border-0 btn-sm p-1 m-0 d-none">Ocultar filtros</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id='div_filtros' class='d-none d-lg-block d-xl-block'>
+
+                <div id="campo_categoria_pesquisa"><input type='checkbox' class='categoria_pesquisa' name='categoria_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_leilao_pesquisa"><input type='checkbox' class='leilao_pesquisa' name='leilao_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_subcategoria_pesquisa" style="margin-top:8px;"><input type='checkbox' class='subcategoria_pesquisa' name='subcategoria_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_marca_pesquisa"><input type='checkbox' class='marca_pesquisa' name='marca_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_modelo_pesquisa"><input type='checkbox' class='modelo_pesquisa' name='modelo_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_ano_pesquisa"><input type='checkbox' class='ano_pesquisa' name='ano_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_situacao_pesquisa"><input type='checkbox' class='situacao_pesquisa' name='situacao_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_local_pesquisa"><input type='checkbox' class='local_pesquisa' name='local_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_grupo_pesquisa"><input type='checkbox' class='grupo_site_pesquisa' name='grupo_site_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_estado_pesquisa"><input type='checkbox' class='estado_site_pesquisa' name='estado_site_pesquisa[]' value='' checked style='display:none;' /></div>
+                <div id="campo_cidade_pesquisa"><input type='checkbox' class='cidade_site_pesquisa' name='cidade_site_pesquisa[]' value='' checked style='display:none;' /></div>
+
+                <input type='hidden' id='e-cat' value='1' />
+                <input type='hidden' id='e-lei' value='1' />
+                <input type='hidden' id='e-sub' value='0' />
+                <input type='hidden' id='e-mar' value='0' />
+                <input type='hidden' id='e-mod' value='0' />
+                <input type='hidden' id='e-ano' value='0' />
+                <input type='hidden' id='e-sit' value='0' />
+                <input type='hidden' id='e-loc' value='0' />
+                <input type='hidden' id='e-grp' value='0' />
+                <input type='hidden' id='e-est' value='0' />
+                <input type='hidden' id='e-cid' value='0' />
+
+            </div>
+
+            <input type="hidden" name="cod_comitente" id="cod_comitente" value="" />
+            <input type="hidden" name="num_lote"      id="num_lote"      value="" />
+            <input type="hidden" name="grupo"         id="grupo"         value="" />
+            <input type="hidden" name="grupo_site"    id="grupo_site"    value="" />
+            <input type="hidden" name="local"         id="local"         value="" />
+            <input type="hidden" name="tipo_exibicao" id="tipo_exibicao" value="" />
+
+        </div>
+
+    </div>
+
+</form>            </div>
+            <div class="col-md-7 col-lg-7 col-xl-8 p-1">
+                <div id='div_leilao_andamento'></div>
+                <div class="container-fluid">
+                    <div id='div_classificacao'></div>
+                </div>
+                <div id='div_lotes'></div>
+                <div class='px-0 py-2 my-4'>
+                    <div class='swiper myComitentes'>
+                        <div id='div_comitentes' class='swiper-wrapper p-1'></div>
+                        <div class='swiper-pagination' style='display:none;'></div>
+                        <!-- If we need navigation buttons -->
+                        <div class="sn_btn swiper-button-prev" id="swiper-myComitentes-prev"></div>
+                        <div class="sn_btn swiper-button-next" id="swiper-myComitentes-next"></div>
+                    </div>
+                </div>
+                <div id='div_destaques'></div>
+            </div>
+            <div class="col-md-1 col-lg-1 col-xl-1 p-0 m-0"></div>
+        </div>
+    </div>
+
+    </div>
+
+    <form id='frm_catalogo' name='frm_catalogo' action='catalogo_pdf.php' method='POST' target="_blank">
+        <input type='hidden' name='cod_leilao_catalogo' id='cod_leilao_catalogo' />
+    </form>
+
+    <form id='frm_listagem' name='frm_listagem' action='listagem_pdf.php' method='POST' target="_blank">
+        <input type='hidden' name='cod_listagem_leilao' id='cod_listagem_leilao' />
+    </form>
+
+    <!--
+		<div class="modal fade" id="modalExemplo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ajude a Causa e Doe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class='row'>
+                        <div class='col-lg pt-1'>
+                            <img src="https://www.palaciodosleiloes.com.br/site/images/logos/login/BEMQUERER.jpeg" style='width:100%;' />
+                        </div>
+                        <div class='col-lg pt-0'>                            
+							<div class='mt-0 mb-2 h5'>Apoie o Projeto Bem Querer Mulher</div>
+                            <div class='my-2'>
+								O Bem Querer Mulher é um movimento que combate a violência contra a mulher, oferecendo suporte psicológico, jurídico e social para transformar vidas. Cada pessoa pode fazer a diferença! Ao apoiar essa causa, você contribui para uma sociedade mais justa e segura.
+								<br><br>
+								Saiba mais e apoie essa iniciativa em <a href="https://bemquerermulher.org.br">bemquerermulher.org.br</a>.
+								<br><br>
+								Siga e compartilhe:
+								<br>
+								&bull;	Instagram: <a href="https://instagram.com/bemquerermulher">@bemquerermulher</a><br>
+								&bull;	Facebook: <a href="https://facebook.com/bemquerermulher">Bem Querer Mulher</a><br>
+							</div>							
+							<div class="row my-4">								
+								<div class="col-6 font-weight-bold">
+								<div>Banco 341 - Itaú</div>
+									<div>Agência: 3100</div>
+									<div>Conta Corrente: 99199-5</div>
+									<div>Instituto para o Desenvolvimento Sustentável / Bem Querer Mulher</div>
+									<div>CNPJ: 07.581.967/0002-34</div>
+								</div>
+								<div class='col-6'>
+									<img src='https://www.palaciodosleiloes.com.br/site/images/logos/login/PIXBEMQUERER.png' style='width:80%; height:auto;' />
+								</div>
+							</div>														
+							<div class='mt-4'>Deixe seu nome e telefone que entraremos em contato</div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="contato_nome">Nome</label>
+                                    <input type="text" class="form-control rounded-0" id="contato_nome" aria-describedby="contato_nome" id="txt_contato_nome" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="contato_telefone"><i class="fab fa-whatsapp"></i> Celular</label>
+                                    <input type="text" class="form-control rounded-0" id="contato_telefone" aria-describedby="contato_telefone" />
+                                </div>
+                            </div>
+                            <input type='button' id='btn-enviar-contato' Value='Enviar' class='btn btn-sm btn-success rounded-0' />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id='btn-fechar-enviar-contato' class="btn btn-sm rounded-0 btn-azul" data-dismiss="modal">Fechar</button>
+                </div>
+                </div>
+            </div>
+        </div>
+		-->
+
+    <div class="modal fade" id="modalCalendario" tabindex="-1" role="dialog" aria-labelledby="calendarioModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id='div_calendario'></div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" id='btn-fechar-calendario' class="btn btn-sm rounded-0 btn-azul"
+                        data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-transparent" id="modalAviso" tabindex="-1" aria-hidden="true" role="dialog" aria-labelledby="avisoModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-0 m-0">
+                    <div class="row p-0 m-0">
+                        <div class="col p-0 m-0">
+                            <img src='images/slides/pop_up4.png' style='width:100%; height:auto;' />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 rounded-0 p-0 m-0 text-center d-flex justify-content-center">
+                    <button type="button" id='btn-fechar-Aviso' class="btn btn-sm rounded-0 p-0 btn-block w-100"
+                        data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    var agora = new Date();
+    var data_inicio = new Date("2026-04-09T08:00:00");
+    var data_fim = new Date("2026-04-09T18:00:00");
+
+    if (agora >= data_inicio && agora <= data_fim) {
+        $("#modalAviso").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    }
+    </script>
+
+    <footer class="footer border-top mt-auto bg-azul text-white">
+    <div class='container py-3'>
+        <div class='row'>
+            <div class='col-md-5'>
+                <div class='font-weight-bold'>Rogério Lopes Ferreira - JUCEMG 394</div>
+                <div>Palácio dos Leilões ® <script>
+                    document.write(new Date().getFullYear())
+                    </script>
+                </div>
+                <div>BR-262, KM 375, Juatuba - MG, 35675-000</div>
+
+                <div class='small my-3'>
+                    <div class='font-weight-bold mt-2'>Horário de Funcionamento Juatuba</div>
+                    <div class='font-weight-light'>Segunda a Sexta-feira</div>
+                    <div class='font-weight-light'>Horário de Visitação: 08:15 às 17:00</div>
+                    <div class='font-weight-light'>Caixa, Documentação e Retirada de Lote: 08:15 às 17:00</div>
+
+                    <div class='font-weight-bold mt-2'>Horário de Funcionamento Cajamar</div>
+                    <div class='font-weight-light'>Horário de Visitação e Retirada: 08:15 às 17:30</div>
+                    <div class='font-weight-light'>Rod. Anhanguera, via de Acesso Norte, Km 32,5 - Empresarial
+                        Anhanguera - Cajamar/SP - 07753-580</div>
+
+                    <div class='font-weight-bold mt-2'>Horário de Funcionamento Simões Filho</div>
+                    <div class='font-weight-light'>Horário de Visitação e Retirada: 08:30 às 17:00</div>
+                    <div class='font-weight-light'>Via periférica Waldyr Beira, n° 4709, Vila CIA Sul, Simões Filho -
+                        BA, 43700-000</div>
+
+                    <div class='peq font-weight-bold'>* Em caso de feriados, confirme os horários antes de realizar sua
+                        visita.</div>
+                </div>
+
+            </div>
+            <div class='col-md-4 pb-3'>
+                <span class='font-weight-bold'>Contatos</span>
+                <div><a class='text-white' href='tel:(31) 3360-8100'>(31) 3360-8100</a></div>
+                <div><a class='text-white'
+                        href='https://www.palaciodosleiloes.com.br/site/politicadeprivacidade.php'>Política de
+                        Privacidade</a></div>
+            </div>
+            <div class="col-md-3 pb-5">
+                <a href='https://goo.gl/maps/WisQwWV8ZKmttiMH9' target='_blank'><i
+                        class="fas fa-map-marked-alt cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://twitter.com/palaciodleiloes' target='_blank'><i
+                        class="fab fa-twitter cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://www.facebook.com/palaciodosleiloes' target='_blank'><i
+                        class="fab fa-facebook cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://www.youtube.com/@palaciodosleiloes1' target='_blank'><i
+                        class="fab fa-youtube cp float-right mr-2 text-white fa-2x"></i></a>
+                <a href='https://www.instagram.com/palacio_dos_leiloes' target='_blank'><i
+                        class="fab fa-instagram cp float-right mr-2 text-white fa-2x"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Cookies -->
+
+<div class="rodape_cookies rounded" style="display: none;">
+    <p>Usamos cookies e outras tecnologias semelhantes para garantir que vocé tenha a melhor experiência em nosso site.
+        Ao continuar navegando, você concorda com o uso dessas tecnologias descritas em nossos <a
+            href="./politicadeprivacidade.php">termos e políticas de privacidade</a>.</p>
+    <div class="rodape_cookies_close"><button id="rodape_cookies_button_close" class="btn btn-block btn-light">Concordar
+            e Fechar</button></div>
+</div>
+
+<style>
+div.rodape_cookies {
+    position: fixed;
+    max-width: 999px;
+    bottom: 15px;
+    left: 5%;
+    right: 5%;
+    padding: 5px 18px;
+    background: linear-gradient(90deg, rgb(3, 62, 124) 0%, rgb(6, 87, 173) 30%, rgb(6, 87, 173) 69%, rgb(242, 86, 86) 100%);
+    margin: 0 auto;
+    color: #FFF;
+    z-index: 9999;
+}
+
+div.rodape_cookies a {
+    color: #FFF;
+}
+
+div.rodape_cookies div.rodape_cookies_close {
+    display: flex;
+    flex-direction: column;
+    justify-content: center !important;
+    text-align: center;
+    margin: 10px 0px;
+}
+</style>
+
+<script>
+// Função para copiar o conteúdo do input para a área de transferência
+document.getElementById('copyButton').addEventListener('click', function() {
+
+    // Seleciona o input
+    var linkInput = document.getElementById('linkToCopy');
+
+    // Seleciona o texto do input
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999); // Para dispositivos móveis
+
+    // Copia o texto para a área de transferência
+    document.execCommand('copy');
+
+    // Exibe um alerta ou mensagem para confirmar que o link foi copiado
+    alert('Link copiado para a área de transferência!');
+
+});
+
+$(document).ready(function() {
+    let aceite_cookies = localStorage.getItem("aceite_cookies");
+    if (isNaN(aceite_cookies) || !aceite_cookies) {
+        localStorage.removeItem('aceite_cookies');
+        $(".rodape_cookies").show();
+        aceite_cookies = false;
+    }
+
+    if (aceite_cookies) {
+        const data_aceite = new Date(parseInt(aceite_cookies));
+        const data_atual = new Date();
+
+        if (data_aceite.getDate() != data_atual.getDate() || data_aceite.getMonth() != data_atual.getMonth() ||
+            data_aceite.getFullYear() != data_atual.getFullYear()) {
+            localStorage.removeItem('aceite_cookies');
+            aceite_cookies = false;
+
+            $(".rodape_cookies").show();
+        } else {
+            $(".rodape_cookies").hide();
+        }
+    }
+
+    $("#rodape_cookies_button_close").click(() => {
+        localStorage.setItem('aceite_cookies', Date.now());
+        $(".rodape_cookies").hide();
+    })
+});
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CRXLJ6DL4P"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+
+function gtag() {
+    dataLayer.push(arguments);
+}
+gtag('js', new Date());
+gtag('config', 'G-CRXLJ6DL4P');
+</script>
+
+<script src="https://wbot.chat/index.js" token="2626d5b5b9445a45b9ac35928041c07b"></script>
+    <script>
+    var slideIndex = 0;
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        var dots = document.getElementsByClassName("dot");
+        if (n > slides.length) {
+            slideIndex = 1
+        }
+        if (n < 1) {
+            slideIndex = slides.length
+        }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+    }
+
+    function showSlides_navegacao() {
+        slideIndex++;
+        showSlides(slideIndex);
+        setTimeout("showSlides_navegacao()", 20000);
+    }
+    </script>
+</body>
+
+</html>

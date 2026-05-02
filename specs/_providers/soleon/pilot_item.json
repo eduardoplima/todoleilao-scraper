@@ -1,0 +1,58 @@
+{
+  "auctioneer_slug": "soleon",
+  "source_listing_url": "https://www.isaiasleiloes.com.br/leiloes/encerrados",
+  "source_lot_url": "https://www.isaiasleiloes.com.br/item/22553/detalhes",
+  "title": "Lote 001 - IMÓVEL RESIDENCIAL EM ALTO JEQUITIBÁ/MG (ID 22553)",
+  "description": "UM IMÓVEL RESIDENCIAL SITUADO À RUA EDUARDO DE PAULA GOMES, Nº 14, BAIRRO GRIPP MOTTA, EM ALTO JEQUITIBÁ/MG, COM TERRENO MEDINDO 240 M2 E SUAS BENFEITORIAS, COM DEMAIS MEDIDAS E CONFRONTAÇÕES DESCRITAS NA MATRÍCULA DE Nº 8.505 DO C.R.I DE MANHUMIRIM/MG. NO IMÓVEL ESTÁ EDIFICADO UMA CASA COM UMA ÁREA DESCOBERTA E COM PISO DE CIMENTO GROSSO NO LADO DIREITO DA CASA, UMA VARANDA COM TETO DE TELHA DE AMIANTO E MADEIRA E PISO DE CIMENTO GROSSO, UM PEQUENO QUINTAL, UMA COZINHA COM TETO DE TELHA AMIANTO E MADEIRA E PISO DE CERÂMICA, UMA PEQUENA SALA DE JANTAR, UM CORREDOR DE ACESSO A UM PEQUENO BANHEIRO COM TETO DE TELHA AMIANTO E MADEIRA, PISO DE CERÂMICA, UM PEQUENO BANHEIRO COM LAJE, UMA SALA, 03 QUARTOS, UM TERRAÇO DE TELHA AMIANTO E MADEIRA POR CIMA DA PARTE DA CASA, QUE É DE LAJE. Comitente: TJMG - FÓRUM DE MANHUMIRIM - 2º LEILÃO. Processo: 0024328-48.2014.8.13.0395. Vara: 2ª VARA CÍVEL, CRIMINAL, DE EXECUÇÕES PENAIS E DO JUIZADO ESPECIAL. Comarca: MANHUMIRIM/MG. Executado: [PF].",
+  "property_type": "casa",
+  "address": {
+    "raw_text": "RUA EDUARDO DE PAULA GOMES, 14 - GRIPP MOTTA - Alto Jequitibá / MG",
+    "street_name": "RUA EDUARDO DE PAULA GOMES",
+    "number": "14",
+    "complement": null,
+    "district": "GRIPP MOTTA",
+    "municipality_name": "Alto Jequitibá",
+    "uf": "MG",
+    "cep": null
+  },
+  "area_sqm": null,
+  "total_area_sqm": "240.00",
+  "market_value_brl": "90000.00",
+  "rounds": [
+    {
+      "round_number": 2,
+      "scheduled_at": "2025-10-17T16:30:00-03:00",
+      "minimum_bid_brl": "45000.00",
+      "status_raw": "Vendido (2º LEILÃO judicial — TJMG/Manhumirim)"
+    }
+  ],
+  "auction_status": "arrematado",
+  "bids": [
+    {
+      "timestamp": "2025-10-17T16:20:14-03:00",
+      "value_brl": "45000.00",
+      "bidder_raw": "wallisson"
+    }
+  ],
+  "images": [
+    {
+      "url": "https://d2mymldkpl0730.cloudfront.net/bens/0000018341/img-18341-6876466dc1e48.jpg",
+      "is_thumbnail": false
+    }
+  ],
+  "documents": [
+    {
+      "kind": "matricula",
+      "url": "https://d2mymldkpl0730.cloudfront.net/bens/0000018341/matricula-do-imovel-6876474e57413.pdf",
+      "label": "MATRÍCULA DO IMÓVEL"
+    },
+    {
+      "kind": "edital",
+      "url": "https://d2mymldkpl0730.cloudfront.net/bens/0000018341/edital-de-leilao-6877b8c38ed14.pdf",
+      "label": "EDITAL DE LEILÃO"
+    }
+  ],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T22:30:00-03:00",
+  "parser_notes": "Recon arquitetural do provider SOLEON (Soluções para Leilões Online), 116 tenants em data/intermediate/site_analysis.csv. Tenant amostrado: isaiasleiloes.com.br (Isaías Rosa Ramos Júnior, JUCEMG 831, MG). Plataforma: Bootstrap 4 + jQuery sobre Cloudflare; HTML 100% server-side via httpx — requires_playwright=False. Sinais canônicos SOLEON: meta name='author' content='SOLEON ...', rodapé 'Tecnologia SOLEON', rotas /leilao/{id}/lotes (lista de lotes do leilão) e /item/{lot_id}/detalhes (detalhe do lote), /leiloes/encerrados paginada via ?page=N (48 páginas no isaias = ~480 leilões encerrados acumulados). Listagem ativa = home (40 leilões); listagem encerrada = /leiloes/encerrados. Ao seguir cards no listing encerrado: alguns leilao_id redirecionam via meta-refresh para subdomain *.soleon.com.br (porta 80 timeout, indisponível) ou para o domínio canônico do tenant via HTTPS (resolve OK). Spider de produção precisa seguir esses redirects pro domínio canônico — caso de uso multi-tenant cross-site no mesmo provider. PILOT LOT (item 22553, leilão 5067 isaias-local): IMÓVEL RESIDENCIAL EM ALTO JEQUITIBÁ/MG, judicial 2ª praça (TJMG/Manhumirim), encerrado em 17/10/2025 16:30 BRT como Vendido (auction_status=arrematado) por R$45.000,00 — 50% da avaliação R$90.000,00 (padrão judicial 2ª praça pós-1ª deserta). Single-round (apenas 'Encerramento:' exposto, sem '1º Leilão/2º Leilão' separados — site renderiza só a praça atual). Bid history server-side: 1 lance ('wallisson', R$45.000,00, manual, 17/10/2025 16:20:14 BRT, 25%+30x = entrada+parcelado), capturado em div.ult_body div.ultimos-lances-item. property_type=casa (descrição: 'UMA CASA COM ... 03 QUARTOS, UMA SALA ...'). area_sqm=null (descrição não distingue área útil construída); total_area_sqm=240.00 (terreno medindo 240 m²). cep=null (site não publica CEP do imóvel — apenas do escritório do leiloeiro, irrelevante; Fase 2 derivar via geocoding do endereço). Imagens em CDN externa d2mymldkpl0730.cloudfront.net/bens/{bem_id_padded}/img-{bem_id}-{hash}.jpg — 1 única foto. CDN varia por tenant SOLEON: cloudfront.net (isaias, ceruli, italo, lancese, ccj amostrados) vs {hash}.cdn.gocache.net (machadoleiloeiro/Fábio Marlon — outro caso já documentado). Documentos: matrícula + edital, ambos em /bens/{bem_id_padded}/ no CDN. PII redigida: 1 nome PF (Executado='DEUZELI FIDELIS' → '[PF]'). bidder_raw='wallisson' mantido (handle público no contexto de leilão, conforme closed-auction-bids skill). Nenhum CPF presente. Comitente é PJ pública (TJMG); leiloeiro é agente público. Robots.txt allow / para *; Content-Signal search=yes,ai-train=no — respeitado (agregador indexa, não treina). 13 disallows para AI trainers (ClaudeBot, GPTBot, CCBot, Bytespider, Amazonbot, Applebot-Extended, Google-Extended, etc.). Rate limit ≥1.5s mantido em todos os fetches (~25 requests no recon). Não baixei nenhum binário."
+}

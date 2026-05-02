@@ -1,0 +1,49 @@
+{
+  "provider": "leiloesweb",
+  "representative": {
+    "slug": "",
+    "nome": "ANTÔNIO RICARDO SILVA DE LARA",
+    "final_url": "https://www.leiloeslaraforster.com.br/",
+    "site_analysis_row": {
+      "id": "567",
+      "slug": "",
+      "nome": "ANTÔNIO RICARDO SILVA DE LARA",
+      "uf": "RS",
+      "cidade": "",
+      "dominio": "http://www.leiloeslaraforster.com.br",
+      "confidence": "high",
+      "real_estate_score": "20.4",
+      "http_status": "200",
+      "final_url": "https://www.leiloeslaraforster.com.br/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap",
+      "tech_signals": "jquery | bootstrap | server:nginx",
+      "static_link_count": "611",
+      "dynamic_link_count": "610",
+      "static_useful_links": "610",
+      "dynamic_useful_links": "609",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "Lara Forster Leilões",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/1d6154d834db56e1dabb76ea1d190db2ce4f6b44.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Ricardo Bampi",
+      "final_url": "https://www.bampileiloes.com.br/",
+      "useful_links": 607,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "MAURICIO SAMBUGARI APPOLINARIO",
+      "final_url": "https://www.selectleiloes.com.br/",
+      "useful_links": 320,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 3
+}

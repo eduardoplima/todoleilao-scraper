@@ -1,0 +1,70 @@
+{
+  "auctioneer_slug": "wordpress",
+  "source_listing_url": "https://fauthleiloes.com.br/product-sitemap.xml",
+  "source_lot_url": "https://fauthleiloes.com.br/leilao/apartamemto-florianopolis-sc/",
+  "title": "Apartamento Florianópolis/SC",
+  "description": "Leilão Extrajudicial. Dias 10 e 11 de fevereiro de 2026, com encerramento ás 16h. Valores: 1º Leilão: R$613.000,00, mais as despesas e encargos no total de R$10.975,12. 2º Leilão: R$306.500,00, mais as despesas e encargos no total de R$10.975,12. APARTAMENTO nº 602, localizado no 6º pavimento do edifício Residencial Montebello, situado na rua João Evangelista da Costa, nº1.145, Jardim Atlântico, Subdistrito do Estreito, no município de Florianópolis, SC, com a área real privativa de 62,2505m². VAGA DE GARAGEM nº 30, com a área real privativa de 21,600m². Inscrição Municipal número 51.20.021.0346.027-608. HOBBY-BOX nº 19, com a área real privativa de 2,0719m². Inscrição Municipal número 51.20.021.0346.053-510. Para efeitos do exercício de preferência, o valor total da dívida corresponde a R$ 150.232,79, despesas e encargos vinculados a R$ 10.975,12, e a comissão de leilão de 6%. Comitente: Construtora e Incorporadora (Randon Aria, conforme nome do edital). Encerrado em 11/02/2026 16:00, arrematado pelo licitante 'c***...s' por R$ 377.710,00 (acima do lance mínimo R$ 306.500,00 do 2º leilão).",
+  "property_type": "apartamento",
+  "address": {
+    "raw_text": "Rua João Evangelista da Costa, nº 1.145, Apartamento nº 602, 6º pavimento, Edifício Residencial Montebello, Jardim Atlântico, Subdistrito do Estreito, Florianópolis/SC",
+    "street_name": "Rua João Evangelista da Costa",
+    "number": "1145",
+    "complement": "Apto 602, 6º pavimento, Edifício Residencial Montebello",
+    "district": "Jardim Atlântico",
+    "municipality_name": "Florianópolis",
+    "uf": "SC",
+    "cep": null
+  },
+  "area_sqm": "62.25",
+  "total_area_sqm": null,
+  "market_value_brl": "613000.00",
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-02-10T16:00:00-03:00",
+      "minimum_bid_brl": "613000.00",
+      "status_raw": "1º Leilão (deserto — pulou para 2º Leilão)"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": "2026-02-11T16:00:00-03:00",
+      "minimum_bid_brl": "306500.00",
+      "status_raw": "2º Leilão — Leilão expirou. O maior lance foi: c***...s (R$ 377.710,00)"
+    }
+  ],
+  "auction_status": "arrematado",
+  "bids": [
+    { "timestamp": "2026-02-10T22:45:00-03:00", "value_brl": "306500.00", "bidder_raw": "d**************l" },
+    { "timestamp": "2026-02-11T12:02:00-03:00", "value_brl": "306510.00", "bidder_raw": "c*************************************************************s" },
+    { "timestamp": "2026-02-11T12:53:00-03:00", "value_brl": "317500.00", "bidder_raw": "d**************l" },
+    { "timestamp": "2026-02-11T13:57:00-03:00", "value_brl": "317510.00", "bidder_raw": "a***************************************g" },
+    { "timestamp": "2026-02-11T14:20:00-03:00", "value_brl": "317900.00", "bidder_raw": "d**************l" },
+    { "timestamp": "2026-02-11T14:45:00-03:00", "value_brl": "318250.00", "bidder_raw": "d**************l" },
+    { "timestamp": "2026-02-11T15:52:00-03:00", "value_brl": "318260.00", "bidder_raw": "c*************************************************************s" },
+    { "timestamp": "2026-02-11T15:56:00-03:00", "value_brl": "319500.00", "bidder_raw": "d**************l" },
+    { "timestamp": "2026-02-11T15:59:00-03:00", "value_brl": "320000.00", "bidder_raw": "a***************************************g" },
+    { "timestamp": "2026-02-11T15:59:00-03:00", "value_brl": "377700.00", "bidder_raw": "d**************l" },
+    { "timestamp": "2026-02-11T15:59:00-03:00", "value_brl": "377710.00", "bidder_raw": "c*************************************************************s" }
+  ],
+  "images": [
+    { "url": "https://fauthleiloes.com.br/wp-content/uploads/2026/01/image.png", "is_thumbnail": false },
+    { "url": "https://fauthleiloes.com.br/wp-content/uploads/2026/01/Captura-de-pantalla-2026-01-20-165926.png", "is_thumbnail": false },
+    { "url": "https://fauthleiloes.com.br/wp-content/uploads/2026/01/image-1.png", "is_thumbnail": false },
+    { "url": "https://fauthleiloes.com.br/wp-content/uploads/2026/01/Captura-de-pantalla-2026-01-20-095125.png", "is_thumbnail": false }
+  ],
+  "documents": [
+    {
+      "kind": "edital",
+      "url": "https://fauthleiloes.com.br/wp-content/uploads/2026/01/EDITAL-RANDON-ARIA-CONSTRUTORA-E-INCORPORADORA.docx",
+      "label": "Edital de Leilão"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://fauthleiloes.com.br/wp-content/uploads/2026/01/matricula-Florianopolis-1.pdf",
+      "label": "Matrícula do Imóvel"
+    }
+  ],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T22:30:00-03:00",
+  "parser_notes": "Recon arquitetural do provider 'wordpress' — bucket residual (10 tenants em data/intermediate/site_analysis.csv) marcando WordPress como tech_stack sem framework de leilão dedicado por trás. Heterogêneo: cada tenant escolheu seu próprio stack acima do WordPress core. Tenant amostrado para o pilot: fauthleiloes.com.br (André Antônio Fauth + Antônio Carlos Fauth, leiloeiros oficiais, Caxias do Sul/RS) — usa WooCommerce + plugin 'Ultimate WooCommerce Auction' (UWA, body class 'product-type-auction', status classes uwa_auction_status_{started,expired,future}). Pilot lot: lote postID=1082, slug 'apartamemto-florianopolis-sc' (typo no slug original, mantido). APARTAMENTO 602 + vaga + hobby-box no Edifício Residencial Montebello, Florianópolis/SC. Leilão Extrajudicial 2 round (alienação fiduciária, comitente Randon Aria Construtora) — encerrado em 11/02/2026 16:00 BRT, ARREMATADO pelo licitante 'c***...s' (handle obfuscado pela UWA — só 1ª e última letras visíveis, miolo em '*') por R$ 377.710,00 (acima do lance mínimo R$ 306.500,00 do 2º leilão). 11 lances totais no histórico, capturados em <table.auction-history-table> com 'Total de lances feitos' explicitamente expostos. Bids com timestamp em PT-BR ('11 de fevereiro de 2026 15:59'), preço em BRL com vírgula decimal e bidder_raw obfuscado pela própria UWA — não houve PII a redigir (já redigida pelo provider). 'description' inclui inscrições municipais (PJ pública, mantém). Sem CPF nem nome PF identificável de pessoa física no pilot. Classificação WordPress provider: NÃO É plataforma única — é etiqueta de bucket de leiloeiros que rodam WordPress sem provedor SaaS dedicado. Survey rápido de tenants amostrados: (1) mvleiloes (representante do _input.json) — custom CPT /leilao_imoveis/ + Elementor + WooCommerce mas SEM plugin de leilão (lots como showcase, sem bid history, todos 'Em breve novas datas'); (2) fauthleiloes — WooCommerce + UWA, real auctions com bid history server-side renderizado (escolhido para o pilot); (3) luizcampolina — WooCommerce + UWA também (485 produtos, mas sample de 25 todos sem bids reais — produtos teste/cancelados); (4) bonfadini — WordPress + Elementor puro, showcase; (5) fabioguimaraes — WordPress 5.1 legado, posts de blog. Spider de produção precisa detectar variant por tenant (CPT /leilao_imoveis/ vs WooCommerce /produto/ vs WooCommerce /leilao/, presença/ausência de UWA) — não dá para escrever um único spider. Recomendação: spider 'wordpress_uwa' cobre fauth+luizcampolina; outros tenants viram 'no_bid_data' ou spiders por tenant individuais. Listing closed (leilões encerrados como filtro UI público): NÃO EXISTE em nenhum dos 5 tenants amostrados — fauth não tem /leiloes-encerrados/, /shop/, /agenda-anteriores/, /categoria-produto/encerrados/ etc. Listing 'closed' efetiva = product-sitemap.xml (Yoast SEO) que lista todos os produtos (73 no fauth); status do leilão (expired/started/future) só aparece no detail via classe body. Spider iterar sitemap → fetch detail → filtrar por uwa_auction_status_expired. CEP=null (descrição não publica CEP). area_sqm=62.25 (área real privativa do apartamento; total_area=null pois inclui múltiplos itens — vaga 21.6m² + hobby-box 2.07m² — não somáveis para 'total construída' do imóvel). Documento Edital vem como .docx (.docx é raro mas o validador HttpUrl aceita; pipeline downstream pode fazer probe de mime). Imagens em wp-content/uploads (4 do gallery WooCommerce, png screenshots do edital — não fotos do imóvel real, mas é o que o tenant publicou). Robots.txt fauth: 'User-agent: * Allow: /' (Yoast block) + Disallow /wp-admin/ — público OK. Rate limit 1.5s mantido em todos os ~80 fetches (probes amplos cross-tenant para confirmar heterogeneidade). Não baixei binários."
+}

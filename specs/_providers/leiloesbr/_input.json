@@ -1,0 +1,70 @@
+{
+  "provider": "leiloesbr",
+  "representative": {
+    "slug": "",
+    "nome": "ALEXANDRE WEYH",
+    "final_url": "https://www.awleiloes.com.br/",
+    "site_analysis_row": {
+      "id": "1129",
+      "slug": "",
+      "nome": "ALEXANDRE WEYH",
+      "uf": "RS",
+      "cidade": "",
+      "dominio": "http://www.awleiloes.com.br",
+      "confidence": "medium",
+      "real_estate_score": "3.1",
+      "http_status": "200",
+      "final_url": "https://www.awleiloes.com.br/",
+      "error": "",
+      "tech_stack": "jQuery",
+      "tech_signals": "jquery",
+      "static_link_count": "112",
+      "dynamic_link_count": "120",
+      "static_useful_links": "75",
+      "dynamic_useful_links": "75",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "Alexandre Weyh - Leiloeiro Oficial",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/ddfc1639854c5f19724f9e129e27947cb4b0cf42.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Thiago Barros Cardoso",
+      "final_url": "https://www.tbaracajuleiloes.com.br/",
+      "useful_links": 124,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "PAULO RENATO HUMOR",
+      "final_url": "https://www.prhleiloes.com.br/",
+      "useful_links": 122,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "FERNANDO PELLONI BARROS DA SILVEINA",
+      "final_url": "https://www.casaamarelaleiloes.net.br/",
+      "useful_links": 67,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "EVANIO ALVES PEREIRA",
+      "final_url": "https://www.evanioalvesleiloeiro.com.br/",
+      "useful_links": 6,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Sarita Ana Giacomazzi Araujo",
+      "final_url": "https://www.pandacolecoes.com.br/",
+      "useful_links": 2,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 6
+}

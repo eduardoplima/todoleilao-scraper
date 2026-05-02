@@ -1,0 +1,41 @@
+{
+  "passed_hard": false,
+  "hard_failures": [
+    "no_real_estate_in_catalog: provider catalog has only Automovel/Eletro/Maquinario; 0 imóveis listed",
+    "no_pilot_item_producible: cannot construct PilotItem when source publishes no real estate"
+  ],
+  "soft_warnings": [
+    "listing_closed unavailable: provider purges lot data after sale (only 'Este lote já foi arrematado' message remains)",
+    "bids unavailable: bid history gated behind login even for active lots",
+    "site_analysis_row.real_estate_score=13.1 was a false positive from edital PDF keywords"
+  ],
+  "fill_rate": {
+    "auctioneer_slug": 0.0,
+    "source_listing_url": 0.0,
+    "source_lot_url": 0.0,
+    "title": 0.0,
+    "description": 0.0,
+    "property_type": 0.0,
+    "address.raw_text": 0.0,
+    "address.uf": 0.0,
+    "address.cep": 0.0,
+    "address.municipality_name": 0.0,
+    "market_value_brl": 0.0,
+    "rounds": 0.0,
+    "bids": 0.0,
+    "images": 0.0,
+    "documents": 0.0,
+    "auction_status": 0.0,
+    "scraped_at": 0.0
+  },
+  "recon_status": "no_real_estate",
+  "closed_url_tested": "https://www.palaciodosleiloes.com.br/site/lotem.php?cl=1514551",
+  "closed_url_observation": "44KB HTML returns generic 'lote arrematado' shell with zero structured fields",
+  "ajax_endpoint_mapped": "POST https://www.palaciodosleiloes.com.br/site/camada_ajax/coluna_esquerda_m.php (opcao=listar_lote|carregar_categoria|...)",
+  "categories_exposed": {
+    "1": "Automovel (378 lotes)",
+    "15": "Eletro (739 lotes)",
+    "2": "Maquinario (1 lote)"
+  },
+  "validated_at": "2026-05-01T21:00:00+00:00"
+}

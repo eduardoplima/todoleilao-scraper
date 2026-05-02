@@ -1,0 +1,186 @@
+# Contrato declarativo do recon arquitetural do "provider" WordPress.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+#
+# CAVEAT IMPORTANTE: "wordpress" não é uma plataforma — é um BUCKET RESIDUAL
+# de leiloeiros que rodam WordPress + plugins variados sem provedor SaaS
+# dedicado por trás (ao contrário de soleon, leilao_pro, leilotech etc.).
+# Survey de 5 tenants amostrados (mvleiloes, fauthleiloes, luizcampolina,
+# leiloesbonfadini, fabioguimaraesleiloes) revelou pelo menos 4 stacks
+# distintos por baixo da etiqueta WordPress:
+#
+#   variant            tenant                stack                      auction_data
+#   ───────────────    ────────────────────  ─────────────────────────  ────────────
+#   showcase-cpt       mvleiloes             custom CPT /leilao_imoveis/ + Elementor   nenhum
+#                                            (sem plugin de leilão)
+#   woo-uwa            fauthleiloes          WooCommerce + Ultimate WooCommerce        bids reais
+#                                            Auction (UWA) + custom slug /leilao/
+#   woo-uwa            luizcampolina         WooCommerce + UWA + slug /produto/        bids reais
+#   showcase-pages     leiloesbonfadini      WordPress + Elementor (sem WooCommerce)   nenhum
+#   legacy-blog        fabioguimaraes        WordPress 5.1 + posts (sem plugin)        nenhum
+#
+# Os selectors abaixo cobrem a variant **woo-uwa** (única com bids reais).
+# Para outras variants, spider precisa fallback "no_bid_data" + extração
+# manual via descrição/título do post. Tenant escolhido para o pilot:
+# fauthleiloes.com.br (postID 1082, apartamento Florianópolis/SC).
+
+auctioneer_slug: "wordpress"
+platform_hint: "wordpress-woocommerce-uwa"
+
+listing_active:
+  url_pattern: "https://fauthleiloes.com.br/agenda-de-leiloes/"
+  card_selector: "a[href*='/leilao/']:not([href*='/agenda-'])"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+  notes: |
+    Variant woo-uwa: tenant não tem rota canônica de listagem ativa
+    pública (categorias /categoria-produto/imoveis/ vêm vazias). A
+    listagem real do tenant é a home + sitemap. Para descobrir todos
+    os lotes, usar product-sitemap.xml (Yoast SEO) — mesmo pattern
+    para listing_closed (sem distinção entre ativo/encerrado no UI
+    público; status só aparece no detail via classe body
+    uwa_auction_status_{started,expired,future}).
+
+    Variants showcase-cpt (mvleiloes): card_selector
+    "a[href*='/leilao_imoveis/']", listing = home (18 lots),
+    pagination=none, sitemap wp-sitemap-posts-leilao_imoveis-1.xml.
+    Variants showcase-pages/legacy-blog: caso a caso, geralmente
+    /category/{slug}/ ou /portal/category/leiloes/.
+
+listing_closed:
+  url_pattern: "https://fauthleiloes.com.br/product-sitemap.xml"
+  card_selector: "loc"
+  card_kind: xpath
+  pagination:
+    kind: none
+    template: null
+  notes: |
+    Não existe listagem UI pública para encerrados nos tenants
+    amostrados. /leiloes-encerrados/, /encerrados/,
+    /categoria-produto/encerrados/, /shop/?product_status=expired:
+    todos 404. Fallback canônico: product-sitemap.xml (Yoast SEO,
+    formato sitemap XML padrão; xpath '//loc/text()' extrai todas as
+    URLs de produto). Iterar sitemap → fetch detail → filtrar por
+    body class 'uwa_auction_status_expired' (variant woo-uwa) para
+    obter encerrados. Para variant showcase-cpt:
+    wp-sitemap-posts-leilao_imoveis-1.xml + filtragem por badge no
+    card (mvleiloes mostra apenas 'Em breve novas datas' / 'Leilão
+    Judicial' / 'VENDA DIRETA CAEX' — sem distinção encerrado/ativo
+    estrutural).
+
+detail:
+  url_pattern: "https://fauthleiloes.com.br/leilao/{slug}/"
+  field_selectors:
+    title:
+      selector: "meta[property='og:title']::attr(content)"
+      kind: css
+      notes: |
+        og:title sempre presente, formato '{titulo} - {Tenant Name}'.
+        Strip do sufixo ' - {Tenant Name}' opcional. Alternativas:
+        <h1 class="product_title entry-title"> ou <title>.
+    auction_status:
+      selector: "body::attr(class)"
+      kind: css
+      notes: |
+        Variant woo-uwa: classe body inclui
+        'uwa_auction_status_{started|expired|future}'.
+        - started + auction-history-table com bids → ativo
+        - expired + auction-history-table com bids + 'O maior lance
+          foi:' → arrematado
+        - expired + auction-history-table sem bids
+          (apenas <tr class="start">) → encerrado
+        - future → ativo (agendado)
+        Variant showcase-cpt: status só inferível por badge textual
+        ('Em breve novas datas', 'Leilão Judicial', 'VENDA DIRETA').
+        Sem mapeamento estrutural para encerrado/arrematado.
+    price_minimum:
+      selector: "div#tab-description"
+      kind: css
+      notes: |
+        Variant woo-uwa: descrição PT-BR inclui '1º Leilão: R$X,YY'
+        e '2º Leilão: R$Z,YY'. Regex em python:
+        r'(\d+)º\s+Leil[ãa]o:?\s*R?\$?\s*([\d\.]+,\d{2})'.
+        Lance mínimo do round = valor publicado. Há também o campo
+        UWA #_auction_start_price (postmeta), mas só visível pra
+        usuário logado.
+    price_market:
+      selector: "div#tab-description"
+      kind: css
+      notes: |
+        Variant woo-uwa: avaliação geralmente = '1º Leilão' (100%
+        avaliação por padrão Lei 9.514). Em alguns tenants vem
+        explícito 'AVALIAÇÃO: R$ X,YY' separado (luizcampolina).
+        Para o pilot fauth: market_value = 613000.00 = 1º Leilão
+        (sem campo 'avaliação' explícito; padrão extrajudicial pré-2ª
+        praça).
+    address_block:
+      selector: "div#tab-description"
+      kind: css
+      notes: |
+        Endereço dentro da descrição livre. Sem schema. Heurística:
+        'situado na/no rua [^,]+, n[º°.]?\\s*\\d+', complementos
+        intermediários até cidade/UF. Florianópolis/SC, Caxias do
+        Sul/RS são bairros típicos do tenant fauth.
+    description_block:
+      selector: "div#tab-description"
+      kind: css
+      notes: |
+        woocommerce-Tabs-panel--description. Texto rico, parágrafos
+        com <br/>. Limpar tags + entidades HTML. Pode conter PII em
+        leilões judiciais (executado, devedor) — redigir
+        para [PF]/[CPF] antes de gravar no item.
+    images:
+      selector: "div.woocommerce-product-gallery__image > a"
+      kind: css
+      notes: |
+        Galeria woocommerce do tema theme-own-shop / maxbizz /
+        astra. Cada <div class="woocommerce-product-gallery__image">
+        contém <a href="{full_size_url}"> com <img> srcset.
+        Capturar href (= full size). 1-N imagens (3-9 típico no
+        fauth). Filtrar imagens fora do gallery (related-products
+        contém imgs de outros lotes — excluir).
+    documents:
+      selector: "div#tab-description a[href*='/wp-content/uploads/']"
+      kind: css
+      notes: |
+        Documentos linkados inline na descrição (anchor com texto
+        'Edital de Leilão', 'Matrícula do Imóvel'). Extensões: .pdf
+        (mais comum), .docx (RARO mas existe — fauth usa .docx para
+        edital em alguns lotes), .doc, .xlsx. Heurística kind:
+        - 'edital' no texto/href → kind=edital
+        - 'matric' no texto/href → kind=matricula
+        - 'laudo' → kind=laudo
+        - 'certid' / 'ônus' → kind=certidao
+    bids:
+      selector: "table.auction-history-table tbody tr"
+      kind: css
+      notes: |
+        Plugin Ultimate WooCommerce Auction (UWA). Estrutura:
+          <tr>
+            <td class="bid_username">{handle obfuscado}</td>
+            <td class="bid_date">{DD de {mês} de YYYY HH:MM}</td>
+            <td class="bid_price"><span...>{NN.NNN,NN}</bdi></td>
+            <td class="proxy">{vazio | 'Sim' p/ auto-bid}</td>
+          </tr>
+        Bidder_raw vem PRÉ-OBFUSCADO pelo provider
+        ('c************s' — só 1ª e última letras visíveis).
+        Não há PII nominal a redigir. Ordem do HTML: mais recente
+        primeiro; reverter para chronological order (oldest first)
+        no PilotItem.bids[].
+        Datas em PT-BR completo: '11 de fevereiro de 2026 15:59'.
+        Parse com mapa de meses e fixar tz=-03:00.
+        Acima da tabela existe <p>'Leilão expirou'</p> +
+        <p>'O maior lance foi: <span>{handle}</span></p> — útil
+        para o status canônico.
+        Sem paginação no histórico — todos os lances vêm na 1ª
+        request (não há /lances?page=2).
+    auction_meta_postid:
+      selector: "body::attr(class)"
+      kind: css
+      notes: |
+        body class 'postid-{N}' identifica o post WooCommerce.
+        Auction-history-table usa o mesmo ID:
+        'auction-history-table-{N}'. Útil para reconciliação
+        cross-page (ex.: ajax bids endpoint
+        /wp-admin/admin-ajax.php?action=woo_ua_set_new_bid).

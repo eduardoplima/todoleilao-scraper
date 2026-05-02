@@ -1,0 +1,78 @@
+# Contrato declarativo do recon piloto — provider leilotech
+# Validado por: uv run python -m validator.lint_selectors selectors.yaml
+#
+# Provider: leilotech (multi-tenant, Laravel + Livewire + Cloudflare Workers).
+# Site representativo: topoleiloes.com.br.
+# 17+ outros tenants no CSV (alleiloes, spencerleiloes, vasconcelosleiloes,
+# oleiloes, ...) compartilham este mesmo template — confirmado por probe:
+# todos servem `cdn.leilotech.workers.dev` + `wire:snapshot=` no HTML.
+
+auctioneer_slug: "guilherme-eduardo-stutz-toporoski"  # tenant representativo
+platform_hint: "leilotech-livewire"
+
+# Listagem ativa: home `/` lista lotes ativos diretamente
+# (anchors `<a href="/lote/{id}/{slug}">` mistos imóveis+veículos).
+listing_active:
+  url_pattern: "https://topoleiloes.com.br/"
+  card_selector: "a[href*='/lote/']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+# Listagem encerrada: rota dedicada `/encerrados`
+# (mesmo schema de anchors). Sem paginação detectada na 1ª página.
+listing_closed:
+  url_pattern: "https://topoleiloes.com.br/encerrados"
+  card_selector: "a[href*='/lote/']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+detail:
+  url_pattern: "https://topoleiloes.com.br/lote/{lot_id}/{slug}"
+  field_selectors:
+    # CRÍTICO: o conteúdo estruturado do lote vive em wire:snapshot="..."
+    # (Livewire JSON com HTML-entity-encoded). Parser real precisa:
+    #   1. capturar `<div ... wire:snapshot="(.+?)">` no HTML
+    #   2. decodear entities (&quot; etc.)
+    #   3. json.loads → data.lote[0]
+    # Os selectors abaixo são "address books" para os parsers HTML
+    # tradicionais (fallback) ou auditoria visual; o spider final
+    # deve ler do snapshot.
+    title:
+      selector: "title::text"
+      kind: css
+    price_minimum:
+      # ver wire:snapshot.data.lote[0].table_rows -> "Lance inicial:"
+      # contém os 2 leilões em uma string HTML; parsear com regex
+      # `(\d+)º?\.?\s*LEILÃO:\s*[A-Za-zÀ-ÿ]+,\s*(\d{2}/\d{2}/\d{4})\s*-\s*(\d{1,2}:\d{2})h?\s*-\s*R\$\s*([\d.,]+)`
+      selector: "#lote-detail [class*='ficha-do-lote']"
+      kind: css
+    price_market:
+      # wire:snapshot.data.lote[0].table_rows -> "Valor da avaliação:"
+      selector: "#lote-detail [class*='ficha-do-lote']"
+      kind: css
+    address_block:
+      # wire:snapshot.data.lote[0].description_html (contém LOCALIZAÇÃO:)
+      # CSS apenas para fallback HTML-rendered.
+      selector: "#descricao-do-lote, [data-section='descricao']"
+      kind: css
+    images:
+      # wire:snapshot.data.lote[0].images[][0] -> {image, original, thumb}
+      # CDN: https://cdn.leilotech.workers.dev/{tenant}/lote/{id}/fotos/...
+      selector: ".galeria-do-lote img[src*='cdn.leilotech.workers.dev']::attr(src)"
+      kind: css
+    documents:
+      # wire:snapshot.data.lote[0].documents[][0] -> {label, url}
+      # E também actions[][0] (ex.: link EDITAL → /{publicacao_id}/publicacao).
+      selector: "a[href*='cdn.leilotech.workers.dev'][href$='.pdf']"
+      kind: css
+    bids:
+      # NÃO EXPOSTO: snapshot só carrega agregados (Maior Lance, Apelido,
+      # Total de lances) em table_rows. Sem endpoint público de histórico
+      # — bids: [] por design. O resultado final fica em
+      # rounds[-1].status_raw ("Arrematado por <apelido> — R$ <valor>").
+      selector: null
+      kind: css

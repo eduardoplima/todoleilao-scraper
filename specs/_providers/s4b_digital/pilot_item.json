@@ -1,0 +1,65 @@
+{
+  "auctioneer_slug": "eckert-leiloes",
+  "source_listing_url": "https://www.eckertleiloes.com.br/?searchType=closed&pageNumber=1&pageSize=30&orderBy=endDate:desc&filter=product.productType.id:13",
+  "source_lot_url": "https://www.eckertleiloes.com.br/oferta/lote-urbano-n-5-localizado-na-rua-sao-jose-jardim-moretti-municipio-de-realeza-parana-area-de-50537-m-4429106",
+  "title": "LOTE 015 - LOTE URBANO N° 5, LOCALIZADO NA RUA SÃO JOSÉ, JARDIM MORETTI, MUNICÍPIO DE REALEZA/PARANÁ  ÁREA DE 505.37 M²",
+  "description": "LOTE URBANO N° 5, QUADRA 419, LOCALIZADO NA RUA SÃO JOSÉ, JARDIM MORETTI, MUNICÍPIO DE REALEZA/PARANÁ&nbsp; COM METRAGEM TOTAL DE 505.37 M² MATRÍCULA N° 24.338 OBSERVAÇÕES: Os bens serão vendidos NO ESTADO em que se encontram, SEM GARANTIA e SEM DIREITO A TROCA, constituindo ônus do interessado realizar a visitação e verificar suas condições, antes da data designada para o encerramento do leilão. Eventuais regularizações necessárias, inclusive aquelas referentes à averbação de edificações ou à adequação perante os órgãos competentes, correrão exclusivamente por conta e responsabilidade do arrematante comprador. Reservamo-nos o direito de corrigir eventuais erros de digitação. Não será cobrado nenhum encargo administrativo dos arrematantes sobre o preço da arrematação (valor do lance ofertado).",
+  "property_type": "terreno",
+  "address": {
+    "raw_text": "LOTE URBANO N° 5, QUADRA 419, RUA SÃO JOSÉ, JARDIM MORETTI, REALEZA/PR — área 505,37 m², matrícula nº 24.338",
+    "street_name": "RUA SÃO JOSÉ",
+    "number": null,
+    "complement": "LOTE URBANO N° 5, QUADRA 419",
+    "district": "JARDIM MORETTI",
+    "municipality_name": "Realeza",
+    "uf": "PR",
+    "cep": null
+  },
+  "area_sqm": null,
+  "total_area_sqm": "505.37",
+  "market_value_brl": null,
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2025-12-04T11:07:58-03:00",
+      "minimum_bid_brl": "60000",
+      "status_raw": "Praça Única - Arrematado por m*****la - R$ 151500"
+    }
+  ],
+  "auction_status": "arrematado",
+  "bids": [],
+  "images": [
+    {
+      "url": "https://ms.sbwebservices.net/photos/15b06307-002c-48ba-bb22-15b18a95852f.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://ms.sbwebservices.net/photos/c02eb325-199a-4f7b-be75-42944437a28f.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://ms.sbwebservices.net/photos/80b8759a-058f-44a7-9ea4-d842f644759e.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://ms.sbwebservices.net/photos/b7fbadf9-b838-4d9d-bd31-399e289ac98c.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://ms.sbwebservices.net/photos/cc73038b-bf11-4c7f-b689-f85e878b8328.jpg",
+      "is_thumbnail": false
+    },
+    {
+      "url": "https://ms.sbwebservices.net/photos/d37c6a48-0f88-433b-a226-f4f8ab47d396.jpg",
+      "is_thumbnail": true
+    },
+    {
+      "url": "https://ms.sbwebservices.net/photos/16c308d2-a9a7-49ef-ad13-fad479cc2661.jpg",
+      "is_thumbnail": false
+    }
+  ],
+  "documents": [],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T21:02:02.465581-03:00",
+  "parser_notes": "Provider s4b_digital (NP/Eckert/JMF/Saladeleiloes/Barreto multi-tenant). API: offer-query.superbid.net + event-query.superbid.net. Bids history NOT exposed publicly (api.s4bdigital.net/auction-event/offer/{id}/bids = 401). auction_status=arrematado inferido de winnerBid.currentWinner=2413889 (login m*****la, já ofuscado pelo provider) e totalBids=165, hasBids=true, allOffersOfThisAuctionIsClosed=true. rounds[0].minimum_bid = initialBidValue (60.000), distinto do priceFormatted (151.500=lance vencedor). market_value (avaliação) não publicado pelo provider em campo separado; reservedPrice = initialBid. Sem PII para redigir; bidder login já vem ofuscado server-side."
+}

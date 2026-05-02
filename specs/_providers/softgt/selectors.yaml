@@ -1,0 +1,92 @@
+# Contrato declarativo do recon piloto.
+# Plataforma SoftGT (https://www.softgt.com.br ; tel (41) 99936-7879).
+# Sinais canônicos:
+#   <meta name="author" content="SoftGT" />
+#   Rodapé: <a title="SoftGT (41) 99936-7879">SoftGT</a>
+#   Stack: PHP + jQuery (sem framework), Cloudflare na frente em alguns tenants.
+#   Endpoint de lances: POST /historico.php  body: {bem, leilao}  (auth opcional, requer só PHPSESSID).
+#   Rotas:
+#     /                              -> home (listing de leilões abertos)
+#     /home/                         -> alias do home
+#     /home-encerrado/               -> listing de leilões finalizados (variável por tenant)
+#     /leiloes/{leilao_id}           -> tabela de lotes de UM leilão (ativo)
+#     /leiloes-encerrado/{leilao_id} -> tabela de lotes encerrados (resultado, sem URL de detalhe)
+#     /detalhe-lote/{leilao_id}/{ordem} -> detalhe do lote ATIVO (jQuery hidrata via historico.php)
+#     /detalhe-lote-encerrado/{leilao_id}/{ordem} -> NÃO renderiza detalhe; cai pra home (limitação)
+# Tenant escolhido p/ piloto: pbcastro (PR; PB Castro Filho — único com volume e bid ativo no provider).
+# Outros tenants softgt amostrados: flexleiloes, sfleiloes, lbleiloes, dalcanaleleiloes, luizleiloes.
+
+auctioneer_slug: "plinio-barroso-de-castro-filho"
+platform_hint: "softgt"
+
+listing_active:
+  url_pattern: "https://www.pbcastro.com.br/leiloes/{leilao_id}"
+  card_selector: "table.tabela-leilao tbody tr"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+# Provider expõe um listing de encerrados (leilões finalizados), MAS:
+#  - cada item da tabela mostra apenas {Imagem, Lote, Descrição, Edital, Situação, Valor};
+#  - "Situação" é sempre "Encerrado" (não há badge "ARREMATADO" no resultado público);
+#  - "Valor" é 0,00 em todos os 156 leilões encerrados sondados (campo zerado pós-fechamento);
+#  - NÃO há URL canônica para o detalhe do lote encerrado — /detalhe-lote-encerrado/ existe na rota
+#    mas o backend devolve a home (200, ~50KB) sem hidratar o lote;
+#  - POST /historico.php?{bem, leilao} retorna HTTP 500 quando leilao está encerrado
+#    (provavelmente o backend filtra por status ativo antes de servir histórico).
+# Conclusão: o listing existe, é navegável e útil pra reconciliar quais leilões fecharam,
+# mas NÃO entrega lances nem fechamentos públicos. Mantemos a referência e justificamos.
+listing_closed:
+  url_pattern: "https://www.pbcastro.com.br/home-encerrado/"
+  card_selector: "a[href*='leiloes-encerrado/']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+detail:
+  url_pattern: "https://www.pbcastro.com.br/detalhe-lote/{leilao_id}/{ordem}"
+  field_selectors:
+    title:
+      # h2 vem como "Lote 001"; o título descritivo está num <h2> COMENTADO
+      # logo abaixo. Para o spider final, melhor cruzar com o <h2> da listagem
+      # (table.tabela-leilao precedida por section.corpo > h2).
+      # Fallback útil: <section class="info"><h3>...</h3></section> traz a Vara/comitente.
+      selector: "section.corpo > h2"
+      kind: css
+    price_minimum:
+      # "Lance Inicial" — texto livre dentro de section.info > span.abertura
+      # Selector parseia o bloco; valor extraído via regex r'Lance Inicial.*?R\$\s*-?\s*<strong[^>]*>([^<]+)'.
+      selector: "section.info span.abertura"
+      kind: css
+    price_market:
+      # "Valor Avaliação" — mesmo bloco, regex r'Valor Avalia.*?R\$\s*-?\s*<strong[^>]*>([^<]+)'.
+      selector: "section.info span.abertura"
+      kind: css
+    address_block:
+      # Endereço é texto livre dentro do bloco "DETALHE DO LOTE".
+      # Não há campos estruturados; parser final extrai com regex.
+      selector: "section.info:has(h3:contains('DETALHE DO LOTE')) p"
+      kind: css
+    images:
+      # Galeria fotorama. Imagens em arquivos/<datestamp>_<hash>_<codbem>.<ext>.
+      # Fallback: img src="images/logo.png" indica lote SEM fotos publicadas (comum).
+      # Filtrar excluindo paths /images/ (logo) e /icones/.
+      selector: "div.fotorama img"
+      kind: css
+    documents:
+      # Edital em /normas/Edital_<leilao_id>_<token>.pdf
+      # Outros (matrícula, laudo) em /arquivos/<datestamp>_<hash>_<codbem>.pdf
+      # Selector pega <li><a class="botaoinfo">.
+      selector: "section.info-lote a.botaoinfo[href$='.pdf']"
+      kind: css
+    bids:
+      # Histórico de lances NÃO está no HTML inicial; é hidratado por
+      # POST /historico.php  body={bem: <codbem>, leilao: <leilao_id>}
+      # codbem extraído de <div id="codbem">N</div>; leilao_id de <div id="codleilao">N</div>.
+      # Resposta JSON traz vl0..vl2/us0..us2/dt0..dt2 (à vista) e vlp0..vlp3/usp0..usp3/dtp0..dtp3 (à prazo).
+      # Datas em DD/MM/YYYY HH:MM:SS (sem TZ; assumir America/Sao_Paulo / -03:00).
+      # API retorna 500 para leilões encerrados — ler somente em status="S" (Em Andamento).
+      selector: 'POST:/historico.php {bem,leilao}'
+      kind: css

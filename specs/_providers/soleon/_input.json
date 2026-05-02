@@ -1,0 +1,70 @@
+{
+  "provider": "soleon",
+  "representative": {
+    "slug": "",
+    "nome": "Isaías Rosa Ramos Júnior",
+    "final_url": "https://www.isaiasleiloes.com.br/",
+    "site_analysis_row": {
+      "id": "377",
+      "slug": "",
+      "nome": "Isaías Rosa Ramos Júnior",
+      "uf": "MG",
+      "cidade": "",
+      "dominio": "https://www.isaiasleiloes.com.br",
+      "confidence": "high",
+      "real_estate_score": "13.4",
+      "http_status": "200",
+      "final_url": "https://www.isaiasleiloes.com.br/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap",
+      "tech_signals": "jquery | bootstrap | server:cloudflare",
+      "static_link_count": "194",
+      "dynamic_link_count": "226",
+      "static_useful_links": "182",
+      "dynamic_useful_links": "215",
+      "rendering": "hybrid",
+      "requires_js_for_listings": "False",
+      "html_title": "Isaias Jr. - Leiloeiro Oficial - JUCEMG 831",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/0c4aeaf2d6a3d2d20611ea4eb49ec7201103363f.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Flávio Duarte Ceruli",
+      "final_url": "https://www.leiloesceruli.com.br/",
+      "useful_links": 379,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Italo Trindade Moura Filho",
+      "final_url": "https://www.italoleiloes.com/",
+      "useful_links": 352,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Valério César de Azevedo Déda",
+      "final_url": "https://www.lancese.com.br/",
+      "useful_links": 326,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Carlos Gustavo Santos Fiel",
+      "final_url": "https://www.lancese.com.br/",
+      "useful_links": 326,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "João Luiz de França Neto",
+      "final_url": "https://www.ccjleiloes.com.br/",
+      "useful_links": 319,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 116
+}

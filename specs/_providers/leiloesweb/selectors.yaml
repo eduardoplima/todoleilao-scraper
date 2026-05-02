@@ -1,0 +1,98 @@
+# Recon piloto — provider `leiloesweb` (Leilões Web)
+# Tenant amostrado: bampileiloes.com.br (Ricardo Bampi).
+# Validado por: uv run python -m validator.lint_selectors selectors.yaml
+
+auctioneer_slug: "ricardo-bampi"
+platform_hint: "leiloesweb"
+
+# Listagem ATIVA — home consolida leilões abertos, em andamento e encerrados
+# em cards homogêneos `.box-leilao`. Cada card é um leilão (não um lote);
+# leilão pode ter 1+ lotes, mas o site mistura tudo na mesma página.
+listing_active:
+  url_pattern: "https://www.bampileiloes.com.br/"
+  card_selector: "div.box-leilao a[href*='/leilao/detalhe_leilao/']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+# Listagem ENCERRADA — provider preserva todos os leilões na home indefinidamente.
+# A home expõe ativos + encerrados sem distinção visual no card; status real só
+# aparece após XHR `lotes_regressivas.php?idLote={lot_id}` (`statusLote` = `Arrematado` |
+# `ENCERRADO` | `Fechado` | `Suspenso`). Alternativa: `/busca/avancada` com
+# filtros (POST form com data_ini/data_fim, tipo_bem, etc).
+listing_closed:
+  url_pattern: "https://www.bampileiloes.com.br/"
+  card_selector: "div.box-leilao a[href*='/leilao/detalhe_leilao/']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+detail:
+  # URL canônica do detalhe do leilão (que envolve 1+ lotes).
+  # NOTA importante: a página /leilao/detalhe_leilao/{leilao_id} NÃO se auto-referencia
+  # (sem og:url, sem canonical). Para `source_lot_url` no PilotItem usamos o
+  # endpoint XHR que carrega o lote individual — ver recon.md "Decisões".
+  url_pattern: "https://www.bampileiloes.com.br/leilao/detalhe_leilao/{leilao_id}"
+  field_selectors:
+    title:
+      # H1 contém "Código do Leilão: {numero}/{ano}". Para o título do lote, o
+      # site mistura no h2 (vara) + descrição. Usamos o título do leilão na home
+      # (.box-leilao .titulo ou primeiro span do card) que é mais expressivo.
+      selector: "title::text"
+      kind: css
+    price_minimum:
+      # "Lance inicial em 2º Leilão:" no bloco .lote-details. Para encerrados
+      # com bid, o preço inicial da praça onde o lote arrematou.
+      selector: "div.lote-details"
+      kind: css
+    price_market:
+      # "Avaliação:" no bloco .lote-details (primeiro valor R$).
+      selector: "div.lote-details"
+      kind: css
+    address_block:
+      # Endereço do bem está dentro da seção "Descrição detalhada do Lote" (h2
+      # → div), em blocos por Bem (Bem 1 / Bem 2 / Bem 3) com sub-fields:
+      # "Bem:", "Matrícula:", "Endereço de vistoria:". Não há .endereco
+      # canônico — o spider deve regex/parsing.
+      selector: "h2:contains('Descrição detalhada do Lote') ~ *"
+      kind: xpath
+    images:
+      # Fotos do bem ficam em <a class="img_lote_home" href="...manage/pub/Image/*.jpg">
+      # com <img class="img-responsive">. Provider usa pelo menos 1 foto por lote;
+      # banner principal em .img-capa (mesma URL da galeria).
+      selector: "a.img_lote_home[href*='manage/pub/Image']"
+      kind: css
+    documents:
+      # PDFs em /principal/pub/Image/*.pdf (Edital + Matrículas) e
+      # /principal/pub/anexos/*.pdf (Edital alternativo). Anchors texto:
+      # "Edital", "Matrícula imóvel", etc.
+      selector: "a[href*='principal/pub'][href$='.pdf']"
+      kind: css
+    # ---- Field selectors estendidos (não validados pelo lint, mas úteis) ----
+    bids:
+      # Histórico de lances vem em DUAS fontes redundantes:
+      # 1) Tabela HTML inline na seção "Histórico de lances recebidos" (h2 + table).
+      # 2) JSON do XHR /principal/sistemas/leilao/lotes_regressivas.php?idLote={lot_id}
+      #    em data.historico[] — preferível por estar estruturado.
+      selector: "table tr"
+      kind: css
+      notes: |
+        Preferir XHR JSON. URL: /principal/sistemas/leilao/lotes_regressivas.php?idLote={lot_id}
+        Resposta JSON traz: historico[].{val_lance, val_comissao, data_lance, ip,
+        nick_name, origem, pagamento, id_lance}. Datetimes em "dd/mm/yyyy HH:MM:SS",
+        valores em PT-BR ("R$ 1.570.936,81"), nick_name é texto livre. PII na
+        tabela HTML inclui CPF parcialmente mascarado (ex: "697.947.07***") — o
+        XHR JSON NÃO expõe CPF (apenas nick_name + ip). Preferir XHR para evitar
+        PII residual.
+    status:
+      # Status canônico vem do XHR (statusLote / classStatusLote). HTML tem
+      # apenas flags visuais (.img_arrematado, .img_encerrado etc) que são
+      # mostradas/escondidas pelo JS após o XHR.
+      selector: "principal/sistemas/leilao/lotes_regressivas.php?idLote={lot_id}::json:statusLote"
+      kind: css
+      notes: |
+        statusLote ∈ {Arrematado, ENCERRADO, Fechado, Suspenso}. classStatusLote
+        é o equivalente CSS-friendly. isArrematado/isEncerrado/isFechado/isSuspenso
+        são flags 0|1 redundantes.

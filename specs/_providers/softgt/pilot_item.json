@@ -1,0 +1,63 @@
+{
+  "auctioneer_slug": "plinio-barroso-de-castro-filho",
+  "source_listing_url": "https://www.pbcastro.com.br/leiloes/3261",
+  "source_lot_url": "https://www.pbcastro.com.br/detalhe-lote/3261/1/",
+
+  "title": "Lote 001 - TERRENO COM 360M² EM ITAPOÁ/SC",
+  "description": "AUTOS: 0000835-94.2018.5.09.0029 — Um terreno urbano situado na Rua 5, neste município de Itapoá – Santa Catarina, constituído pelo lote 19 da quadra 09, do loteamento denominado Balneário Veredas, com área de 360m², confrontações conforme matrícula sob nº 6.006 do CRI de Itapoá/SC.",
+  "property_type": "terreno",
+
+  "address": {
+    "raw_text": "Rua 5, lote 19, quadra 09, Loteamento Balneário Veredas, Itapoá/SC",
+    "street_name": "Rua 5",
+    "number": "lote 19",
+    "complement": "quadra 09",
+    "district": "Balneário Veredas",
+    "municipality_name": "Itapoá",
+    "uf": "SC",
+    "cep": null
+  },
+
+  "area_sqm": null,
+  "total_area_sqm": "360.00",
+  "market_value_brl": "20000.00",
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": null,
+      "minimum_bid_brl": "10000.00",
+      "status_raw": "Em Andamento — Encerra em 5 dia(s), 15 hora(s) (sondagem 2026-05-01); status='S' do historico.php"
+    }
+  ],
+
+  "auction_status": "ativo",
+
+  "bids": [
+    {
+      "timestamp": "2026-04-19T14:56:14-03:00",
+      "value_brl": "10000.00",
+      "bidder_raw": "Mandy"
+    }
+  ],
+
+  "images": [],
+
+  "documents": [
+    {
+      "kind": "edital",
+      "url": "https://www.pbcastro.com.br/normas/Edital_3261_2124526303.pdf",
+      "label": "Edital"
+    },
+    {
+      "kind": "matricula",
+      "url": "https://www.pbcastro.com.br/arquivos/20260417_32883_3281.pdf",
+      "label": "MATRÍCULA"
+    }
+  ],
+
+  "encumbrances_raw": [],
+
+  "scraped_at": "2026-05-01T12:00:00-03:00",
+  "parser_notes": "Plataforma SoftGT (PHP+jQuery). Tenant: pbcastro (PR). Provider EXPÕE listing de leilões encerrados (/home-encerrado/, 156 leilões), MAS sem URL de detalhe por lote, sem comprador e com Valor=0,00 sempre — POST /historico.php retorna HTTP 500 para leilões encerrados. Por isso o piloto é um lote ATIVO com 1 lance antecipado público (usuário 'Mandy' R$ 10.000,00 em 19/04/2026 14:56:14, vindo de POST /historico.php {bem:3281, leilao:3261}). market_value_brl = Valor Avaliação (R$ 20.000); minimum_bid_brl = Lance Inicial original (R$ 10.000, 50% da avaliação — 2ª praça implícita). Sem fotos do imóvel publicadas (galeria fotorama traz apenas /images/logo.png — gotcha softgt comum). Sem CPF/PF na descrição; 'Mandy' é apelido público de leilão, mantido. scheduled_at: null porque a página não publica data formal de leilão; o JS apenas exibe contagem regressiva ('Encerra em N dia(s)…') sem timestamp absoluto."
+}

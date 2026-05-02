@@ -1,0 +1,35 @@
+{
+  "passed_hard": true,
+  "hard_failures": [],
+  "soft_warnings": [
+    "address.cep ausente"
+  ],
+  "fill_rate": {
+    "auctioneer_slug": 1.0,
+    "source_listing_url": 1.0,
+    "source_lot_url": 1.0,
+    "title": 1.0,
+    "description": 1.0,
+    "property_type": 1.0,
+    "area_sqm": 0.0,
+    "total_area_sqm": 1.0,
+    "market_value_brl": 1.0,
+    "auction_status": 1.0,
+    "scraped_at": 1.0,
+    "parser_notes": 1.0,
+    "address.raw_text": 1.0,
+    "address.street_name": 1.0,
+    "address.number": 0.0,
+    "address.complement": 0.0,
+    "address.district": 1.0,
+    "address.municipality_name": 1.0,
+    "address.uf": 1.0,
+    "address.cep": 0.0,
+    "rounds": 1.0,
+    "bids": 1.0,
+    "images": 1.0,
+    "documents": 1.0,
+    "encumbrances_raw": 1.0
+  },
+  "validated_at": "2026-05-02T00:20:03.448924+00:00"
+}

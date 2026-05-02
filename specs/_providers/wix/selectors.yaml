@@ -1,0 +1,65 @@
+# Provider 'wix' = detector de tech-stack (Wix.com Website Builder), nao plataforma de leilao.
+# Este selectors.yaml documenta o padrao arquitetural: paginas Wix sao marketing
+# estatico, sem cards de lote, sem URLs por lote, sem historico de lances.
+# Spider real precisa parser textual da pagina /leiloesarealizar (ou equivalente)
+# como fluxo degenerado: 1 pagina HTML = N blocos textuais = N items.
+
+auctioneer_slug: "_providers/wix"
+platform_hint: "wix-static-marketing"
+
+listing_active:
+  url_pattern: "https://www.arquimedesleiloes.com.br/leiloesarealizar"
+  # Wix nao gera anchors por lote. A "listagem" e a propria pagina;
+  # blocos de lote sao paragrafos/secoes textuais delimitados por
+  # cabecalhos como "LEILÃO JUDICIAL", "CASA RESIDENCIAL", "IMOVEL RURAL".
+  # Selector card pseudo-CSS: divs do main que contem keyword de lot.
+  card_selector: "main section, main div[data-mesh-id], #PAGES_CONTAINER section"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+# Wix-built sites tipicamente nao publicam encerrados com dados estruturados.
+# Pagina /leiloesrealizados, quando existe, lista CATEGORIAS de clientes
+# (TJMG, RFFSA, INFRAERO...) sem dados de lote. Bids historico nao existe.
+# Quando alguns sites tem link "ACESSE NOSSA PLATAFORMA" (ex: dloficiais ->
+# duarteleiloes.com.br), o provider real e outro (leilao_pro / softgt /
+# bidder etc.) - tratar separadamente.
+listing_closed: null
+
+detail:
+  # No padrao Wix, "detail" colapsa com "listing": e a propria pagina /leiloesarealizar.
+  # Spider real precisa parser textual heuristico (regex sobre texto extraido por
+  # BeautifulSoup), nao seletores CSS por campo.
+  url_pattern: "https://www.arquimedesleiloes.com.br/leiloesarealizar"
+  field_selectors:
+    title:
+      # Cabecalho do bloco (ex: "CASA RESIDENCIAL", "LEILAO JUDICIAL NA COMARCA DE ...")
+      selector: "h1, h2, h3, [data-testid='richTextElement'] strong"
+      kind: css
+    price_minimum:
+      # Avaliacao = lance minimo round 1 no padrao judicial brasileiro
+      # ("por preco igual ou superior ao da avaliacao"). Regex sobre texto:
+      # r'AVALIA[CÇ][AÃ]O[:\s]*R\$\s*([\d.,]+)'
+      selector: "[data-testid='richTextElement']"
+      kind: css
+    price_market:
+      # Mesmo seletor; AVALIACAO = market_value tambem.
+      selector: "[data-testid='richTextElement']"
+      kind: css
+    address_block:
+      # Nao ha bloco estruturado; endereco vem em texto solto. Regex:
+      # r'(?:Rua|Avenida|Av\.?|Pra[cç]a)\s+[^,\n]+,?\s*(?:n[º°o]?\.?\s*\d+)?[^.\n]*?\b\w+/[A-Z]{2}\b'
+      selector: "[data-testid='richTextElement']"
+      kind: css
+    images:
+      # Wix usa <wow-image> com srcset; em paginas de Arquimedes nao ha fotos por lote.
+      # Spider deve ignorar imagens decorativas (logo, banner, equipe).
+      selector: "wow-image img[src], img[src*='wixstatic.com/media/']"
+      kind: css
+    documents:
+      # Editais nao sao publicados online por este provider (pagina diz
+      # "EDITAL E OUTRAS INFORMACOES COM O LEILOEIRO OFICIAL").
+      # Em outros sites Wix pode haver PDFs hospedados em wix-usrfiles.
+      selector: "a[href$='.pdf'], a[href*='.usrfiles.com/']"
+      kind: css

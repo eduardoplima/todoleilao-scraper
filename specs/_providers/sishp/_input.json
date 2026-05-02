@@ -1,0 +1,70 @@
+{
+  "provider": "sishp",
+  "representative": {
+    "slug": "carla-sobreira-umino",
+    "nome": "CARLA SOBREIRA UMINO",
+    "final_url": "https://www.lancenoleilao.com.br/",
+    "site_analysis_row": {
+      "id": "23",
+      "slug": "carla-sobreira-umino",
+      "nome": "CARLA SOBREIRA UMINO",
+      "uf": "SP",
+      "cidade": "",
+      "dominio": "https://www.lancenoleilao.com.br",
+      "confidence": "medium",
+      "real_estate_score": "5.9",
+      "http_status": "200",
+      "final_url": "https://www.lancenoleilao.com.br/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap",
+      "tech_signals": "jquery | bootstrap | server:cloudflare",
+      "static_link_count": "156",
+      "dynamic_link_count": "227",
+      "static_useful_links": "133",
+      "dynamic_useful_links": "205",
+      "rendering": "dynamic",
+      "requires_js_for_listings": "False",
+      "html_title": "Lance no Leilão :: Gestão de Leilões",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/3bcfa0ea869705d22c949d4cce8bf4a8418c576f.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "angelica-mieko-inoue-dantas",
+      "nome": "ANGELICA MIEKO INOUE DANTAS",
+      "final_url": "https://www.lancetotal.com.br/",
+      "useful_links": 110,
+      "cache_used": "static"
+    },
+    {
+      "slug": "angela-eiko-inoque-dos-santos",
+      "nome": "Angela Eiko Inoque dos Santos",
+      "final_url": "https://www.lancetotal.com.br/",
+      "useful_links": 110,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Antônio Carlos Celso Santos Frazão",
+      "final_url": "https://www.sfrazao.com.br/",
+      "useful_links": 6,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Victor Alberto Severino Frazão",
+      "final_url": "https://www.sfrazao.com.br/",
+      "useful_links": 6,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "ANTONIO CARLOS CELSO SANTOS FRAZAO",
+      "final_url": "https://www.sfrazao.com.br/",
+      "useful_links": 6,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 6
+}

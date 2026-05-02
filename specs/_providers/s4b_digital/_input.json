@@ -1,0 +1,70 @@
+{
+  "provider": "s4b_digital",
+  "representative": {
+    "slug": "",
+    "nome": "JOSIANE NUNES SCHWEC PINOTTI",
+    "final_url": "https://www.npleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc",
+    "site_analysis_row": {
+      "id": "1194",
+      "slug": "",
+      "nome": "JOSIANE NUNES SCHWEC PINOTTI",
+      "uf": "RS",
+      "cidade": "",
+      "dominio": "http://www.npleiloes.com.br",
+      "confidence": "high",
+      "real_estate_score": "8.0",
+      "http_status": "200",
+      "final_url": "https://www.npleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc",
+      "error": "",
+      "tech_stack": "jQuery; Superbid",
+      "tech_signals": "jquery | superbid | server:cloudflare",
+      "static_link_count": "0",
+      "dynamic_link_count": "181",
+      "static_useful_links": "0",
+      "dynamic_useful_links": "140",
+      "rendering": "dynamic",
+      "requires_js_for_listings": "True",
+      "html_title": "NP Leilões",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/ea2bf206f8dee0eeabc7f2a8dd151081a810a4e1.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Marciano Mauro Pagliarini",
+      "final_url": "https://www.eckertleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc",
+      "useful_links": 108,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Marcos Paulo Branco de Morais",
+      "final_url": "https://www.saladeleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc",
+      "useful_links": 100,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "POLIANA MIKEJEVS CALÇA",
+      "final_url": "https://www.superbid.net/",
+      "useful_links": 58,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Bruno Barreto Sanches",
+      "final_url": "https://www.barretoleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc",
+      "useful_links": 39,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "JOÍO VITOR MARTINS FERREIRA",
+      "final_url": "https://www.jmfleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc",
+      "useful_links": 37,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 43
+}

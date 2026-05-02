@@ -1,0 +1,57 @@
+{
+  "auctioneer_slug": "sodre_santoro",
+  "source_listing_url": "https://www.sodresantoro.com.br/imoveis/lotes",
+  "source_lot_url": "https://leilao.sodresantoro.com.br/leilao/28423/lote/2743972/",
+  "title": "VAGA DE GARAGEM - CENTRO - AMPARO - SP",
+  "description": "Vaga de garagem n° 19, localizado no térreo do (Condomínio Edifício São José), situado à Rua Comendador Guimarães, n° 330, Amparo/SP, constante de um box para um só veículo, com a área útil de 12,50 m², área comum de 4,77 m², no total de 17,27 m², cabendo-lhe, portanto, uma fração ideal no terreno e coisas comuns de 4,42 m², confrontando pela frente com o pátio de manobras; por um lado com a garagem n° 21; por outro lado com a garagem n° 17; e pelos fundos com a garagem n° 18. Matrícula nº 24.398, do CRI de Amparo/SP. Contribuinte municipal nº 0091-0109. Avaliação: R$ 17.000,00 (abril/2023). Ônus/restrições: (i) Constam da matrícula do imóvel, em (Av.09), a indisponibilidade decretada nos autos n° 0033400-65.2009.5.15.0060, Vara do Trabalho de Amparo/SP; em (Av.10) e (Av.11), a comunicação de existência de ação e, respectivamente, a penhora dos presentes autos; (ii) De acordo com o disposto no artigo 1.331 do Código Civil, bem como a Convenção do Condomínio Edifício São José, referida vaga de garagem só poderá ser adquirida por proprietários de unidade autônoma dentro do condomínio.",
+  "property_type": "outro",
+
+  "address": {
+    "raw_text": "RUA COMENDADOR GUIMARÃES, 330 - CENTRO - AMPARO/SP",
+    "street_name": "RUA COMENDADOR GUIMARÃES",
+    "number": "330",
+    "complement": null,
+    "district": "CENTRO",
+    "municipality_name": "Amparo",
+    "uf": "SP",
+    "cep": null
+  },
+
+  "area_sqm": "12.50",
+  "total_area_sqm": "17.27",
+  "market_value_brl": "17000.00",
+
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2026-05-13T11:30:00-03:00",
+      "minimum_bid_brl": "19139.00",
+      "status_raw": "1ª Praça"
+    }
+  ],
+
+  "auction_status": "ativo",
+
+  "bids": [],
+
+  "images": [
+    { "url": "https://photos.sodresantoro.com.br/imoveis/28423/2743972/1755865664_I16715N1.JPG", "is_thumbnail": false },
+    { "url": "https://photos.sodresantoro.com.br/imoveis/28423/2743972/1755865664_I16715N2.JPG", "is_thumbnail": true }
+  ],
+
+  "documents": [
+    { "kind": "edital", "url": "https://arquivos.sodresantoro.com.br/anexos/28423_NULL_29060.pdf", "label": "Edital/Condições de Venda" },
+    { "kind": "edital", "url": "https://arquivos.sodresantoro.com.br/anexos/28423_NULL_29061.pdf", "label": "Edital" },
+    { "kind": "outro", "url": "https://arquivos.sodresantoro.com.br/anexos/28423_2743972_29126.pdf", "label": "Anexo do lote" }
+  ],
+
+  "encumbrances_raw": [
+    "Indisponibilidade decretada nos autos n° 0033400-65.2009.5.15.0060, Vara do Trabalho de Amparo/SP (Av.09)",
+    "Comunicação de existência de ação (Av.10)",
+    "Penhora dos presentes autos (Av.11)",
+    "Restrição condominial: art. 1.331 CC + Convenção do Edifício São José — vaga só pode ser adquirida por proprietário de unidade autônoma do condomínio"
+  ],
+
+  "scraped_at": "2026-05-01T22:00:00-03:00",
+  "parser_notes": "Provider Nuxt + API search-lots (Elasticsearch) + detalhes legacy PHP em leilao.sodresantoro.com.br. Pilot escolhido: imóvel (vaga de garagem) AMPARO/SP, lote ativo (lot_status=andamento) com 1 lance registrado por 'E*e' R$ 19.400,00 — único imóvel com bid_has_bid=true no índice. PilotBid[] vazio: tabela #tabela_lances expõe apelido + valor + comissão SEM timestamp absoluto, e PilotBid exige tz-aware datetime; provider apenas mostra bid_user_nickname e bid_actual=19400 sem âncora temporal. property_type=outro porque 'vaga de garagem' não mapeia limpo para apartamento|casa|terreno|comercial|rural; trata-se de fração autônoma de imóvel residencial. listing_closed=null pois índice 'imoveis' contém só ativos (47 docs, todos auction_status=aberto); 51 encerrados globais residem todos em 'veiculos' (lot_status=não vendido, id 6) — provider não publica histórico de imóveis encerrados. PII: bidder 'E*e' (apelido público, mantido); descrição cita autos judiciais (números de processo são públicos, mantidos)."
+}

@@ -1,0 +1,104 @@
+---
+# Recon contract — palacio_dos_leiloes
+# Status: NO_REAL_ESTATE
+# O site (palaciodosleiloes.com.br/site/) NÃO publica leilões de imóveis
+# em seu catálogo público. Categorias expostas: Automovel (1), Eletro (15),
+# Maquinario (2). Total 1118 lotes, 0 imóveis.
+# Este arquivo é mantido como documentação arquitetural do provider para
+# referência futura, caso a empresa reabra o canal "Imóveis" (já existiu
+# em editais antigos como "EDITAL DE CONSOLIDAÇÃO DE PROPRIEDADE").
+
+provider: palacio_dos_leiloes
+site_url: https://www.palaciodosleiloes.com.br/site/
+representative_auctioneer: Rafaela Melo Ferreira Marzano (sites_in_provider=5)
+platform_hint: custom-php-ajax  # PHP backend + jQuery AJAX (camada_ajax/*.php)
+requires_playwright: false       # API AJAX é HTTP+POST puro, sem JS-only
+
+# Mesmo sendo dynamic (rendering=dynamic), todo o conteúdo da listagem
+# é entregue por POST a um endpoint AJAX que retorna HTML fragment.
+# Spider de produção poderia usar httpx direto.
+
+xhr:
+  endpoint: https://www.palaciodosleiloes.com.br/site/camada_ajax/coluna_esquerda_m.php
+  method: POST
+  content_type: application/x-www-form-urlencoded
+  query_param_required: "?quebra=<random_float>"   # cache-buster anti-CDN
+  body_params:
+    opcao: listar_lote        # opções: listar_lote | carregar_leilao | carregar_categoria | carregar_subcategoria | ...
+    categoria_pesquisa: ""    # CSV de IDs (1=Automovel, 15=Eletro, 2=Maquinario)
+    leilao_pesquisa: ""       # CSV de leilao_pesquisa IDs (do sitemap)
+    txt_pesquisa_lote: ""
+    paginacao: "0"            # offset (passos de 8)
+    total_paginas: "1"
+    tipo_exibicao: "grid"     # grid | lista
+    somente_pesquisa: "0"
+    e_categoria: "0"          # flag binária por filtro
+    e_leilao: "0"
+  response: "HTML fragment com cards de lote; cada card aponta para lotem.php?cl={cod_lote}"
+  notes: |
+    Fallback embutido no JS quando nenhum filtro foi marcado e a página
+    é leilao.php: aplica `categoria_pesquisa=1,13059,15`. O ID 13059 não
+    aparece em /carregar_categoria — provavelmente categoria stub.
+    Headers: encoding=iso-8859-1 (importante; respostas em latin-1, não UTF-8).
+
+sitemap:
+  url: https://www.palaciodosleiloes.com.br/sitemap.xml
+  patterns:
+    - /site/leilao.php?leilao_pesquisa={id}    # 274 entries, mas só ~10 ativos respondem com lotes
+    - /site/lotem.php?cl={lot_code}             # 1118 entries (todos não-imóveis)
+
+# ----------------------------------------------------------------------
+# listing_active — contrato hipotético (não testável: zero imóveis)
+# ----------------------------------------------------------------------
+
+listing_active:
+  url: https://www.palaciodosleiloes.com.br/site/leilao.php?leilao_pesquisa={leilao_id}
+  fetch_kind: xhr_post
+  xhr_endpoint: https://www.palaciodosleiloes.com.br/site/camada_ajax/coluna_esquerda_m.php
+  card_selector: "div.card, div[id^='div_lote_']"   # estrutura observada no fragment de Eletro/Automovel; aplicável se Imóveis fosse listado
+  card_kind: css
+  pagination:
+    kind: querystring
+    param: paginacao
+    page_size: 8
+  filter_imoveis_supported: false   # categoria 'Imóveis' não existe no /carregar_categoria
+
+# ----------------------------------------------------------------------
+# listing_closed — IMPOSSÍVEL EXTRAIR
+# ----------------------------------------------------------------------
+
+listing_closed: null
+listing_closed_reason: |
+  1. O catálogo público AJAX (carregar_leilao) lista apenas leilões ativos
+     dos últimos 30 dias (8334-8371, todos com data >= hoje).
+  2. Tentativa de POST com leilao_pesquisa=8333 (e mais antigos: 8200, 8000)
+     retorna mensagem "Desculpe, não foi possível localizar a oferta..."
+     (size=1009 bytes). Leilões anteriores não são indexados.
+  3. Página de detalhe lotem.php?cl={old_id} de lote arrematado retorna
+     APENAS "Este lote já foi arrematado! Mas não se preocupe, temos
+     muitas opções..." — sem título do lote, sem valor, sem endereço,
+     sem histórico de lances. Todo conteúdo é apagado/substituído.
+  4. Histórico de lances exigia login mesmo para lotes ativos (forms
+     frm_lote/lance_online.php gateados por cadastro).
+  5. PDFs em /editais.php contêm o texto integral de leilões antigos,
+     mas como prosa não-estruturada — fora do escopo Fase 1.
+
+bids:
+  source: none
+  reason: "Lances ficam atrás de login; pós-arremate, toda info é purgada da view pública."
+
+# ----------------------------------------------------------------------
+# Detalhe (caso futuro — não validável agora)
+# ----------------------------------------------------------------------
+
+detail:
+  url_pattern: https://www.palaciodosleiloes.com.br/site/lotem.php?cl={lot_code}
+  encoding: latin-1   # iso-8859-1; httpx precisa decode explícito
+  field_selectors:
+    title: "h1, .titulo-lote"
+    description: ".descricao, #descricao_lote"
+    price: ".valor-lance, .lance-atual"
+    images: "img.foto-lote, .galeria img"
+  notes: |
+    Selectors hipotéticos — nunca foram exercitados em lote de imóvel
+    (nenhum existe). Seriam derivados após Palácio reabrir essa categoria.

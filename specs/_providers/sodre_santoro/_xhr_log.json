@@ -1,0 +1,49 @@
+[
+  {
+    "url": "https://www.sodresantoro.com.br/api/server-date?_t=1777683685068",
+    "status": 200,
+    "method": "GET",
+    "ct": "application/json",
+    "size": 35,
+    "body_preview": "{\"date\":\"2026-05-02T01:01:25.388Z\"}"
+  },
+  {
+    "url": "https://prd-api.sodresantoro.com.br/api/v1/auctions?status=online",
+    "status": 200,
+    "method": "GET",
+    "ct": "application/json",
+    "size": 24,
+    "body_preview": "{\"data\":[],\"status\":200}"
+  },
+  {
+    "url": "https://prd-api.sodresantoro.com.br/api/v1/site/segments",
+    "status": 200,
+    "method": "GET",
+    "ct": "application/json",
+    "size": 1935,
+    "body_preview": "{\"data\":[{\"id\":1,\"name\":\"Ve\\u00edculos\",\"slug\":\"veiculos\",\"icon\":\"vehicles\",\"fixed\":1,\"quantity\":null,\"categories\":[{\"id\":1,\"name\":\"Carros\",\"slug\":\"carros\",\"link\":\"carros\",\"quantity\":273},{\"id\":4,\"name\":\"Utilitarios leves\",\"slug\":\"utilitarios-leves\",\"link\":\"utilitarios+leves\",\"quantity\":91},{\"id\":2,\"name\":\"Motos\",\"slug\":\"motos\",\"link\":\"motos\",\"quantity\":85},{\"id\":5,\"name\":\"Caminh\\u00f5es\",\"slug\":\"caminhoes\",\"link\":\"caminh\\u00f5es\",\"quantity\":36}]},{\"id\":2,\"name\":\"Materiais e Equipamentos\",\"slug\":\"materiais\",\"icon\":\"materials\",\"fixed\":1,\"quantity\":705,\"categories\":[{\"id\":1007,\"name\":\"Telefonia e Comunica\\u00e7\\u00e3o\",\"slug\":\"telefonia-e-comunicacao\",\"link\":\"telefonia+e+comunica\\u00e7\\u00e3o\",\"quantity\":128},{\"id\":1008,\"name\":\"Eletrodomesticos\",\"slug\":\"eletrodomesticos\",\"link\":\"eletrodomesticos\",\"quantity\":119},{\"id\":1126,\"name\":\"M\\u00f3veis e Decora\\u00e7\\u00e3o\",\"slug\":\"moveis-e-decoracao\",\"link\":\"m\\u00f3veis+e+decora\\u00e7\\u00e3o\",\"quantity\":98},{\"id\":1017,\"name\":\"Casa \\/ Constru\\u00e7\\u00e3o\",\"slug\":\"casa-construcao\",\"link\":\"casa+\\/+constru\\u00e7\\u00e3o\",\"quantity\":75}]},{\"id\":3,\"name\":\"Im\\u00f3veis\",\"slug\":\"imoveis\",\"icon\":\"properties\",\"fixed\":1,\"quantity\":47,\"categories\":[{\"id\":3,\"name\":\"Apartamento\",\"slug\":\"apartamento\",\"link\":\"apartamento\",\"quantity\":13},{\"id\":1,\"name\":\"Terreno\",\"slug\":\"terreno\",\"link\":\"terreno\",\"quantity\":6},{\"id\":23,\"name\":\"Im\\u00f3vel Residencial\",\"slug\":\"imovel-residencial\",\"link\":\"im\\u00f3vel+residencial\",\"quantity\":5},{\"id\":1768,\"name\":\"Direitos "
+  },
+  {
+    "url": "https://www.sodresantoro.com.br/api/search-lots",
+    "status": 200,
+    "method": "POST",
+    "ct": "application/json",
+    "size": 449,
+    "body_preview": "{\"results\":[],\"aggs\":{\"segments_quantity\":{\"doc_count_error_upper_bound\":0,\"sum_other_doc_count\":0,\"buckets\":[{\"key\":\"materiais\",\"doc_count\":613},{\"key\":\"veiculos\",\"doc_count\":564},{\"key\":\"sucatas\",\"doc_count\":143},{\"key\":\"luxos\",\"doc_count\":136},{\"key\":\"judiciais-materiais\",\"doc_count\":93},{\"key\":\"judiciais-imoveis\",\"doc_count\":25},{\"key\":\"imoveis\",\"doc_count\":22},{\"key\":\"judiciais-veiculos\",\"doc_count\":12}]}},\"total\":1608,\"page\":1,\"perPage\":0}"
+  },
+  {
+    "url": "https://www.sodresantoro.com.br/api/search-lots",
+    "status": 200,
+    "method": "POST",
+    "ct": "application/json",
+    "size": 5768,
+    "body_preview": "{\"results\":[],\"aggs\":{\"lot_occupied\":{\"doc_count\":47,\"lot_occupied\":{\"doc_count_error_upper_bound\":0,\"sum_other_doc_count\":1,\"buckets\":[{\"key\":\"ocupado\",\"doc_count\":27},{\"key\":\"desocupado\",\"doc_count\":19}]}},\"bid_actual\":{\"doc_count\":47,\"bid_actual\":{\"count\":47,\"min\":19400,\"max\":43500000,\"avg\":3713386.9134042556,\"sum\":174529184.93}},\"lot_category\":{\"doc_count\":47,\"lot_category\":{\"doc_count_error_upper_bound\":0,\"sum_other_doc_count\":0,\"buckets\":[{\"key\":\"apartamento\",\"doc_count\":12},{\"key\":\"casa com piscina\",\"doc_count\":1},{\"key\":\"casa de alto padrão\",\"doc_count\":1},{\"key\":\"comercial\",\"doc_count\":1},{\"key\":\"consultório\",\"doc_count\":1},{\"key\":\"direitos sobre apartamento\",\"doc_count\":3},{\"key\":\"domínio útil sobre conjunto comercial\",\"doc_count\":1},{\"key\":\"fazenda\",\"doc_count\":1},{\"key\":\"galpão\",\"doc_count\":1},{\"key\":\"imóvel residencial\",\"doc_count\":5},{\"key\":\"imóvel residencial composto de 04 edificações\",\"doc_count\":1},{\"key\":\"lote de terreno\",\"doc_count\":1},{\"key\":\"prédio\",\"doc_count\":2},{\"key\":\"prédio comercial\",\"doc_count\":3},{\"key\":\"sítio rural\",\"doc_count\":1},{\"key\":\"terreno\",\"doc_count\":6},{\"key\":\"terreno urbano\",\"doc_count\":1},{\"key\":\"terrenos\",\"doc_count\":1},{\"key\":\"vaga de garagem\",\"doc_count\":2},{\"key\":\"van pesada\",\"doc_count\":1},{\"key\":\"área rural\",\"doc_count\":1}]}},\"lot_praca_label\":{\"doc_count\":47,\"lot_praca_label\":{\"doc_count_error_upper_bound\":0,\"sum_other_doc_count\":0,\"buckets\":[{\"key\":\"1ª Praça\",\"doc_count\":18},{\"key\":\"2ª Praça\",\"doc_count\":7}]}"
+  },
+  {
+    "url": "https://www.sodresantoro.com.br/api/search-lots",
+    "status": 200,
+    "method": "POST",
+    "ct": "application/json",
+    "size": 268347
+  }
+]

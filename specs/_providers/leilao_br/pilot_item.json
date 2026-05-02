@@ -1,0 +1,60 @@
+{
+  "auctioneer_slug": "Leiloeira_marilaine",
+  "source_listing_url": "https://www.confiancaleiloes.leilao.br/editais?aba=encerrados",
+  "source_lot_url": "https://www.confiancaleiloes.leilao.br/lotes/23383/casa-residencial-com-terreno-de-200m2",
+  "title": "Casa Residencial com terreno de 200m²",
+  "description": "Matrícula nº 4.158 – 1º CRI Local: Prédio residencial e seu respectivo terreno (imóvel não possui matrícula própria, somente do loteamento nº 4.158) situado na Rua das Rosas, nº 50, Jardim Nova Santa Rita, lote 4, Q-N, Santa Rita do Passa Quatro/SP, inscrição municipal nº 02.0510.0335.000 possuindo 200 metros quadrados de terreno e 126,21 metros quadrados de construção, que não estão regularizados junto a prefeitura local. Imóvel está em boas condições, pisos revestimentos em geral, laje, esquadrilhas, cobertura/telhado, encanamento e elétrica, possuindo 3 dormitórios sendo um suíte, sala, cozinha, banheiro social, garagem para um carro, lavanderia e quintal com quarto de despejo, construção de padrão simples com mais de quinze anos aproximadamente.",
+  "property_type": "casa",
+  "address": {
+    "raw_text": "Rua das Rosas, nº 50, Jardim Nova Santa Rita, lote 4, Q-N, Santa Rita do Passa Quatro/SP, CEP 13670-000",
+    "street_name": "Rua das Rosas",
+    "number": "50",
+    "complement": "lote 4, Q-N",
+    "district": "Jardim Nova Santa Rita",
+    "municipality_name": "Santa Rita do Passa Quatro",
+    "uf": "SP",
+    "cep": "13670-000"
+  },
+  "area_sqm": "126.21",
+  "total_area_sqm": "200",
+  "market_value_brl": "280000.00",
+  "rounds": [
+    {
+      "round_number": 1,
+      "scheduled_at": "2023-06-01T14:30:00-03:00",
+      "minimum_bid_brl": "280000.00",
+      "status_raw": "1ª Praça — Sem Licitante (encerrada)"
+    },
+    {
+      "round_number": 2,
+      "scheduled_at": "2023-06-21T14:30:00-03:00",
+      "minimum_bid_brl": "168000.00",
+      "status_raw": "2ª Praça — Sem Licitante (encerrada)"
+    }
+  ],
+  "auction_status": "encerrado",
+  "bids": [],
+  "images": [
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e4495f314-6479e44a20585.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e485db6fd-6479e4869cc82.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e48b2e103-6479e48bebbda.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e49004ae2-6479e490be2ab.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e49526e55-6479e495e69be.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e496338a3-6479e496ef041.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e49c0243d-6479e49cb9152.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e49cec2ff-6479e49dab100.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e4a4b68ba-6479e4a578ccd.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e4a5c68d6-6479e4a68fada.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e4a9aaca9-6479e4aa71f79.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e4ab3ad71-6479e4ac025f9.jpg", "is_thumbnail": false},
+    {"url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/6479e4ae306c9-6479e4aee77ef.jpg", "is_thumbnail": false}
+  ],
+  "documents": [
+    {"kind": "matricula", "url": "https://static.e-leiloes.com.br/eleiloescombr/bens/23391/arquivos/sl-bem-23391-646fb5dfc317e-646fb5e01a75c.pdf", "label": "Matrícula do imóvel"},
+    {"kind": "edital", "url": "https://static.e-leiloes.com.br/eleiloescombr/leiloes/1727/documentos/sl-doc-1727-646fafb0a41e1-646fafb0a5568.pdf", "label": "Edital do Leilão"},
+    {"kind": "outro", "url": "https://static.e-leiloes.com.br/eleiloescombr/leiloes/1727/documentos/sl-doc-1727-6474b1659a5a3-6474b1659b655.pdf", "label": "Jornal"}
+  ],
+  "encumbrances_raw": [],
+  "scraped_at": "2026-05-01T16:30:00-03:00",
+  "parser_notes": "Provider leilao_br (e-leiloes Nuxt SSR variant: confiancaleiloes/e-leiloeiro). Dados extraídos de <script id='__NUXT_DATA__'>. lances=[] no SSR — provider não expõe histórico publicamente; apenas valores das praças e status final. Status do evento _status_variant='encerrado'; lote sem arrematante (valorArremate=None, valorInicialAtual=168000). 13 imagens e 3 documentos do bem (id 23391). Sem PII redigida — siteDescricao não contém CPF nem nome PF (executados aparecem em processoExequente/Executado, fora do PilotItem)."
+}

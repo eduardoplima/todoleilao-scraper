@@ -1,0 +1,42 @@
+{
+  "provider": "mega_leiloes",
+  "representative": {
+    "slug": "",
+    "nome": "FERNANDO JOSE CERELLO GONCALVES PEREIRA",
+    "final_url": "https://www.megaleiloes.com.br/",
+    "site_analysis_row": {
+      "id": "322",
+      "slug": "",
+      "nome": "FERNANDO JOSE CERELLO GONCALVES PEREIRA",
+      "uf": "MT",
+      "cidade": "",
+      "dominio": "https://www.megaleiloes.com.br",
+      "confidence": "high",
+      "real_estate_score": "14.4",
+      "http_status": "200",
+      "final_url": "https://www.megaleiloes.com.br/",
+      "error": "",
+      "tech_stack": "jQuery; Bootstrap; Mega Leilões",
+      "tech_signals": "jquery | bootstrap | megaleiloes | server:cloudflare",
+      "static_link_count": "525",
+      "dynamic_link_count": "756",
+      "static_useful_links": "521",
+      "dynamic_useful_links": "748",
+      "rendering": "hybrid",
+      "requires_js_for_listings": "False",
+      "html_title": "Leilões Judiciais e Extrajudiciais Online | Mega Leilões",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/efad82f2d3817dfc19a404c3522408fde6f08b67.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "Milena Rosa Di Giacomo Adri",
+      "final_url": "https://www.megaleiloes.com.br/ms",
+      "useful_links": 227,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 2
+}

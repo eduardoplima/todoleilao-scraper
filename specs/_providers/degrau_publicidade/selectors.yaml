@@ -1,0 +1,66 @@
+# Contrato declarativo do recon piloto.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+# Provider Degrau Publicidade (footer "Sua Plataforma de Leilão | Degrau Publicidade
+# e Internet"). Multi-tenant: cada leiloeiro tem seu domínio mas todos
+# expõem a mesma API .NET '/ApiEngine/*' e o mesmo bundle '/Core/V1/*'.
+# Pilot site = casareisleiloes.com.br (Eduardo dos Reis / Roberto dos Reis Junior).
+
+auctioneer_slug: "casa-reis-leiloes"
+platform_hint: "degrau_publicidade"
+
+listing_active:
+  # User-facing URL (SPA hash-driven). Real listagem vem da API:
+  # POST /ApiEngine/GetBusca/{Pagina}/{PaginaIndex}/{IndexOut}
+  # body: { "SubStatus":[1,8] (Online/Aberto), "ID_Categoria":1 (IMÓVEIS), ... }
+  # response.Lotes[].URLlote → "lote/{slug}/{ID_Leiloes_Lote}/"
+  url_pattern: "https://www.casareisleiloes.com.br/busca/#Engine=Start&Pagina=1&Busca=&Mapa=&ID_Categoria=1&SubStatus=1,8"
+  card_selector: "a[href*='/lote/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "POST /ApiEngine/GetBusca/{page}/1/0 — body.Pagina={page}"
+
+listing_closed:
+  # Mesmo SPA hash; o filtro decisivo é SubStatus=4,5 (Encerrado/Arrematado).
+  # Provider expõe COUNT por status: response.CountEncerrado, CountArrematado etc.
+  url_pattern: "https://www.casareisleiloes.com.br/busca/#Engine=Start&Pagina=1&Busca=&Mapa=&ID_Categoria=1&SubStatus=4,5"
+  card_selector: "a[href*='/lote/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "POST /ApiEngine/GetBusca/{page}/1/0 — body.SubStatus=[4,5]"
+
+detail:
+  url_pattern: "https://www.casareisleiloes.com.br/lote/{slug}/{ID_Leiloes_Lote}/"
+  field_selectors:
+    title:
+      selector: "h1.dg-lote-titulo"
+      kind: css
+    price_minimum:
+      # Vem da API GetBusca/GetLote (GetLoteRealTime[].ValorMinimoLancePrimeiraPraca);
+      # no HTML aparece apenas via template jQuery (.BoxLanceValor).
+      selector: "section#PageLote .BoxLanceValor[DataLabel='R$ ']"
+      kind: css
+    price_market:
+      # Server-side rendered value (avaliação original do edital):
+      #   <strong class="ValorAvaliacao_Removido">R$645.895,18</strong>
+      # API: response.Lotes[].ValorAvaliacao (638333.33) e GetValorAvaliacao (atualizado).
+      selector: "strong.ValorAvaliacao_Removido"
+      kind: css
+    address_block:
+      # 2 ocorrências: card 'Endereço:' (curto) e seção #dg-lote-local (com texto + mapa).
+      selector: "section#dg-lote-local .dg-lote-local-endereco, .dg-lote-cfgs-item .dg-lote-cfgs-txt"
+      kind: css
+    images:
+      selector: "div.jsLoteImgItens a.jsLoteImgItem[href*='/imagens/1300x1300/']"
+      kind: css
+    documents:
+      selector: "ul.jsLoteAnexos a[href*='/preview/'][href$='.pdf']"
+      kind: css
+    bids:
+      # Histórico via XHR — não há tabela server-rendered.
+      # POST /ApiEngine/GetLancesPropostasLote/{ID_Leilao}/{ID_Leiloes_Lote}
+      # response.Lances[] = [{DataHoraLance, Valor, Apelido, IsRecusado, IsAutomatico, IP}]
+      # Filtrar IsRecusado>0 (lances rejeitados não entram no PilotBid[]).
+      selector: "section#ResultadoLancesPropostasPageLote ul.dg-lote-hist-itens"
+      kind: css

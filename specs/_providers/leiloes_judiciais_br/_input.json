@@ -1,0 +1,70 @@
+{
+  "provider": "leiloes_judiciais_br",
+  "representative": {
+    "slug": "",
+    "nome": "Thaís Costa Bastos Teixeira",
+    "final_url": "https://www.leiloesjudiciaismg.com.br/",
+    "site_analysis_row": {
+      "id": "418",
+      "slug": "",
+      "nome": "Thaís Costa Bastos Teixeira",
+      "uf": "MG",
+      "cidade": "",
+      "dominio": "https://www.leiloesjudiciaismg.com.br",
+      "confidence": "high",
+      "real_estate_score": "28.9",
+      "http_status": "200",
+      "final_url": "https://www.leiloesjudiciaismg.com.br/",
+      "error": "",
+      "tech_stack": "WordPress; Nuxt; Vue; Superbid",
+      "tech_signals": "wp-content/wp-includes | /_nuxt/ or __NUXT__ | vue.js/v-cloak/data-v- | superbid | server:nginx",
+      "static_link_count": "326",
+      "dynamic_link_count": "327",
+      "static_useful_links": "177",
+      "dynamic_useful_links": "178",
+      "rendering": "static",
+      "requires_js_for_listings": "False",
+      "html_title": "Leilões Judiciais - Imóveis, Terrenos, Veículos e Mais",
+      "html_meta_generator": "",
+      "screenshot_path": "data/intermediate/cache/sites/6f0c7f2890f4900ed74eaaded6bb21b6d15deb1a.png"
+    }
+  },
+  "sites_in_provider": [
+    {
+      "slug": "",
+      "nome": "GIORDANO BRUNO COAN AMADOR",
+      "final_url": "https://www.giordanoleiloes.com.br/",
+      "useful_links": 297,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Francisco Jonnathan Santos Freitas - (Cancelado a pedido)",
+      "final_url": "https://franciscofreitasleiloes.com.br/",
+      "useful_links": 235,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Álvaro Sérgio Fuzo",
+      "final_url": "https://alvaroleiloes.com.br/",
+      "useful_links": 169,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "DEONIZIA KIRATCH",
+      "final_url": "https://www.deonizialeiloes.com.br/",
+      "useful_links": 148,
+      "cache_used": "static"
+    },
+    {
+      "slug": "",
+      "nome": "Renato Guedes Rocha",
+      "final_url": "https://www.rioleiloes.com.br/",
+      "useful_links": 141,
+      "cache_used": "static"
+    }
+  ],
+  "n_sites_in_provider": 30
+}

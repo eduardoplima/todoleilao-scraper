@@ -1,0 +1,67 @@
+# Contrato declarativo do recon piloto.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+# Plataforma leilao_pro (Leilão Pro — https://www.leilao.pro). Sinais:
+#   <meta name="author" content="Leilão Pro - https://www.leilao.pro" />
+#   /bundles/leilaoprocore/js/eventsource.min.js
+#   Mercure SSE: https://mercure.leilaodetran.com.br/.well-known/mercure
+#   Rotas /leilao/{slug}/lotes/lista, /leilao/{slug}/lote_id/{lot_id},
+#         /leilao/lotes/{categoria}, /leilao/proximos
+# Tenant escolhido p/ piloto: renovar-leiloes (Corrêa & Alegranzzi LTDA / RS).
+
+auctioneer_slug: "renovar-leiloes"
+platform_hint: "leilao_pro"
+
+listing_active:
+  url_pattern: "https://www.renovarleiloes.com.br/leilao/lotes/imoveis"
+  card_selector: "div.card-vertical"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?page={page}"
+
+# Provider NÃO expõe encerrados publicamente.
+# Lots desaparecem do listing após o término do leilão; não há /encerrados,
+# /realizados ou /historico. Probes 404 ou redirecionam para /leilao/proximos.
+# Filtro ?status=encerrado é ignorado pelo backend (mesma resposta).
+# Justificativa em recon.md "Listing encerrada".
+listing_closed: null
+
+detail:
+  url_pattern: "https://www.renovarleiloes.com.br/leilao/{leilao_slug}/lote_id/{lot_id}"
+  field_selectors:
+    title:
+      selector: "h4.black, ol.breadcrumb li.active"
+      kind: css
+    price_minimum:
+      # 'LANCE ATUAL' (após primeiro lance) ou 'LANCE INICIAL' (sem lances).
+      # Ambos compartilham a classe .lance-inicial-valor.
+      selector: "div.valor-preco.lance-inicial-valor"
+      kind: css
+    price_market:
+      # AVALIAÇÃO em card-informacoes; isolar pelo título "AVALIAÇÃO".
+      selector: "div.card-informacoes:has(h5.titulo:contains('AVALIAÇÃO')) h4 b"
+      kind: css
+    address_block:
+      # Não há campo estruturado; o endereço é texto livre dentro da
+      # primeira card-body do accordion DESCRIÇÃO DO LOTE. Parse via regex.
+      selector: "div#collapseDescricao div.card-body, div.aviso-descricao-container ~ div.card-body"
+      kind: css
+    images:
+      # Fotos em /uploads/media/default/{padded_lote_id}/{hash}.{jpg|png|...}
+      # Filtrar para evitar logo (em /uploads/media/default/0001/60/).
+      selector: "img[src*='/uploads/media/default/'][src*='.jpg'], img[src*='/uploads/media/default/'][src*='.jpeg'], img[src*='/uploads/media/default/'][src*='.png']"
+      kind: css
+    documents:
+      # Editais/matrículas em /uploads/media/documentos_leilao/ e
+      # /uploads/media/documentos_bem/.
+      selector: "a[href$='.pdf'][href*='/uploads/media/documentos_'], a[target='_blank'][href*='/uploads/media/documentos_']"
+      kind: css
+    bids:
+      # Histórico de lances inline (server-side render). Cada <div.lance-item>
+      # carrega: usuário (.lance-value dentro do bloco fa-user), valor
+      # (.lance-value.valor-principal), tipo (Manual/Automático), data/hora
+      # (último .lance-info — formato 'DD/MM/YYYY | HH:MM:SS').
+      # Atualização em tempo real via Mercure SSE — não relevante para o
+      # snapshot. Badge total: span#badge-lances-{lot_id}.
+      selector: "div.lances-list > div.lance-item"
+      kind: css

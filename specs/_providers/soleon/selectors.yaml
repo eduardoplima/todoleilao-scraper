@@ -1,0 +1,113 @@
+# Contrato declarativo do recon arquitetural do provider SOLEON.
+# Validado por `uv run python -m validator.lint_selectors selectors.yaml`.
+#
+# Plataforma SOLEON (Soluções para Leilões Online) — multi-tenant. 116
+# tenants em data/intermediate/site_analysis.csv apontam para esta
+# stack. Sinais canônicos: meta name="author" content="SOLEON ...",
+# rodapé "Tecnologia SOLEON", rotas /leilao/{id}/lotes (lista por
+# leilão), /item/{lot_id}/detalhes (detalhe do lote),
+# /leiloes/encerrados (paginada via ?page=N), CDN externo
+# d2mymldkpl0730.cloudfront.net (alguns tenants) ou
+# {hash}.cdn.gocache.net (outros). Bootstrap 4 + jQuery sobre
+# Cloudflare. requires_playwright = False.
+
+auctioneer_slug: "soleon"
+platform_hint: "soleon"
+
+listing_active:
+  url_pattern: "https://www.isaiasleiloes.com.br/"
+  card_selector: "a[href*='/leilao/'][href$='/lotes']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+  notes: |
+    Home é a listagem ativa do tenant. Cada tenant SOLEON tem sua
+    própria home; selectors são portáveis. 40 leilões na home do
+    isaias amostrado, distribuídos entre lotes únicos
+    (alienação fiduciária / Lei 9.514) e leilões judiciais
+    multi-lote.
+
+listing_closed:
+  url_pattern: "https://www.isaiasleiloes.com.br/leiloes/encerrados"
+  card_selector: "a[href*='/leilao/'][href$='/lotes']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?page={page}"
+  notes: |
+    /leiloes/encerrados expõe TODOS os encerrados do tenant
+    (48 páginas no isaias = ~480 leilões). Mesmo selector da home
+    funciona. Dado o cross-tenant: alguns IDs no listing redirect
+    via meta-refresh para subdomain *.soleon.com.br (timeout em
+    porta 80) ou para o domínio canônico do tenant via HTTPS
+    (resolve OK). Spider de produção precisa seguir esses redirects
+    até o domínio canônico do tenant.
+
+detail:
+  url_pattern: "https://www.isaiasleiloes.com.br/item/{lot_id}/detalhes"
+  field_selectors:
+    title:
+      selector: "meta[name='description']"
+      kind: css
+      notes: "Padrão: 'Lote 001 - {TÍTULO} (ID {lot_id})'. og:title alternativo."
+    status_badge:
+      selector: "div.label_lote"
+      kind: css
+      notes: |
+        Classes: aberto_lance (ativo), sem_licitante (encerrado),
+        vendido (arrematado), sustado (suspenso). Texto bruto em
+        rounds[].status_raw.
+    price_minimum:
+      selector: "h6:contains('Lance Inicial')"
+      kind: css
+    price_market:
+      selector: "h6:contains('Valor de Avaliação')"
+      kind: css
+    encerramento:
+      selector: "h6:contains('Encerramento')"
+      kind: css
+      notes: "Single-round: judicial 2ª praça ou alienação fiduciária encerrada."
+    address_block:
+      selector: "h5:contains('Localização do Imóvel') ~ div"
+      kind: css
+    description_block:
+      selector: "div:contains('Descrição:')"
+      kind: css
+    images:
+      selector: "img[src*='cloudfront.net/bens/'], img[src*='cdn.gocache.net/bens/']"
+      kind: css
+      notes: |
+        CDN varia por tenant SOLEON: d2mymldkpl0730.cloudfront.net
+        (isaias, ceruli, italo, lancese, ccj) e
+        {hash}.cdn.gocache.net (machadoleiloeiro/Fábio Marlon).
+        Path padrão: /bens/{bem_id_padded}/img-{bem_id}-{hash}.{jpg|JPG}.
+        Imagens duplicam 2-3x no HTML (carousel + thumbs); deduplicar
+        por URL canônica.
+    documents:
+      selector: "div.arquivos-lote a[href$='.pdf']"
+      kind: css
+      notes: |
+        Padrão CDN: /bens/{bem_id}/{kind}-de-leilao-{hash}.pdf
+        (edital), /bens/{bem_id}/matricula-do-imovel-{hash}.pdf
+        (matrícula). Label em texto do <a>.
+    bids:
+      selector: "div.ult_body div.ultimos-lances-item"
+      kind: css
+      notes: |
+        Histórico server-side renderizado. Cada item:
+        - .ult_valor_lance: "R$ XX.XXX,XX"
+        - .ult_data_lance: "DD/MM/YYYY HH:MM:SS" (BRT, -03:00)
+        - .ult_tipo_lance: Manual | Automático
+        - .ult_usuario_lance: handle público (e.g., 'wallisson')
+        Maior lance no header também: #valor_lance, #data_lance,
+        #usuario_lance. Em encerrados sem licitante o ult_body fica
+        vazio (apenas o template tpl-lances).
+    judicial_meta:
+      selector: "div.mb-3.p-2.border.rounded.text-justify"
+      kind: css
+      notes: |
+        Bloco "Detalhes do Lote" (acima de "Localização do Imóvel")
+        traz: Comitente, Processo, Vara, Comarca, Executado, Cidade,
+        Endereço, Matrícula, Descrição. PII: 'Executado' contém
+        nome PF — redigir para [PF] no pilot_item.json.
