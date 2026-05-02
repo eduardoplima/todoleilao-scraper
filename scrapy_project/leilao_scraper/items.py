@@ -53,6 +53,17 @@ class PropertyItem(scrapy.Item):
     second_auction_date = scrapy.Field()
     status = scrapy.Field()  # aberto|arrematado|cancelado|desconhecido
 
+    # ----- histórico de lances (encerrados) ----------------------------------
+    # list[{timestamp, value_brl, bidder_raw}] — espelha PilotBid em
+    # validator/pilot_item.py. SOFT por design; alguns providers não expõem.
+    # Extração detalhada em .claude/skills/closed-auction-bids/SKILL.md.
+    bids = scrapy.Field()
+
+    # ----- código do lote no provider (chave externa para idempotência) ------
+    # Usado pelo SupabasePipeline em UPSERT (source_id, source_lot_code).
+    # Quando ausente, fallback é a própria `url`.
+    source_lot_code = scrapy.Field()
+
     # ----- mídia / anexos ----------------------------------------------------
     images = scrapy.Field()  # list[str] de URLs absolutas
     documents = scrapy.Field()  # list[{name, url}]

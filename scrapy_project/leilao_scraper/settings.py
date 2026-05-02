@@ -124,10 +124,12 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 FEED_EXPORT_ENCODING = "utf-8"
 
 # Pipelines: ordem por prioridade (menor primeiro).
+# SupabasePipeline (800) é graceful: fica inerte se SUPABASE_DB_URL ausente.
 ITEM_PIPELINES: dict[str, int] = {
     "leilao_scraper.pipelines.ValidationPipeline": 100,
     "leilao_scraper.pipelines.DeduplicationPipeline": 200,
     "leilao_scraper.pipelines.EnrichmentPipeline": 300,
+    "leilao_scraper.pipelines_supabase.SupabasePipeline": 800,
     "leilao_scraper.pipelines.JsonLinesExportPipeline": 900,
 }
 SPIDER_MIDDLEWARES: dict[str, int] = {}

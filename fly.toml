@@ -1,0 +1,30 @@
+# Fly.io app config — todoleilao-soleon
+#
+# Bootstrap:
+#   fly launch --no-deploy --copy-config --name todoleilao-soleon
+#   fly secrets set SUPABASE_DB_URL="postgresql://..." CPF_PEPPER="..."
+#   fly deploy
+#
+# Primeira execução manual:
+#   fly machines run --rm . scrapy crawl soleon -a sites=2
+#
+# Cron diário (cria Machine recorrente):
+#   fly machines run --schedule daily . scrapy crawl soleon -a sites=10
+
+app = "todoleilao-soleon"
+primary_region = "gru"  # São Paulo — perto dos sites BR e do Supabase BR
+
+[build]
+  dockerfile = "Dockerfile"
+
+# Sem [http_service] — esse app não expõe porta, é puro batch.
+
+[env]
+  SOLEON_SITES = "5"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
+
+[deploy]
+  strategy = "immediate"

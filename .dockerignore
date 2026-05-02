@@ -1,0 +1,44 @@
+# Dados grandes que não vão pra imagem
+data/raw/
+data/processed/
+data/intermediate/cache/
+data/intermediate/auctioneers_*.csv
+data/intermediate/site_analysis.csv
+
+# specs internas (somente _providers/<provider>/selectors.yaml é necessário,
+# que já está incluído via COPY explícito no Dockerfile)
+specs/[!_]*/
+specs/_template/
+specs/_status.md
+specs/_providers/_status.md
+specs/_providers/*/pilot_*.html
+specs/_providers/*/pilot_xhr*.har*
+specs/_providers/*/_*.json
+specs/_providers/*/_*.html
+
+# Reports e docs
+reports/
+docs/
+
+# Dev tooling
+.git/
+.github/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+
+# Edição
+.vscode/
+.idea/
+*.swp
+
+# Outros
+.env
+.env.local
+*.har
+PLANOMESTRE.md
