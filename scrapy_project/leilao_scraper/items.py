@@ -64,6 +64,10 @@ class PropertyItem(scrapy.Item):
     # Quando ausente, fallback é a própria `url`.
     source_lot_code = scrapy.Field()
 
+    # ----- número humano do lote (ex.: "001") --------------------------------
+    # Identificador exibido na listagem; útil pra UI mas não chave única.
+    lot_number = scrapy.Field()
+
     # ----- mídia / anexos ----------------------------------------------------
     images = scrapy.Field()  # list[str] de URLs absolutas
     documents = scrapy.Field()  # list[{name, url}]

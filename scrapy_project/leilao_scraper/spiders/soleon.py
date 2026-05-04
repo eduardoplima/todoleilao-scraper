@@ -39,8 +39,8 @@ class SoleonSpider(ProviderSpider):
         "DOWNLOAD_DELAY": 1.5,
     }
 
-    LEILAO_LOTES_HREF_RE = re.compile(r"/leilao/\d+/lotes/?$")
-    ITEM_DETALHES_HREF_RE = re.compile(r"/item/\d+/detalhes/?$")
+    LEILAO_LOTES_HREF_RE = re.compile(r"/leilao/\d+/lotes/?(?:\?|$)")
+    ITEM_DETALHES_HREF_RE = re.compile(r"/item/\d+/detalhes/?(?:\?|$)")
 
     # ------------------------------------------------------------------
     # Nível 1: home → /leilao/{id}/lotes
@@ -71,28 +71,56 @@ class SoleonSpider(ProviderSpider):
     # ------------------------------------------------------------------
     def parse_leilao_lotes(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
         seen: set[str] = set()
-        for href in response.css("a[href*='/item/']::attr(href)").getall():
+        kept = 0
+        dropped_non_imovel = 0
+        ambiguous = 0
+        for card in response.css("div.lote"):
+            href = card.css("a[href*='/item/']::attr(href)").get()
             if not href or not self.ITEM_DETALHES_HREF_RE.search(href):
                 continue
             absolute = response.urljoin(href)
             if absolute in seen:
                 continue
             seen.add(absolute)
+            verdict = _card_category(card)
+            if verdict is False:
+                dropped_non_imovel += 1
+                continue
+            if verdict is None:
+                ambiguous += 1
+            kept += 1
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,
-                meta={"source_listing_url": response.url},
+                meta={
+                    "source_listing_url": response.url,
+                    "category_verdict_listing": verdict,  # True | None (ambíguo)
+                },
             )
         self.log_event(
             "soleon_leilao_lotes_done",
             url=response.url,
             lote_links=len(seen),
+            kept=kept,
+            dropped_non_imovel=dropped_non_imovel,
+            ambiguous=ambiguous,
         )
 
     # ------------------------------------------------------------------
     # Nível 3: /item/{lot_id}/detalhes → PropertyItem
     # ------------------------------------------------------------------
     def parse_property(self, response: scrapy.http.Response):
+        # Rede de segurança: re-checa categoria via og:description no detalhe.
+        # Pega lotes que passaram ambíguos pelo card e revela ser veículo.
+        og_desc = (response.css("meta[property='og:description']::attr(content)").get() or "").lower()
+        if _detail_is_non_imovel(og_desc):
+            self.log_event(
+                "soleon_lote_dropped_non_imovel",
+                url=response.url,
+                og_desc=og_desc[:80],
+            )
+            return
+
         loader = self.new_loader(response)
         # auctioneer override: usa host como discriminador entre os 116 tenants
         host = self.host_of(response.url)
@@ -104,27 +132,47 @@ class SoleonSpider(ProviderSpider):
             or response.css("meta[property='og:title']::attr(content)").get()
             or ""
         )
+        og_title = response.css("meta[property='og:title']::attr(content)").get() or ""
         loader.add_value("title", meta_desc)
+
+        # lot_number — extrai "001" de "Lote 001 - ..."
+        m_lot = re.match(r"\s*Lote\s+(\d+)", meta_desc, re.I)
+        if m_lot:
+            loader.add_value("lot_number", m_lot.group(1))
 
         # status — div.label_lote class names: aberto_lance, sem_licitante,
         # vendido, sustado
         label_classes = response.css("div.label_lote::attr(class)").get() or ""
         loader.add_value("status", _map_status(label_classes))
 
-        # price_minimum / price_market — h6 texts contendo R$
+        # minimum_bid / market_value — preferir h6 (template "judicial");
+        # fallback para og:title (template "venda direta", padronizado pelo SOLEON
+        # em todos tenants: "<localização> - Lance Inicial: R$X- Avaliação: R$Y").
         price_min = _extract_brl_after_label(response, ["Lance Inicial", "Lance Mínimo"])
+        if price_min is None:
+            price_min = _extract_brl_from_og_title(og_title, "Lance Inicial")
         loader.add_value("minimum_bid", price_min)
         price_market = _extract_brl_after_label(response, ["Valor de Avaliação", "Avaliação"])
+        if price_market is None:
+            price_market = _extract_brl_from_og_title(og_title, "Avaliação")
         loader.add_value("market_value", price_market)
 
-        # encerramento — h6 with date "Encerramento: DD/MM/YYYY HH:MM:SS"
-        encerramento_text = _text_after_label(response, ["Encerramento", "Encerramento do Leilão"])
-        if encerramento_text:
-            iso = _parse_br_datetime_iso(encerramento_text)
-            if iso:
-                # Single-round: trata como segunda praça (judicial padrão SOLEON)
-                loader.add_value("second_auction_date", iso)
-                loader.add_value("auction_phase", "2a_praca")
+        # data — h6 com "Encerramento" (judicial) OU "Envie sua proposta até"
+        # (venda direta). Fallback: og:description "Leilão: DD/MM/YYYY HH:MM"
+        # Passa string BR para o ItemLoader (parse_br_date no input_processor).
+        br_dt_text = _text_after_label(
+            response,
+            ["Encerramento", "Encerramento do Leilão", "Envie sua proposta até"],
+        )
+        if not br_dt_text:
+            og_desc = response.css("meta[property='og:description']::attr(content)").get() or ""
+            m_dt = re.search(r"(\d{2}/\d{2}/\d{4}[^,]*\d{2}:\d{2})", og_desc)
+            if m_dt:
+                br_dt_text = m_dt.group(1)
+        if br_dt_text:
+            # Single-round: trata como segunda praça (judicial padrão SOLEON)
+            loader.add_value("second_auction_date", br_dt_text)
+            loader.add_value("auction_phase", "2a_praca")
 
         # description — div com "Descrição:" como heading
         desc = " ".join(response.css("div:contains('Descrição:') *::text").getall()).strip()
@@ -142,19 +190,23 @@ class SoleonSpider(ProviderSpider):
         if address_text:
             loader.add_value("address", _parse_address(address_text))
 
-        # images — CDN cloudfront ou gocache
-        img_urls = response.css(
-            "img[src*='cloudfront.net/bens/']::attr(src), "
-            "img[src*='cdn.gocache.net/bens/']::attr(src)"
-        ).getall()
+        # images — SOLEON usa carousel-item com style="background: url(...)";
+        # path varia: /bens/, /watermark/bens/, ou domínio cloudfront/gocache
+        # diretamente. Pegamos URL via regex em todo HTML do carousel + og:image.
+        img_urls: list[str] = []
+        carousel_html = " ".join(response.css("div.carousel-item").getall())
+        img_urls.extend(_IMG_BENS_RE.findall(carousel_html))
+        og_img = response.css("meta[property='og:image']::attr(content)").get()
+        if og_img:
+            img_urls.append(og_img)
         # Dedup preservando ordem
-        seen: set[str] = set()
+        seen_imgs: set[str] = set()
         unique_imgs: list[str] = []
         for u in img_urls:
             absolute = response.urljoin(u)
-            if absolute in seen:
+            if absolute in seen_imgs:
                 continue
-            seen.add(absolute)
+            seen_imgs.add(absolute)
             unique_imgs.append(absolute)
         if unique_imgs:
             loader.add_value("images", unique_imgs)
@@ -188,6 +240,9 @@ class SoleonSpider(ProviderSpider):
             url=response.url,
             host=host,
             status=item.get("status"),
+            min_bid=item.get("minimum_bid"),
+            scheduled=item.get("second_auction_date"),
+            imgs=len(item.get("images") or []),
             bids=len(item.get("bids") or []),
         )
         yield item
@@ -196,6 +251,68 @@ class SoleonSpider(ProviderSpider):
 # ---------------------------------------------------------------------------
 # Helpers locais (puro Python, fáceis de testar isoladamente)
 # ---------------------------------------------------------------------------
+
+
+_IMOVEL_LABEL_RE = re.compile(r"\b(?:matr[ií]cula|endere[çc]o|cri|inscri[çc][ãa]o imobili[áa]ria)\s*:", re.I)
+_IMOVEL_NOUN_RE = re.compile(
+    r"\b(apartamento|casa|terreno|im[óo]vel|im[óo]veis|sala\s+comercial|loja|fazenda|"
+    r"ch[áa]cara|s[íi]tio|gleba|kitnet|cobertura|sobrado|conjunto\s+comercial|"
+    r"galp[ãa]o|pr[ée]dio)\b",
+    re.I,
+)
+_VEICULO_LABEL_RE = re.compile(r"\b(?:placa|chassi|renavam|combust[íi]vel)\s*:", re.I)
+_VEICULO_NOUN_RE = re.compile(
+    r"\b(ve[íi]culo|motocicleta|caminh[ãa]o|caminhonete|trator|embarca[çc][ãa]o|"
+    r"motoneta|reboque|[ôo]nibus|moto\s+\w+\s+ano)\b",
+    re.I,
+)
+
+
+def _card_category(card) -> bool | None:
+    """Classifica card de listagem SOLEON como imóvel.
+
+    Retorna:
+        True  — sinais fortes de imóvel (segue, não precisa rever no detail)
+        False — sinais fortes de não-imóvel (descarta sem fetch)
+        None  — ambíguo (segue, mas re-valida no detail via og:description)
+    """
+    text = " ".join(card.css("*::text").getall())
+    has_imovel_label = bool(_IMOVEL_LABEL_RE.search(text))
+    has_veiculo_label = bool(_VEICULO_LABEL_RE.search(text))
+    has_imovel_noun = bool(_IMOVEL_NOUN_RE.search(text))
+    has_veiculo_noun = bool(_VEICULO_NOUN_RE.search(text))
+
+    # Sinais de imóvel mandam quando coexistem (lote misto que cita "imóvel")
+    if has_imovel_label or has_imovel_noun:
+        return True
+    if has_veiculo_label or has_veiculo_noun:
+        return False
+    return None
+
+
+_DETAIL_NON_IMOVEL_PREFIXES = (
+    "um veículo",
+    "um veiculo",
+    "uma motocicleta",
+    "um caminhão",
+    "um caminhao",
+    "uma caminhonete",
+    "um trator",
+    "uma embarcação",
+    "uma embarcacao",
+    "uma motoneta",
+    "um reboque",
+    "um ônibus",
+    "um onibus",
+    "uma moto ",
+)
+
+
+def _detail_is_non_imovel(og_desc_lower: str) -> bool:
+    """Rede de segurança no detail. True = lote NÃO é imóvel, deve ser dropado."""
+    if not og_desc_lower:
+        return False
+    return og_desc_lower.lstrip().startswith(_DETAIL_NON_IMOVEL_PREFIXES)
 
 
 _STATUS_MAP = {
@@ -215,6 +332,27 @@ def _map_status(class_attr: str) -> str:
 
 
 _BRL_RE = re.compile(r"R\$\s*([\d.,]+)")
+_IMG_BENS_RE = re.compile(
+    r"https?://[^\s'\"\\]+?/(?:watermark/)?bens/[^\s'\"\\]+?\.(?:jpg|jpeg|png|webp)",
+    re.I,
+)
+
+
+def _extract_brl_from_og_title(og_title: str, label: str) -> str | None:
+    """Extrai R$ que segue um rótulo no og:title.
+
+    SOLEON padroniza og:title como '<localização> - Lance Inicial: R$X- Avaliação: R$Y'.
+    Útil para tenants que não têm <h6> com o label (template venda direta).
+    """
+    if not og_title:
+        return None
+    m = re.search(rf"{re.escape(label)}\s*:\s*R\$\s*([\d.,]+)", og_title, re.I)
+    if not m:
+        return None
+    try:
+        return str(_brl_to_decimal(m.group(1)))
+    except (InvalidOperation, ValueError):
+        return None
 
 
 def _extract_brl_after_label(response, labels: list[str]) -> str | None:
@@ -254,7 +392,8 @@ def _brl_to_decimal(raw: str) -> Decimal:
 
 
 _BR_DT_RE = re.compile(
-    r"(\d{2})/(\d{2})/(\d{4})\s+(\d{2}):(\d{2})(?::(\d{2}))?"
+    # Aceita "DD/MM/YYYY HH:MM:SS", "DD/MM/YYYY às HH:MM", "DD/MM/YYYY - HH:MM"
+    r"(\d{2})/(\d{2})/(\d{4})\s*(?:[àa]s|-)?\s*(\d{2}):(\d{2})(?::(\d{2}))?"
 )
 
 

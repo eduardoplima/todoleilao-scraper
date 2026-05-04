@@ -76,18 +76,24 @@ def _host(url: str) -> str:
 
 
 _LOT_STATUS_MAP = {
-    # PropertyItem.status → core.lot_status enum
-    "aberto": "ativo",
+    # PropertyItem.status → core.lot_status enum (DDL: futuro, aberto, suspenso,
+    # arrematado, deserto, adjudicado, remido, cancelado, desconhecido).
+    "aberto": "aberto",
+    "suspenso": "suspenso",
     "arrematado": "arrematado",
-    "cancelado": "fracassado",
-    "desconhecido": "futuro",
+    "deserto": "deserto",
+    "adjudicado": "adjudicado",
+    "remido": "remido",
+    "cancelado": "cancelado",
+    "futuro": "futuro",
+    "desconhecido": "desconhecido",
 }
 
 
 def _map_lot_status(status: str | None) -> str:
     if not status:
-        return "futuro"
-    return _LOT_STATUS_MAP.get(status, "futuro")
+        return "desconhecido"
+    return _LOT_STATUS_MAP.get(status, "desconhecido")
 
 
 # Mapeia property_type (PropertyItem) → unit_kind enum (core.spatial_unit.kind)
@@ -402,6 +408,7 @@ class SupabasePipeline:
         self, cur, source_id: str, auction_id: str, a: ItemAdapter, url: str
     ) -> tuple[str, bool]:
         lot_code = a.get("source_lot_code") or url
+        lot_number = a.get("lot_number")
         status = _map_lot_status(a.get("status"))
         appraisal = _to_decimal(a.get("market_value"))
 
@@ -409,12 +416,13 @@ class SupabasePipeline:
             """
             INSERT INTO core.auction_lot
                 (auction_id, source_id, source_lot_code, source_url,
-                 current_status, appraisal_value,
+                 lot_number, current_status, appraisal_value,
                  scraped_at, parser_version)
-            VALUES (%s, %s, %s, %s, %s, %s, now(), %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, now(), %s)
             ON CONFLICT (source_id, source_lot_code) DO UPDATE
               SET current_status   = EXCLUDED.current_status,
                   appraisal_value  = COALESCE(EXCLUDED.appraisal_value, core.auction_lot.appraisal_value),
+                  lot_number       = COALESCE(EXCLUDED.lot_number, core.auction_lot.lot_number),
                   source_url       = EXCLUDED.source_url,
                   last_seen_at     = now(),
                   scraped_at       = EXCLUDED.scraped_at
@@ -422,7 +430,7 @@ class SupabasePipeline:
             """,
             (
                 auction_id, source_id, lot_code, url,
-                status, appraisal, PARSER_VERSION,
+                lot_number, status, appraisal, PARSER_VERSION,
             ),
         )
         row = cur.fetchone()
