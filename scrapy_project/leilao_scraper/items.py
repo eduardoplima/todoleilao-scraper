@@ -68,6 +68,16 @@ class PropertyItem(scrapy.Item):
     # Identificador exibido na listagem; útil pra UI mas não chave única.
     lot_number = scrapy.Field()
 
+    # ----- modalidades de pagamento aceitas ----------------------------------
+    # list[{kind, max_installments?, min_down_payment_pct?, notes?}].
+    # kind ∈ enum core.payment_kind. Vazio = não declarado pelo edital.
+    payment_options = scrapy.Field()
+
+    # ----- ônus declarados (estruturado) -------------------------------------
+    # list[{kind, status?, amount?, description?}]. kind ∈ enum
+    # core.encumbrance_kind. Distinto de `encumbrances_raw` (textual).
+    encumbrances = scrapy.Field()
+
     # ----- mídia / anexos ----------------------------------------------------
     images = scrapy.Field()  # list[str] de URLs absolutas
     documents = scrapy.Field()  # list[{name, url}]

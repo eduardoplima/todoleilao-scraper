@@ -352,4 +352,7 @@ class PropertyLoader(ItemLoader):
     # então Identity preserva a ordem dos elementos sem aninhar.
     images_out = Identity()
     documents_out = Identity()
+    payment_options_out = Identity()
+    encumbrances_out = Identity()
+    bids_out = Identity()
     # address é um dict único — TakeFirst (default) extrai o dict cru.

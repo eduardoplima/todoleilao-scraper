@@ -70,6 +70,18 @@ class SoleonSpider(ProviderSpider):
     # Nível 2: /leilao/{id}/lotes → /item/{lot_id}/detalhes
     # ------------------------------------------------------------------
     def parse_leilao_lotes(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
+        # Cláusulas gerais do leilão (regras de pagamento + ônus declarados).
+        # Aplicadas a todos os lotes deste leilão e propagadas via meta.
+        # O parser do detail pode adicionar cláusulas específicas do lote.
+        page_text = _normalize_text(" ".join(response.css("body *::text").getall()))
+        payment_options, encumbrances = _parse_auction_clauses(page_text)
+        self.log_event(
+            "soleon_leilao_clauses",
+            url=response.url,
+            payments=[p["kind"] for p in payment_options],
+            encumbrances=[e["kind"] for e in encumbrances],
+        )
+
         seen: set[str] = set()
         kept = 0
         dropped_non_imovel = 0
@@ -95,6 +107,8 @@ class SoleonSpider(ProviderSpider):
                 meta={
                     "source_listing_url": response.url,
                     "category_verdict_listing": verdict,  # True | None (ambíguo)
+                    "auction_payment_options": payment_options,
+                    "auction_encumbrances": encumbrances,
                 },
             )
         self.log_event(
@@ -226,6 +240,19 @@ class SoleonSpider(ProviderSpider):
         if bids:
             loader.add_value("bids", bids)
 
+        # Cláusulas: começa com as gerais do leilão (vindas via meta), e
+        # mescla com sinais específicos extraídos do próprio detail.
+        payment_options = list(response.meta.get("auction_payment_options") or [])
+        encumbrances = list(response.meta.get("auction_encumbrances") or [])
+        detail_text = _normalize_text(" ".join(response.css("body *::text").getall()))
+        detail_pay, detail_enc = _parse_auction_clauses(detail_text)
+        payment_options = _dedup_clauses(payment_options + detail_pay, key="kind")
+        encumbrances = _dedup_clauses(encumbrances + detail_enc, key="kind")
+        if payment_options:
+            loader.add_value("payment_options", payment_options)
+        if encumbrances:
+            loader.add_value("encumbrances", encumbrances)
+
         # source_lot_code — extrai do path /item/{id}/detalhes
         m = re.search(r"/item/(\d+)/detalhes", response.url)
         if m:
@@ -288,6 +315,113 @@ def _card_category(card) -> bool | None:
     if has_veiculo_label or has_veiculo_noun:
         return False
     return None
+
+
+def _normalize_text(s: str) -> str:
+    """Espaços únicos, sem leading/trailing. Mantém acentuação."""
+    return re.sub(r"\s+", " ", s or "").strip()
+
+
+# ------- Parser de cláusulas (payment_option + encumbrance) -------------------
+# Sinais detectados em texto livre da página `/leilao/{id}/lotes` (e do
+# detail). Granularidade: presença de cada `kind`. Status default = "declarado".
+# Refinamento de status (sub_rogado vs quitado_pelo_arrematante) e valores
+# (amount, max_installments) é trabalho futuro — exige parser estrutural do
+# edital ou regex muito específicas por leiloeiro.
+
+_PAYMENT_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"\bfgts\b", re.I), "fgts"),
+    (re.compile(r"\bfinanciamento(?:\s+banc[áa]rio|\s+pr[óo]prio)?\b", re.I), "financiamento_proprio"),
+    (re.compile(r"\bcons[óo]rcio\b", re.I), "consorcio"),
+    (re.compile(r"carta\s+de\s+cr[ée]dito", re.I), "carta_credito"),
+    (re.compile(r"\bpermuta\b", re.I), "permuta"),
+    (re.compile(r"\b(?:[àa]\s+vista)\b", re.I), "a_vista"),
+]
+
+# kind 'parcelado' tratado em separado pra extrair max_installments e entrada.
+_PARC_PRESENT_RE = re.compile(r"\bparcelad[oa]s?\b|parcelament[oa]", re.I)
+_PARC_INSTALLMENTS_RE = re.compile(
+    r"(?:em\s+at[ée]\s+|at[ée]\s+|em\s+)(\d{1,3})\s*(?:parcelas?|x\b|vezes\b)",
+    re.I,
+)
+_DOWN_PAYMENT_RE = re.compile(
+    r"(\d{1,2})\s*%\s+(?:do\s+(?:lance|valor)|de\s+entrada|à\s+vista|a\s+vista)",
+    re.I,
+)
+
+_ENCUMBRANCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    # IPTU em aberto: cuidado pra não casar nome de bairro etc. — sempre
+    # exigir contexto de débito/aberto/atraso/dívida ou simplesmente a
+    # palavra IPTU (que praticamente só aparece quando está em aberto).
+    (re.compile(r"\biptu\b", re.I), "iptu_em_aberto"),
+    (re.compile(
+        r"(?:d[ée]bit|d[íi]vid|cota|taxa|condom[íi]nio\s+em\s+(?:aberto|atraso))[^.]{0,40}condomin",
+        re.I,
+    ), "condominio_em_aberto"),
+    (re.compile(r"condom[íi]ni(?:o|al)s?\s+em\s+(?:aberto|atraso)", re.I), "condominio_em_aberto"),
+    (re.compile(r"\bhipoteca\b", re.I), "hipoteca"),
+    (re.compile(r"\bpenhora\s+fiscal\b", re.I), "penhora_fiscal"),
+    (re.compile(r"\bpenhora\b", re.I), "penhora"),
+    (re.compile(r"aliena[çc][ãa]o\s+fiduci[áa]ri", re.I), "alienacao_fiduciaria"),
+    (re.compile(r"indisponibilidade", re.I), "indisponibilidade"),
+    (re.compile(r"\busufruto\b", re.I), "usufruto"),
+    (re.compile(r"\barresto\b", re.I), "arresto"),
+]
+
+
+def _parse_auction_clauses(text: str) -> tuple[list[dict], list[dict]]:
+    """Extrai (payment_options, encumbrances) de texto livre de uma página de leilão.
+
+    Retorna listas de dicts com `kind` (sempre) e atributos opcionais:
+      - payment: max_installments, min_down_payment_pct, notes
+      - encumbrance: status (default 'declarado'), description
+    """
+    if not text:
+        return [], []
+
+    payments: list[dict] = []
+    seen_kinds: set[str] = set()
+
+    for pat, kind in _PAYMENT_PATTERNS:
+        if kind not in seen_kinds and pat.search(text):
+            payments.append({"kind": kind})
+            seen_kinds.add(kind)
+
+    if _PARC_PRESENT_RE.search(text) and "parcelado" not in seen_kinds:
+        parc: dict = {"kind": "parcelado"}
+        m_n = _PARC_INSTALLMENTS_RE.search(text)
+        if m_n:
+            parc["max_installments"] = int(m_n.group(1))
+        m_dp = _DOWN_PAYMENT_RE.search(text)
+        if m_dp:
+            parc["min_down_payment_pct"] = m_dp.group(1)
+        payments.append(parc)
+        seen_kinds.add("parcelado")
+
+    encumbrances: list[dict] = []
+    enc_seen: set[str] = set()
+    for pat, kind in _ENCUMBRANCE_PATTERNS:
+        if kind in enc_seen:
+            continue
+        if pat.search(text):
+            encumbrances.append({"kind": kind, "status": "declarado"})
+            enc_seen.add(kind)
+
+    return payments, encumbrances
+
+
+def _dedup_clauses(items: list[dict], key: str) -> list[dict]:
+    """Remove dicts com mesmo valor em `key`, mantendo o primeiro (que tende
+    a ser o do leilão genérico, sobreposto por specs do detail só se novos)."""
+    out: list[dict] = []
+    seen: set[Any] = set()
+    for it in items:
+        k = it.get(key)
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(it)
+    return out
 
 
 _DETAIL_NON_IMOVEL_PREFIXES = (

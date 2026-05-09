@@ -257,6 +257,12 @@ class SupabasePipeline:
                 (last_bid, final_amount, _parse_dt(a.get("second_auction_date")), lot_id),
             )
 
+        # Cláusulas estruturadas (idempotentes via DELETE+INSERT por lot)
+        self._replace_payment_options(cur, lot_id, a.get("payment_options") or [])
+        if unit_id is not None:
+            ba_unit_id = self._ensure_ba_unit(cur, unit_id, source_id)
+            self._replace_encumbrances(cur, ba_unit_id, source_id, a.get("encumbrances") or [])
+
         for img in (a.get("images") or [])[:50]:
             cur.execute(
                 """
@@ -483,6 +489,79 @@ class SupabasePipeline:
             )
             ids.append(cur.fetchone()[0])
         return ids
+
+    # ------------------------------------------------------------------
+    # ba_unit / payment_option / encumbrance
+    # ------------------------------------------------------------------
+
+    def _ensure_ba_unit(self, cur, spatial_unit_id: str, source_id: str) -> str:
+        """1 ba_unit por spatial_unit (sem dados de holder ainda)."""
+        cur.execute(
+            "SELECT id FROM core.ba_unit WHERE spatial_unit_id = %s LIMIT 1",
+            (spatial_unit_id,),
+        )
+        row = cur.fetchone()
+        if row:
+            return row[0]
+        cur.execute(
+            """
+            INSERT INTO core.ba_unit (spatial_unit_id, source_id)
+            VALUES (%s, %s)
+            RETURNING id
+            """,
+            (spatial_unit_id, source_id),
+        )
+        return cur.fetchone()[0]
+
+    def _replace_payment_options(self, cur, lot_id: str, options: list[dict]) -> None:
+        """Idempotente: substitui todas as opções do lote (DELETE+INSERT)."""
+        cur.execute("DELETE FROM core.payment_option WHERE lot_id = %s", (lot_id,))
+        for opt in options:
+            kind = opt.get("kind")
+            if not kind:
+                continue
+            cur.execute(
+                """
+                INSERT INTO core.payment_option
+                    (lot_id, kind, max_installments, min_down_payment_pct, notes)
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (
+                    lot_id,
+                    kind,
+                    opt.get("max_installments"),
+                    _to_decimal(opt.get("min_down_payment_pct")),
+                    opt.get("notes"),
+                ),
+            )
+
+    def _replace_encumbrances(
+        self, cur, ba_unit_id: str, source_id: str, encs: list[dict]
+    ) -> None:
+        """Idempotente por (ba_unit, source): substitui só ônus do mesmo source."""
+        cur.execute(
+            "DELETE FROM core.encumbrance WHERE ba_unit_id = %s AND source_id = %s",
+            (ba_unit_id, source_id),
+        )
+        for enc in encs:
+            kind = enc.get("kind")
+            if not kind:
+                continue
+            cur.execute(
+                """
+                INSERT INTO core.encumbrance
+                    (ba_unit_id, kind, status, amount, description, source_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    ba_unit_id,
+                    kind,
+                    enc.get("status") or "declarado",
+                    _to_decimal(enc.get("amount")),
+                    enc.get("description"),
+                    source_id,
+                ),
+            )
 
 
 # ---------------------------------------------------------------------------
