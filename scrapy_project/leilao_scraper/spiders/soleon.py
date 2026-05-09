@@ -272,10 +272,12 @@ class SoleonSpider(ProviderSpider):
             imgs=len(item.get("images") or []),
             bids=len(item.get("bids") or []),
         )
-        yield item
 
-        # Tenta enriquecer com cláusulas do PDF do edital (cobre tenants
-        # cujo HTML é minimalista — ex.: isaiasleiloes, loucoporleiloes).
+        # Tenta enriquecer com cláusulas do PDF do edital antes de yield.
+        # IMPORTANTE: yield só ocorre depois do callback do PDF (ou
+        # imediatamente, se sem edital). DeduplicationPipeline descartaria
+        # o item enriquecido se item HTML fosse yielded primeiro com a
+        # mesma url. errback re-yielda item HTML em caso de PDF falho.
         edital_url = _find_edital_url(item)
         self.log_event(
             "soleon_edital_dispatch",
@@ -283,31 +285,38 @@ class SoleonSpider(ProviderSpider):
             edital_url=edital_url,
             n_documents=len(item.get("documents") or []),
         )
-        if edital_url:
-            # `dont_obey_robotstxt`: CDNs (CloudFront, gocache) servem com
-            # robots.txt default `Disallow: /`. Editais são publicidade
-            # obrigatória por lei (LAI; CPC arts. 887, 889) e o leiloeiro já
-            # linka pro PDF na página pública — exceção documentada ao
-            # princípio ROBOTSTXT_OBEY do CLAUDE.md, restrita a PDFs de edital.
-            yield self.make_request(
-                edital_url,
-                callback=self._merge_edital_clauses,
-                cb_kwargs={"item_html": item},
-                errback=self._on_edital_error,
-                meta={
-                    "handle_httpstatus_list": [403, 404],
-                    "dont_obey_robotstxt": True,
-                },
-            )
+        if not edital_url:
+            yield item
+            return
+        # `dont_obey_robotstxt`: CDNs (CloudFront, gocache) servem com
+        # robots.txt default `Disallow: /`. Editais são publicidade
+        # obrigatória por lei (LAI; CPC arts. 887, 889) e o leiloeiro já
+        # linka pro PDF na página pública — exceção documentada ao
+        # princípio ROBOTSTXT_OBEY do CLAUDE.md, restrita a PDFs de edital.
+        yield self.make_request(
+            edital_url,
+            callback=self._merge_edital_clauses,
+            cb_kwargs={"item_html": item},
+            errback=self._on_edital_error,
+            meta={
+                "handle_httpstatus_list": [403, 404],
+                "dont_obey_robotstxt": True,
+            },
+        )
 
     def _on_edital_error(self, failure):
+        """Falha no download do PDF — yielda item HTML mesmo assim para não perder o lote."""
         self.logger.warning(
             f"edital download failed: {failure.request.url} — {failure.value!r}"
         )
+        item_html = failure.request.cb_kwargs.get("item_html")
+        if item_html is not None:
+            yield item_html
 
     def _merge_edital_clauses(self, response: scrapy.http.Response, item_html):
-        """Baixa PDF do edital, parseia e re-yielda item se houver cláusulas novas."""
+        """Baixa PDF do edital, parseia e yielda item enriquecido (ou HTML cru)."""
         if response.status >= 400:
+            yield item_html
             return
         cache = getattr(self, "_edital_cache", None)
         if cache is None:
@@ -320,6 +329,7 @@ class SoleonSpider(ProviderSpider):
             except Exception as e:
                 self.logger.warning(f"PDF parse failed {response.url}: {e}")
                 cache[response.url] = ([], [])
+                yield item_html
                 return
             pdf_pay, pdf_enc = _parse_auction_clauses(text) if text else ([], [])
             cache[response.url] = (pdf_pay, pdf_enc)
@@ -330,17 +340,33 @@ class SoleonSpider(ProviderSpider):
                 encumbrances=[e["kind"] for e in pdf_enc],
             )
         if not pdf_pay and not pdf_enc:
+            yield item_html
             return
-        # Mescla com cláusulas HTML; somente re-yielda se incrementar
         existing_pay = list(item_html.get("payment_options") or [])
         existing_enc = list(item_html.get("encumbrances") or [])
         merged_pay = _dedup_clauses(existing_pay + pdf_pay, key="kind")
         merged_enc = _dedup_clauses(existing_enc + pdf_enc, key="kind")
         if len(merged_pay) == len(existing_pay) and len(merged_enc) == len(existing_enc):
-            return  # PDF não trouxe nada novo
+            # PDF não trouxe nada novo — yielda item HTML como está
+            self.log_event(
+                "soleon_edital_no_diff",
+                lot_url=item_html.get("url"),
+                edital_url=response.url,
+                merged_pay=len(merged_pay),
+                merged_enc=len(merged_enc),
+            )
+            yield item_html
+            return
         new_item = item_html.copy()
         new_item["payment_options"] = merged_pay
         new_item["encumbrances"] = merged_enc
+        self.log_event(
+            "soleon_edital_yield",
+            lot_url=new_item.get("url"),
+            edital_url=response.url,
+            pay=[p["kind"] for p in merged_pay],
+            enc=[(e["kind"], e.get("status")) for e in merged_enc],
+        )
         yield new_item
 
 
@@ -451,15 +477,17 @@ _DOWN_PAYMENT_RE = re.compile(
 )
 
 _ENCUMBRANCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
-    # IPTU em aberto: cuidado pra não casar nome de bairro etc. — sempre
-    # exigir contexto de débito/aberto/atraso/dívida ou simplesmente a
-    # palavra IPTU (que praticamente só aparece quando está em aberto).
+    # IPTU em aberto: presença direta — o termo só aparece em editais quando
+    # o débito é relevante. Ruído quase nulo.
     (re.compile(r"\biptu\b", re.I), "iptu_em_aberto"),
+    # Condomínio em aberto: exige contexto financeiro pra evitar casar nome
+    # de edifício ("CONDOMÍNIO EDIFÍCIO X").
     (re.compile(
-        r"(?:d[ée]bit|d[íi]vid|cota|taxa|condom[íi]nio\s+em\s+(?:aberto|atraso))[^.]{0,40}condomin",
+        r"(?:d[ée]bit|d[íi]vid|cota|taxa|tribut|cr[ée]dit|m[êe]s|valor|atraso)\w*\s+(?:de\s+)?condomin",
         re.I,
     ), "condominio_em_aberto"),
-    (re.compile(r"condom[íi]ni(?:o|al)s?\s+em\s+(?:aberto|atraso)", re.I), "condominio_em_aberto"),
+    (re.compile(r"condomin\w*\s+em\s+(?:aberto|atraso)", re.I), "condominio_em_aberto"),
+    (re.compile(r"d[ée]bito\s+condominial", re.I), "condominio_em_aberto"),
     (re.compile(r"\bhipoteca\b", re.I), "hipoteca"),
     (re.compile(r"\bpenhora\s+fiscal\b", re.I), "penhora_fiscal"),
     (re.compile(r"\bpenhora\b", re.I), "penhora"),
@@ -468,6 +496,39 @@ _ENCUMBRANCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\busufruto\b", re.I), "usufruto"),
     (re.compile(r"\barresto\b", re.I), "arresto"),
 ]
+
+# Boilerplate CTN art. 130 (parágrafo único): tributos sobre o imóvel e
+# taxas de condomínio sub-rogam-se na pessoa do arrematante. Aparece em
+# praticamente todo leilão judicial. Quando detectado, adiciona iptu +
+# condominio com status 'sub_rogado_no_lance' (mesmo se palavras-chave
+# diretas não tiverem casado — caso ceruli/3torres template federal).
+_CTN_130_RE = re.compile(
+    r"(?:"
+    r"art(?:\.|igo)?\s*130\s+do\s+(?:c\.?\s*t\.?\s*n|c[óo]digo\s+tribut[áa]rio)|"
+    r"sub[-\s]?rog\w*\s+(?:na\s+)?pessoa\s+do\s+(?:adquirente|arrematante)|"
+    r"cr[ée]ditos\s+tribut[áa]rios.{0,80}sub[-\s]?rog|"
+    r"impost\w+\s+cujo\s+fato\s+gerador\s+seja\s+a\s+propriedade"
+    r")",
+    re.I,
+)
+
+# Sinais de status. Aplicados a TODAS as encumbrances detectadas no texto
+# (heurística rasa — refinamento por encumbrance individual exige parser
+# estrutural de cláusulas).
+_STATUS_SUB_ROGADO_RE = re.compile(
+    r"sub[-\s]?rog\w*|"
+    r"art(?:\.|igo)?\s*130\s+do\s+(?:c\.?\s*t\.?\s*n|c[óo]digo\s+tribut[áa]rio)",
+    re.I,
+)
+_STATUS_QUITADO_ARREMATANTE_RE = re.compile(
+    r"(?:"
+    r"(?:respons[áa]vel|arcar[áa]?\s*com|caber[áa]?\s+ao|"
+    r"a\s+cargo\s+do|obriga[çc][ãa]o\s+do|"
+    r"correr[áa]o\s+por\s+conta\s+do).{0,30}arrematante|"
+    r"arrematante.{0,40}(?:arcar[áa]?|responder|quitar|assumir|pagar)"
+    r")",
+    re.I,
+)
 
 
 def _parse_auction_clauses(text: str) -> tuple[list[dict], list[dict]]:
@@ -508,20 +569,47 @@ def _parse_auction_clauses(text: str) -> tuple[list[dict], list[dict]]:
             encumbrances.append({"kind": kind, "status": "declarado"})
             enc_seen.add(kind)
 
+    # CTN art. 130: adiciona IPTU + condomínio (taxas) com status sub-rogado.
+    # Cobre edital judicial federal típico que não nomeia "IPTU" diretamente.
+    if _CTN_130_RE.search(text):
+        for k in ("iptu_em_aberto", "condominio_em_aberto"):
+            if k not in enc_seen:
+                encumbrances.append({"kind": k, "status": "sub_rogado_no_lance"})
+                enc_seen.add(k)
+
+    # Refina status das encumbrances 'declarado' baseado em sinais textuais:
+    #  - sub-rogação explícita → 'sub_rogado_no_lance'
+    #  - "responsabilidade do arrematante" → 'quitado_pelo_arrematante'
+    has_subrog = bool(_STATUS_SUB_ROGADO_RE.search(text))
+    has_quitar = bool(_STATUS_QUITADO_ARREMATANTE_RE.search(text))
+    if has_subrog or has_quitar:
+        new_status = "sub_rogado_no_lance" if has_subrog else "quitado_pelo_arrematante"
+        for e in encumbrances:
+            if e["status"] == "declarado":
+                e["status"] = new_status
+
     return payments, encumbrances
 
 
 def _dedup_clauses(items: list[dict], key: str) -> list[dict]:
-    """Remove dicts com mesmo valor em `key`, mantendo o primeiro (que tende
-    a ser o do leilão genérico, sobreposto por specs do detail só se novos)."""
+    """Deduplica por `key`. Em colisão, prefere entrada com status mais
+    informativo que 'declarado' (ex.: 'sub_rogado_no_lance' ganha de
+    'declarado' quando ambos kind=iptu_em_aberto coexistem)."""
     out: list[dict] = []
-    seen: set[Any] = set()
+    idx: dict[Any, int] = {}
     for it in items:
         k = it.get(key)
-        if k in seen:
+        if k is None:
             continue
-        seen.add(k)
-        out.append(it)
+        if k not in idx:
+            idx[k] = len(out)
+            out.append(it)
+            continue
+        existing = out[idx[k]]
+        existing_status = existing.get("status") or "declarado"
+        new_status = it.get("status") or "declarado"
+        if existing_status == "declarado" and new_status != "declarado":
+            out[idx[k]] = it
     return out
 
 
