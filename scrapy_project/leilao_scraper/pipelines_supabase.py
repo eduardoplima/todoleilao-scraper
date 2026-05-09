@@ -488,8 +488,29 @@ class SupabasePipeline:
     def _insert_bids(
         self, cur, lot_id: str, round_id: str | None, source_id: str, a: ItemAdapter
     ) -> list[str]:
+        """Idempotente: substitui o histórico de bids do lote a cada UPSERT.
+
+        Sem chave única natural (`bidder_party_id` está NULL na maioria),
+        DELETE+INSERT é o caminho mais simples para evitar inflação. O
+        histórico vem do site SOLEON (`div.ult_body div.ultimos-lances-item`)
+        e é completo a cada fetch.
+        """
         bids = a.get("bids") or []
-        if not bids or round_id is None:
+        if round_id is None:
+            return []
+        # Zera FK winning_bid_id antes do DELETE para evitar
+        # auction_lot_winning_bid_fk. O bloco subsequente em `_persist`
+        # repopula winning_bid_id se status='arrematado'.
+        cur.execute(
+            "UPDATE core.auction_lot SET winning_bid_id = NULL WHERE id = %s",
+            (lot_id,),
+        )
+        # Limpa bids prévios deste lot+source (idempotência por execução)
+        cur.execute(
+            "DELETE FROM core.bid WHERE lot_id = %s AND source_id = %s",
+            (lot_id, source_id),
+        )
+        if not bids:
             return []
         ids: list[str] = []
         for b in bids:

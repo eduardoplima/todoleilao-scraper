@@ -185,6 +185,19 @@ SELECT
       ORDER BY i.source_url, i.display_order, i.created_at
     ) img
   )                                                    AS images,
+  -- Histórico de lances (DISTINCT por (placed_at, amount) — defesa contra
+  -- duplicação herdada; com pipeline corrigido o DISTINCT vira no-op).
+  (
+    SELECT json_agg(row_to_json(b) ORDER BY b.placed_at)
+    FROM (
+      SELECT DISTINCT ON (bd.placed_at, bd.amount)
+             bd.placed_at, bd.amount, bd.status, bd.is_conditional,
+             bd.installments
+      FROM core.bid bd
+      WHERE bd.lot_id = al.id
+      ORDER BY bd.placed_at, bd.amount, bd.created_at
+    ) b
+  )                                                    AS bids,
   -- Documentos (DISTINCT por source_url)
   (
     SELECT json_agg(row_to_json(doc) ORDER BY doc.kind)
