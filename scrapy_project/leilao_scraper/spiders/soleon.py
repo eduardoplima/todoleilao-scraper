@@ -274,6 +274,75 @@ class SoleonSpider(ProviderSpider):
         )
         yield item
 
+        # Tenta enriquecer com cláusulas do PDF do edital (cobre tenants
+        # cujo HTML é minimalista — ex.: isaiasleiloes, loucoporleiloes).
+        edital_url = _find_edital_url(item)
+        self.log_event(
+            "soleon_edital_dispatch",
+            url=response.url,
+            edital_url=edital_url,
+            n_documents=len(item.get("documents") or []),
+        )
+        if edital_url:
+            # `dont_obey_robotstxt`: CDNs (CloudFront, gocache) servem com
+            # robots.txt default `Disallow: /`. Editais são publicidade
+            # obrigatória por lei (LAI; CPC arts. 887, 889) e o leiloeiro já
+            # linka pro PDF na página pública — exceção documentada ao
+            # princípio ROBOTSTXT_OBEY do CLAUDE.md, restrita a PDFs de edital.
+            yield self.make_request(
+                edital_url,
+                callback=self._merge_edital_clauses,
+                cb_kwargs={"item_html": item},
+                errback=self._on_edital_error,
+                meta={
+                    "handle_httpstatus_list": [403, 404],
+                    "dont_obey_robotstxt": True,
+                },
+            )
+
+    def _on_edital_error(self, failure):
+        self.logger.warning(
+            f"edital download failed: {failure.request.url} — {failure.value!r}"
+        )
+
+    def _merge_edital_clauses(self, response: scrapy.http.Response, item_html):
+        """Baixa PDF do edital, parseia e re-yielda item se houver cláusulas novas."""
+        if response.status >= 400:
+            return
+        cache = getattr(self, "_edital_cache", None)
+        if cache is None:
+            cache = self._edital_cache = {}
+        if response.url in cache:
+            pdf_pay, pdf_enc = cache[response.url]
+        else:
+            try:
+                text = _pdf_to_text(response.body)
+            except Exception as e:
+                self.logger.warning(f"PDF parse failed {response.url}: {e}")
+                cache[response.url] = ([], [])
+                return
+            pdf_pay, pdf_enc = _parse_auction_clauses(text) if text else ([], [])
+            cache[response.url] = (pdf_pay, pdf_enc)
+            self.log_event(
+                "soleon_edital_parsed",
+                url=response.url,
+                payments=[p["kind"] for p in pdf_pay],
+                encumbrances=[e["kind"] for e in pdf_enc],
+            )
+        if not pdf_pay and not pdf_enc:
+            return
+        # Mescla com cláusulas HTML; somente re-yielda se incrementar
+        existing_pay = list(item_html.get("payment_options") or [])
+        existing_enc = list(item_html.get("encumbrances") or [])
+        merged_pay = _dedup_clauses(existing_pay + pdf_pay, key="kind")
+        merged_enc = _dedup_clauses(existing_enc + pdf_enc, key="kind")
+        if len(merged_pay) == len(existing_pay) and len(merged_enc) == len(existing_enc):
+            return  # PDF não trouxe nada novo
+        new_item = item_html.copy()
+        new_item["payment_options"] = merged_pay
+        new_item["encumbrances"] = merged_enc
+        yield new_item
+
 
 # ---------------------------------------------------------------------------
 # Helpers locais (puro Python, fáceis de testar isoladamente)
@@ -320,6 +389,38 @@ def _card_category(card) -> bool | None:
 def _normalize_text(s: str) -> str:
     """Espaços únicos, sem leading/trailing. Mantém acentuação."""
     return re.sub(r"\s+", " ", s or "").strip()
+
+
+def _find_edital_url(item) -> str | None:
+    """Localiza URL do edital principal (não complementar) em item['documents']."""
+    for doc in (item.get("documents") or []):
+        if not isinstance(doc, dict):
+            continue
+        label = (doc.get("name") or "").lower()
+        url = doc.get("url") or ""
+        if not url:
+            continue
+        # Edital principal: nome contém "edital" sem "complement", ou URL termina .pdf
+        # com palavra "edital" no path.
+        if "edital" in label and "complement" not in label:
+            return url
+        if "edital" in url.lower() and url.lower().endswith(".pdf"):
+            return url
+    return None
+
+
+def _pdf_to_text(pdf_bytes: bytes) -> str:
+    """Extrai texto de PDF in-memory via pypdf. Retorna '' se falhar."""
+    if not pdf_bytes:
+        return ""
+    import io
+    from pypdf import PdfReader
+
+    try:
+        reader = PdfReader(io.BytesIO(pdf_bytes))
+        return "\n".join((page.extract_text() or "") for page in reader.pages)
+    except Exception:
+        return ""
 
 
 # ------- Parser de cláusulas (payment_option + encumbrance) -------------------
