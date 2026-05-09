@@ -115,15 +115,35 @@ def _map_unit_kind(t: str | None) -> str:
 
 # Heurística leve: edital / matrícula / laudo / outro a partir do label
 def _classify_document(label: str) -> str:
+    """Mapeia rótulo livre → enum core.document_kind.
+
+    Enum: edital, edital_complementar, laudo_avaliacao, matricula,
+    certidao_onus, certidao_iptu, certidao_condominio, auto_arrematacao,
+    termo_direito_preferencia, ficha_lote, planta_imovel, outro.
+    """
     s = (label or "").lower()
+    if "complement" in s and "edital" in s:
+        return "edital_complementar"
     if "edital" in s:
         return "edital"
     if "matr" in s:  # matrícula / matricula
         return "matricula"
     if "laudo" in s:
-        return "laudo"
+        return "laudo_avaliacao"
     if "certid" in s:
-        return "certidao"
+        if "iptu" in s:
+            return "certidao_iptu"
+        if "condom" in s:
+            return "certidao_condominio"
+        if "ônus" in s or "onus" in s:
+            return "certidao_onus"
+        return "outro"
+    if "auto" in s and "arrematac" in s:
+        return "auto_arrematacao"
+    if "ficha" in s:
+        return "ficha_lote"
+    if "planta" in s:
+        return "planta_imovel"
     return "outro"
 
 
