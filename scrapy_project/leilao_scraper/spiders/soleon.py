@@ -124,13 +124,16 @@ class SoleonSpider(ProviderSpider):
     # Nível 3: /item/{lot_id}/detalhes → PropertyItem
     # ------------------------------------------------------------------
     def parse_property(self, response: scrapy.http.Response):
-        # Rede de segurança: re-checa categoria via og:description no detalhe.
-        # Pega lotes que passaram ambíguos pelo card e revela ser veículo.
-        og_desc = (response.css("meta[property='og:description']::attr(content)").get() or "").lower()
-        if _detail_is_non_imovel(og_desc):
+        # Rede de segurança no detalhe: classifica via og:title + og:description
+        # com lista positiva (deve ter sinal forte de imóvel) + negativa
+        # (rejeita bens móveis). Estrito por design — vide _detail_is_imovel.
+        og_desc = response.css("meta[property='og:description']::attr(content)").get() or ""
+        og_title = response.css("meta[property='og:title']::attr(content)").get() or ""
+        if not _detail_is_imovel(og_title, og_desc):
             self.log_event(
                 "soleon_lote_dropped_non_imovel",
                 url=response.url,
+                og_title=og_title[:60],
                 og_desc=og_desc[:80],
             )
             return
@@ -613,29 +616,77 @@ def _dedup_clauses(items: list[dict], key: str) -> list[dict]:
     return out
 
 
-_DETAIL_NON_IMOVEL_PREFIXES = (
-    "um veículo",
-    "um veiculo",
-    "uma motocicleta",
-    "um caminhão",
-    "um caminhao",
-    "uma caminhonete",
-    "um trator",
-    "uma embarcação",
-    "uma embarcacao",
-    "uma motoneta",
-    "um reboque",
-    "um ônibus",
-    "um onibus",
-    "uma moto ",
+# Sinais positivos de imóvel no og:title/og:description.
+# Lista derivada de uma amostra representativa de leilões judiciais e
+# extrajudiciais SOLEON (categorias que efetivamente aparecem nos editais).
+_DETAIL_IMOVEL_RE = re.compile(
+    r"\b("
+    r"im[óo]vel|im[óo]veis|"
+    r"apartamento|apto\.?\s+\d|kitnet|conjugado|cobertura|sobrado|"
+    r"casa\b|residencial\b|"
+    r"terreno|lote(s)?\s+(de\s+terreno|de\s+esquina|residencia)|"
+    r"fazenda|ch[áa]cara|s[íi]tio|gleba|hectare\b|"
+    r"sala\s+comercial|loja\b|galp[ãa]o|pr[ée]dio|edif[íi]cio\b|"
+    r"[áa]rea\s+(rural|urbana|de\s+terra|construida)|"
+    r"fra[çc][ãa]o\s+(de|do|da)\s+(im[óo]vel|terreno|fazenda|casa|apartamento)|"
+    r"matr[íi]cula\s+n[º°o.]*\s*\d|matr[íi]cula\s+\d|"
+    r"unidade\s+aut[ôo]noma|vaga\s+de\s+garagem|"
+    r"loteamento\b|condom[íi]nio\s+residencial"
+    r")\b",
+    re.I,
+)
+
+# Sinais negativos: bens móveis tipicamente leiloados que NÃO são imóveis.
+# Cobre veículos, equipamentos industriais/agrícolas, eletrodomésticos,
+# semoventes, commodities/matérias-primas.
+_DETAIL_NON_IMOVEL_RE = re.compile(
+    r"\b("
+    r"ve[íi]culo|caminh[ãa]o|caminhonete|camionete|motocicleta|motoneta|"
+    r"\bmoto\s+\w+|trator|[ôo]nibus|micro-?[ôo]nibus|reboque|carreta\b|"
+    r"automotor|empilhadeira|retroescavadeira|escavadeira|"
+    r"colheitadeira|plantadeira|"
+    r"m[áa]quina|equipamento|implemento\s+agr|gerador|"
+    r"computador|notebook|impressora|servidor\s+rack|"
+    r"eletrodom[ée]stico|geladeira|fog[ãa]o|televis[ãa]o|"
+    r"m[óo]vel\s+de\s+(escrit|copa|cozinha|sala)|m[óo]veis\s+e\s+|"
+    r"esteira\s+ergom|passadeira|"
+    r"bovino|equino|su[íi]no|gado\b|semovent|cabe[çc]as?\s+de\s+gado|"
+    r"tonelada|sucata|peça(s)?\s+de\s+\w+|saca(s)?\s+de\s+\w+|"
+    r"bens\s+diversos|bens\s+m[óo]veis|"
+    r"\d+\s*\(\w+\)\s+(camas?|cadeiras?|mesas?|estantes?)"
+    r")\b",
+    re.I,
+)
+
+_DETAIL_DATE_PREFIX_RE = re.compile(
+    r"\bleil[ãa]o\s*:\s*\d{1,2}/\d{1,2}/\d{4}[^,]*,\s*",
+    re.I,
 )
 
 
-def _detail_is_non_imovel(og_desc_lower: str) -> bool:
-    """Rede de segurança no detail. True = lote NÃO é imóvel, deve ser dropado."""
-    if not og_desc_lower:
+def _detail_is_imovel(og_title: str | None, og_desc: str | None) -> bool:
+    """Decide pelo og:title+og:description se o lote é imóvel.
+
+    Estrito: na ausência de sinais positivos, retorna False (drop).
+    Esse default conservador surgiu de smoke em isaiasleiloes, onde 37%
+    dos lots eram bens móveis (veículo, colheitadeira, máquinas, móveis,
+    commodities) e o filtro de prefixo anterior não os pegava — o template
+    do isaias prefixa toda og:description com 'Leilão: DD/MM/YYYY às HH:MM,'.
+    """
+    title = (og_title or "")
+    desc = (og_desc or "")
+    # Remove prefixo de data que existe nos templates judiciais
+    desc = _DETAIL_DATE_PREFIX_RE.sub(" ", desc)
+    text = (title + " " + desc).lower()
+    has_pos = bool(_DETAIL_IMOVEL_RE.search(text))
+    has_neg = bool(_DETAIL_NON_IMOVEL_RE.search(text))
+    if has_pos:
+        # Coexistência (ex.: "imóvel + 1 veículo no mesmo lote") aceita.
+        return True
+    if has_neg:
         return False
-    return og_desc_lower.lstrip().startswith(_DETAIL_NON_IMOVEL_PREFIXES)
+    # Sem sinal positivo — drop por segurança.
+    return False
 
 
 _STATUS_MAP = {
