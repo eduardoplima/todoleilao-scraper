@@ -72,7 +72,16 @@ def _parse_dt(v: Any) -> datetime | None:
 
 
 def _host(url: str) -> str:
-    return (urlparse(url or "").hostname or "").lower()
+    """Hostname canônico (lowercase, sem 'www.').
+
+    Mesmo leiloeiro pode ter href com `www.x` e sem (mistura comum em
+    SOLEON). Sem normalização, geram 2 entradas em core.source pra
+    mesma fonte. Strip `www.` resolve.
+    """
+    h = (urlparse(url or "").hostname or "").lower()
+    if h.startswith("www."):
+        h = h[4:]
+    return h
 
 
 _LOT_STATUS_MAP = {
