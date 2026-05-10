@@ -711,7 +711,9 @@ _DETAIL_IMOVEL_RE = re.compile(
     r"fra[çc][ãa]o\s+(de|do|da)\s+(im[óo]vel|terreno|fazenda|casa|apartamento)|"
     r"matr[íi]cula\s+n[º°o.]*\s*\d|matr[íi]cula\s+\d|"
     r"unidade\s+aut[ôo]noma|vaga\s+de\s+garagem|"
-    r"loteamento\b|condom[íi]nio\s+residencial"
+    r"loteamento\b|condom[íi]nio\s+residencial|"
+    r"edifica[çc][ãa]o\b|edif[íi]cio\s+\w+|"
+    r"benfeitoria|construção|moradia"
     r")\b",
     re.I,
 )
