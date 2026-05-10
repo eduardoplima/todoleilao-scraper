@@ -755,6 +755,10 @@ CREATE TABLE core.auction_lot (
   final_at              timestamptz,
   -- Direito de preferência
   preference_applies    boolean NOT NULL DEFAULT false,
+  -- Descrição livre publicada pelo leiloeiro (texto do anúncio + ônus + processo).
+  -- Não é a descrição do imóvel físico (que vai em `spatial_unit`); é o blob
+  -- bruto que o leiloeiro publica na página do lote.
+  description           text,
   -- Comissão do leiloeiro
   commission_pct        numeric(5, 2) CHECK (commission_pct BETWEEN 0 AND 100),
   -- Modalidades de pagamento (conjuntos modelados em payment_option)

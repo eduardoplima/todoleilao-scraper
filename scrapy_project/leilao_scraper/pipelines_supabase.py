@@ -435,6 +435,7 @@ class SupabasePipeline:
     ) -> tuple[str, bool]:
         lot_code = a.get("source_lot_code") or url
         lot_number = a.get("lot_number")
+        description = a.get("description")
         status = _map_lot_status(a.get("status"))
         appraisal = _to_decimal(a.get("market_value"))
 
@@ -442,13 +443,14 @@ class SupabasePipeline:
             """
             INSERT INTO core.auction_lot
                 (auction_id, source_id, source_lot_code, source_url,
-                 lot_number, current_status, appraisal_value,
+                 lot_number, current_status, appraisal_value, description,
                  scraped_at, parser_version)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, now(), %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, now(), %s)
             ON CONFLICT (source_id, source_lot_code) DO UPDATE
               SET current_status   = EXCLUDED.current_status,
                   appraisal_value  = COALESCE(EXCLUDED.appraisal_value, core.auction_lot.appraisal_value),
                   lot_number       = COALESCE(EXCLUDED.lot_number, core.auction_lot.lot_number),
+                  description      = COALESCE(EXCLUDED.description, core.auction_lot.description),
                   source_url       = EXCLUDED.source_url,
                   last_seen_at     = now(),
                   scraped_at       = EXCLUDED.scraped_at
@@ -456,7 +458,7 @@ class SupabasePipeline:
             """,
             (
                 auction_id, source_id, lot_code, url,
-                lot_number, status, appraisal, PARSER_VERSION,
+                lot_number, status, appraisal, description, PARSER_VERSION,
             ),
         )
         row = cur.fetchone()

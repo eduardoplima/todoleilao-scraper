@@ -191,12 +191,18 @@ class SoleonSpider(ProviderSpider):
             loader.add_value("second_auction_date", br_dt_text)
             loader.add_value("auction_phase", "2a_praca")
 
-        # description — div com "Descrição:" como heading
-        desc = " ".join(response.css("div:contains('Descrição:') *::text").getall()).strip()
-        if desc:
-            # Limpa o "Descrição:" prefix repetido
+        # description — `<div><b>Descrição: </b>texto livre do anúncio</div>`.
+        # XPath cirúrgico: pega só o div cujo filho <b> começa com 'Descrição',
+        # evitando incluir a UI inteira que o ":contains()" CSS pegaria.
+        desc_nodes = response.xpath(
+            "//div[b[starts-with(normalize-space(), 'Descrição')]]"
+        )
+        if desc_nodes:
+            raw = " ".join(desc_nodes[0].css("*::text").getall())
+            desc = re.sub(r"\s+", " ", raw).strip()
             desc = re.sub(r"^\s*Descri[çc][aã]o:\s*", "", desc, count=1)
-            loader.add_value("description", desc[:5000])
+            if desc:
+                loader.add_value("description", desc[:10000])
 
         # address — h5 "Localização do Imóvel" + irmão div
         address_text = " ".join(

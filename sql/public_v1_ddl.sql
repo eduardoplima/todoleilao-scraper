@@ -149,6 +149,7 @@ SELECT
   al.source_url,
   al.current_status,
   al.appraisal_value,
+  al.description,
   al.preference_applies,
   al.commission_pct,
   al.final_price,
