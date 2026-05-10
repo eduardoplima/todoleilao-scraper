@@ -87,16 +87,17 @@ SELECT
   m.name                                                 AS municipality_name,
   ad.district,
   ad.geom,
-  -- Próxima praça
+  -- Próxima praça (round) e fallback pra venda direta (lot.minimum_bid).
+  -- next_round_at fica NULL quando é venda direta sem encerramento agendado.
   nr.round_number                                        AS next_round_number,
   nr.scheduled_at                                        AS next_round_at,
-  nr.minimum_bid                                         AS minimum_bid,
+  COALESCE(nr.minimum_bid, al.minimum_bid)               AS minimum_bid,
   -- Deságio (%) calculado: 100 * (1 - minimum_bid/appraisal_value)
   CASE
     WHEN al.appraisal_value IS NOT NULL
          AND al.appraisal_value > 0
-         AND nr.minimum_bid IS NOT NULL
-    THEN ROUND((100 * (1 - nr.minimum_bid / al.appraisal_value))::numeric, 2)
+         AND COALESCE(nr.minimum_bid, al.minimum_bid) IS NOT NULL
+    THEN ROUND((100 * (1 - COALESCE(nr.minimum_bid, al.minimum_bid) / al.appraisal_value))::numeric, 2)
   END                                                    AS discount_pct,
   -- Mídia
   pi.thumb_url,

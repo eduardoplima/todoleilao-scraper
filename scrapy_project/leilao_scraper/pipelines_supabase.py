@@ -512,17 +512,23 @@ class SupabasePipeline:
         description = a.get("description")
         status = _map_lot_status(a.get("status"))
         appraisal = _to_decimal(a.get("market_value"))
+        # Persiste minimum_bid direto em auction_lot. Útil pra "venda direta"
+        # (sem data de encerramento → sem auction_round). Em leilão judicial,
+        # auction_round.minimum_bid permanece como verdade primária; view
+        # public_v1.lot_search faz COALESCE pra escolher.
+        min_bid = _to_decimal(a.get("minimum_bid"))
 
         cur.execute(
             """
             INSERT INTO core.auction_lot
                 (auction_id, source_id, source_lot_code, source_url,
-                 lot_number, current_status, appraisal_value, description,
-                 scraped_at, parser_version)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, now(), %s)
+                 lot_number, current_status, appraisal_value, minimum_bid,
+                 description, scraped_at, parser_version)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s)
             ON CONFLICT (source_id, source_lot_code) DO UPDATE
               SET current_status   = EXCLUDED.current_status,
                   appraisal_value  = COALESCE(EXCLUDED.appraisal_value, core.auction_lot.appraisal_value),
+                  minimum_bid      = COALESCE(EXCLUDED.minimum_bid, core.auction_lot.minimum_bid),
                   lot_number       = COALESCE(EXCLUDED.lot_number, core.auction_lot.lot_number),
                   description      = COALESCE(EXCLUDED.description, core.auction_lot.description),
                   source_url       = EXCLUDED.source_url,
@@ -532,7 +538,7 @@ class SupabasePipeline:
             """,
             (
                 auction_id, source_id, lot_code, url,
-                lot_number, status, appraisal, description, PARSER_VERSION,
+                lot_number, status, appraisal, min_bid, description, PARSER_VERSION,
             ),
         )
         row = cur.fetchone()

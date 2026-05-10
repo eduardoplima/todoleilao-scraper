@@ -759,6 +759,11 @@ CREATE TABLE core.auction_lot (
   -- Não é a descrição do imóvel físico (que vai em `spatial_unit`); é o blob
   -- bruto que o leiloeiro publica na página do lote.
   description           text,
+  -- Lance inicial publicado quando NÃO há praça com data definida (ex.: venda
+  -- direta — "DISPONÍVEL PARA LANCES" sem encerramento agendado). Em leilão
+  -- judicial padrão, a verdade está em `auction_round.minimum_bid`. View
+  -- pública faz COALESCE(round.minimum_bid, lot.minimum_bid).
+  minimum_bid           core.brl,
   -- Comissão do leiloeiro
   commission_pct        numeric(5, 2) CHECK (commission_pct BETWEEN 0 AND 100),
   -- Modalidades de pagamento (conjuntos modelados em payment_option)
