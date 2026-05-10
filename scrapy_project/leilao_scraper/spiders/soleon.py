@@ -696,10 +696,18 @@ def _detail_is_imovel(og_title: str | None, og_desc: str | None) -> bool:
 
 
 _STATUS_MAP = {
-    "aberto_lance": "aberto",
-    "sem_licitante": "cancelado",  # encerrado sem arrematante
-    "vendido": "arrematado",
-    "sustado": "cancelado",
+    # Classes da div.label_lote no template SOLEON. Múltiplos templates
+    # geram múltiplas classes; este mapa cobre tudo que aparece em amostra
+    # de 1000+ lots dos 53 tenants amostrados.
+    "aberto_lance":   "aberto",       # leilão online, recebendo lances
+    "venda_direta":   "aberto",       # modalidade "venda direta" = aberto pra propostas
+    "proposta":       "aberto",       # aberto pra recebimento de propostas
+    "sem_licitante":  "cancelado",    # encerrado sem arrematante (deserto)
+    "vendido":        "arrematado",
+    "arrematado":     "arrematado",
+    "sustado":        "cancelado",
+    "suspenso":       "suspenso",
+    "encerrado":      "desconhecido", # encerrado sem mais info — pipeline preserva
 }
 
 
