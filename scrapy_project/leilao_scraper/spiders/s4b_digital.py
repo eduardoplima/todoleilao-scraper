@@ -2,26 +2,26 @@
 
 Plataforma SaaS multi-tenant operada pela S4B Digital. 43 tenants em
 data/intermediate/site_providers.csv. Cada tenant é um `storeId` no
-backend Superbid (portalId=2 ou 15).
+backend Superbid (portalId=[2,15]).
 
 Recon: specs/_providers/s4b_digital/.
 
-Estratégia API-first (não acessa o site SPA):
-  1. Pra cada tenant URL, GET siteconfigprod.superbid.net/{host}/style.config.json
-     pra descobrir storeId.
-  2. GET offer-query.superbid.net/offers/?filter=stores.id:{storeId};
-     product.productType.id:13 (Imóveis) — paginar por pageNumber.
-  3. Cada `offer` no JSON já é completo: title, description, photos[],
-     auction parent, location lat/lon, productType, initialBidValue,
-     winnerBid (ofuscado).
+Particularidade:
+  - siteconfigprod.superbid.net/{host}/style.config.json devolve
+    Cloudflare "managed challenge" mesmo com Origin/UA realistas;
+    nem cURL nem Playwright headless conseguem resolver direto.
+  - MAS quando o JS do próprio tenant SPA faz a request, Cloudflare
+    libera (o site é cliente CF — o challenge não dispara para
+    requisições XHR originárias do mesmo proprietário).
+  - Solução: Playwright navega para a home do tenant; um response
+    handler intercepta a resposta de siteconfigprod e captura storeId.
+    Daí em diante usamos Scrapy normal para offer-query (não tem CF).
 
-Limitações públicas:
-  - Histórico individual de bids requer JWT (api.s4bdigital.net/.../bids
-    retorna 401). Apenas agregado (totalBids, hasBids, winnerBid
-    ofuscado) é exposto.
-  - Documentos do edital não estão na resposta pública — fica null.
-  - reservedPrice ≠ market_value (avaliação) — provider só publica
-    initialBidValue. Aceitamos market_value=null.
+Limitações:
+  - Histórico individual de bids requer JWT (api.s4bdigital.net retorna
+    401). Apenas agregado é exposto.
+  - Documentos do edital ficam null na resposta pública.
+  - market_value não é publicado (reservedPrice ≈ initialBidValue).
 
 Uso:
     scrapy crawl s4b_digital -a sites=1
@@ -32,8 +32,10 @@ from __future__ import annotations
 import json
 import re
 from typing import Any, Iterable
+from urllib.parse import urlencode
 
 import scrapy
+from scrapy_playwright.page import PageMethod
 
 from leilao_scraper.spiders._provider_base import ProviderSpider
 from leilao_scraper.spiders.soleon import (
@@ -47,10 +49,7 @@ _OFFER_QUERY = "https://offer-query.superbid.net/offers/"
 _SITE_CONFIG = "https://siteconfigprod.superbid.net/{host}/style.config.json"
 _PHOTO_BASE = "https://ms.sbwebservices.net/photos/"
 
-# subcategoryId → core.unit_kind mapping (parcial; quando não casa,
-# classify_lot_kind no banco resolve via description)
 _SUBCATEGORY_TO_KIND_HINT = {
-    # baseado em recon de productType=13 + subCategory.description
     "apartamento": "apartamento",
     "casa": "casa",
     "terreno": "terreno",
@@ -62,6 +61,8 @@ _SUBCATEGORY_TO_KIND_HINT = {
     "comercial": "comercial",
     "galpão": "comercial",
     "galpao": "comercial",
+    "prédio": "comercial",
+    "predio": "comercial",
 }
 
 
@@ -69,72 +70,124 @@ class S4BDigitalSpider(ProviderSpider):
     name = "s4b_digital"
     provider_slug = "s4b_digital"
     auctioneer_slug = "s4b_digital"
-    # siteconfigprod.superbid.net devolve Cloudflare JS challenge mesmo
-    # com Origin/UA realistas. Forçamos Playwright pra esses tenants.
-    # No-op até subir a stack scrapy-playwright.
     requires_playwright = True
 
     custom_settings = {
-        "CONCURRENT_REQUESTS_PER_DOMAIN": 2,
-        "DOWNLOAD_DELAY": 1.0,  # API JSON é leve, pode acelerar
+        # Playwright só na home do tenant — depois cai pra HTTP normal.
+        # Concorrência baixa porque cada home consome ~5s de browser.
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
+        "DOWNLOAD_DELAY": 0.5,
+        "PLAYWRIGHT_MAX_PAGES_PER_CONTEXT": 4,
     }
 
     PAGE_SIZE = 30
+    # Cap defensivo
+    MAX_PAGES_PER_STORE = 60
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # host → {storeId, portalId}; preenchido via response handler
+        self._store_map: dict[str, dict] = {}
 
     # ------------------------------------------------------------------
-    # Nível 1: home → siteconfigprod pra descobrir storeId
+    # Nível 1: home do tenant via Playwright (intercepta siteconfigprod)
     # ------------------------------------------------------------------
     def parse(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
         host = self.host_of(response.url).lower()
-        # Tenants legacy podem ter URL com www; siteconfigprod aceita
-        # ambos (testado). Removemos www. pra normalizar.
-        host_no_www = host[4:] if host.startswith("www.") else host
-        config_url = _SITE_CONFIG.format(host=host_no_www)
+        # Mesmo recurso, agora via Playwright pra disparar o XHR interno
+        # do SPA que carrega siteconfigprod (libera CF).
+        target_url = f"https://{host}/?searchType=opened&productTypeId=13"
         yield self.make_request(
-            config_url,
-            callback=self.parse_config,
-            meta={"host": host, "tenant_url": response.url},
+            target_url,
+            callback=self.parse_tenant_home,
+            meta={
+                "host": host,
+                "playwright": True,
+                "playwright_include_page": True,
+                "playwright_page_event_handlers": {
+                    "response": self._capture_siteconfig,
+                },
+                "playwright_page_methods": [
+                    PageMethod("wait_for_load_state", "networkidle"),
+                    # Pequena pausa pra garantir que o XHR siteconfigprod
+                    # já foi disparado e completou.
+                    PageMethod("wait_for_timeout", 2000),
+                ],
+            },
+            dont_filter=True,
         )
 
-    def parse_config(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
-        host = response.meta["host"]
+    async def _capture_siteconfig(self, response):
+        """Handler registrado no `page.on('response', ...)`.
+        Captura a resposta de siteconfigprod/style.config.json e popula
+        self._store_map[host]."""
+        url = response.url
+        if "siteconfigprod" not in url or "style.config.json" not in url:
+            return
+        m = re.search(r"siteconfigprod[^/]+/([^/]+)/style\.config\.json", url)
+        if not m:
+            return
+        host_no_www = m.group(1)
         try:
-            cfg = json.loads(response.text)
+            body = await response.body()
         except Exception as e:
-            self.logger.warning(f"siteconfig parse failed for {host}: {e}")
+            self.logger.warning(f"_capture_siteconfig body read failed: {e}")
             return
-        store_id = cfg.get("storeId") or cfg.get("store", {}).get("id")
-        portal_id = cfg.get("portalId") or 2
+        try:
+            data = json.loads(body)
+        except Exception as e:
+            self.logger.warning(f"_capture_siteconfig json parse failed for {host_no_www}: {e}; preview={body[:100]!r}")
+            return
+        store_id = data.get("storeId") or (data.get("store") or {}).get("id")
+        portal_id = data.get("portalId") or 2
         if not store_id:
-            self.logger.warning(f"storeId não encontrado em siteconfig de {host}")
             return
-        self.log_event("s4b_config_done", host=host, store_id=store_id, portal_id=portal_id)
+        self._store_map[host_no_www] = {"storeId": store_id, "portalId": portal_id}
+        self._store_map[f"www.{host_no_www}"] = {"storeId": store_id, "portalId": portal_id}
+        self.logger.info(f"_capture_siteconfig OK: {host_no_www} → storeId={store_id} portalId={portal_id}")
 
-        # Inicia paginação
-        yield from self._request_offers(
+    async def parse_tenant_home(self, response: scrapy.http.Response):
+        host = response.meta["host"]
+        page = response.meta.get("playwright_page")
+        if page is not None:
+            await page.close()
+        cfg = self._store_map.get(host) or self._store_map.get(host[4:] if host.startswith("www.") else f"www.{host}")
+        if not cfg:
+            self.logger.warning(f"siteconfig not captured for {host} — skipping tenant")
+            return
+        self.log_event("s4b_config_done", host=host, store_id=cfg["storeId"],
+                       portal_id=cfg["portalId"])
+        for req in self._request_offers(
             host=host,
-            store_id=store_id,
-            portal_id=portal_id,
+            store_id=cfg["storeId"],
+            portal_id=cfg["portalId"],
             page=1,
-            search_type="opened",
-        )
+        ):
+            yield req
 
     def _request_offers(
-        self, host: str, store_id: int, portal_id: int, page: int, search_type: str
+        self, host: str, store_id: int, portal_id, page: int
     ) -> Iterable[scrapy.Request]:
+        # portalId pode ser int ou [int,int] (cluster Superbid)
+        portal_str = (
+            f"[{','.join(str(p) for p in portal_id)}]"
+            if isinstance(portal_id, (list, tuple))
+            else str(portal_id)
+        )
         params = {
             "filter": f"stores.id:{store_id};product.productType.id:13",
-            "searchType": search_type,
+            "searchType": "opened",
             "pageNumber": str(page),
             "pageSize": str(self.PAGE_SIZE),
-            "portalId": str(portal_id),
+            "portalId": portal_str,
             "requestOrigin": "store",
             "locale": "pt_BR",
-            "orderBy": "endDate:asc" if search_type == "opened" else "endDate:desc",
+            "orderBy": "endDate:asc",
         }
-        from urllib.parse import urlencode
-        api_url = _OFFER_QUERY + "?" + urlencode(params)
-        yield self.make_request(
+        api_url = _OFFER_QUERY + "?" + urlencode(params, safe=":;,[]")
+        # offer-query.superbid.net aceita Scrapy direto (sem CF challenge
+        # quando o Origin é do tenant). Opt-out explícito de Playwright.
+        yield scrapy.Request(
             api_url,
             callback=self.parse_offers,
             meta={
@@ -142,31 +195,34 @@ class S4BDigitalSpider(ProviderSpider):
                 "store_id": store_id,
                 "portal_id": portal_id,
                 "page": page,
-                "search_type": search_type,
+                "playwright": False,
             },
-            headers={"Accept": "application/json", "Origin": f"https://{host}"},
+            headers={
+                "Accept": "application/json",
+                "Origin": f"https://{host}",
+                "Referer": f"https://{host}/",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            },
         )
 
     # ------------------------------------------------------------------
-    # Nível 2: API offers → emite item direto (sem GET no detail)
+    # Nível 2: API offers → emite item direto
     # ------------------------------------------------------------------
     def parse_offers(self, response: scrapy.http.Response) -> Iterable[Any]:
         host = response.meta["host"]
         page = response.meta["page"]
-        search_type = response.meta["search_type"]
         try:
             data = json.loads(response.text)
         except Exception as e:
             self.logger.warning(f"offers JSON parse failed: {e}")
             return
 
-        offers = data.get("offers") or data.get("results") or []
-        total = data.get("total") or data.get("totalRows") or 0
+        offers = data.get("offers") or []
+        total = data.get("total") or 0
         self.log_event(
             "s4b_offers_done",
             host=host,
             page=page,
-            search_type=search_type,
             count=len(offers),
             total=total,
         )
@@ -174,14 +230,12 @@ class S4BDigitalSpider(ProviderSpider):
         for offer in offers:
             yield from self._emit_item(offer, host)
 
-        # Paginação
-        if offers and len(offers) == self.PAGE_SIZE:
+        if offers and len(offers) == self.PAGE_SIZE and page < self.MAX_PAGES_PER_STORE:
             yield from self._request_offers(
                 host=host,
                 store_id=response.meta["store_id"],
                 portal_id=response.meta["portal_id"],
                 page=page + 1,
-                search_type=search_type,
             )
 
     def _emit_item(self, offer: dict, host: str) -> Iterable[Any]:
@@ -196,10 +250,8 @@ class S4BDigitalSpider(ProviderSpider):
 
         short_desc = product.get("shortDesc") or ""
         detailed_desc = product.get("detailedDescription") or ""
-        # Remove HTML básico
         detailed_desc_clean = _normalize_text(re.sub(r"<[^>]+>", " ", detailed_desc or ""))
 
-        # Filtro de imóvel
         if not _detail_is_imovel(short_desc, detailed_desc_clean):
             self.log_event(
                 "s4b_offer_dropped_non_imovel",
@@ -209,37 +261,30 @@ class S4BDigitalSpider(ProviderSpider):
             )
             return
 
-        # URL do detail (SEO-friendly slug + offerId)
         slug_part = _slugify(short_desc)
         detail_url = f"https://{host}/oferta/{slug_part}-{offer_id}"
 
-        # Cria PropertyItem manualmente (sem ItemLoader — itemizamos JSON direto)
         from leilao_scraper.items import PropertyItem
         item = PropertyItem()
         item["url"] = detail_url
-        item["source_listing_url"] = f"https://{host}/?searchType=opened&filter=product.productType.id:13"
+        item["source_listing_url"] = f"https://{host}/?searchType=opened&productTypeId=13"
         item["source_lot_code"] = str(offer_id)
-        item["auctioneer"] = f"s4b_digital::{host}"  # placeholder; site não expõe leiloeiro estruturado
+        item["auctioneer"] = f"s4b_digital::{host}"
 
-        # title
         lot_number = offer.get("lotNumber")
         title = (f"Lote {lot_number:03d} - {short_desc}" if lot_number else short_desc).strip()
         item["title"] = title
         if lot_number:
             item["lot_number"] = str(lot_number).zfill(3)
-        item["description"] = detailed_desc_clean[:10000] if detailed_desc_clean else None
+        if detailed_desc_clean:
+            item["description"] = detailed_desc_clean[:10000]
 
-        # property_type via subcategoria/categoria
         subcategory_desc = ((product.get("subCategory") or {}).get("description") or "").lower()
-        kind_hint = None
         for keyword, kind in _SUBCATEGORY_TO_KIND_HINT.items():
             if keyword in subcategory_desc:
-                kind_hint = kind
+                item["property_type"] = kind
                 break
-        if kind_hint:
-            item["property_type"] = kind_hint
 
-        # status: searchType + auction status
         if offer.get("closed") or offer.get("sold"):
             if (offer.get("winnerBid") or {}).get("currentWinner"):
                 item["status"] = "arrematado"
@@ -250,39 +295,41 @@ class S4BDigitalSpider(ProviderSpider):
         else:
             item["status"] = "aberto"
 
-        # Preço
         initial = offer_detail.get("initialBidValue")
         if initial:
             item["minimum_bid"] = str(initial)
-        # market_value: provider não expõe avaliação separadamente.
-        # reservedPrice às vezes está populado mas em geral é igual ao initial.
 
-        # Datas
         end_date = auction.get("endDate") or offer_detail.get("auctionEndDate")
         if end_date:
-            # Datas vêm como ISO sem TZ; assumimos BRT
             iso = end_date.replace("Z", "")
             if "T" in iso and "+" not in iso and "-03" not in iso:
                 iso = iso + "-03:00"
             item["second_auction_date"] = iso
             item["auction_phase"] = "2a_praca"
 
-        # Endereço
-        addr = {
-            "raw_text": _normalize_text(detailed_desc_clean[:500] or ""),
-        }
+        addr = {"raw_text": _normalize_text(detailed_desc_clean[:500] or "")}
         city = location.get("city")
         uf = location.get("state")
         if city:
-            addr["municipality_name"] = city
-        if uf:
-            addr["uf"] = uf
-        location_geo = location.get("locationGeo") or {}
-        # geom será derivado pelo SQL — não expomos em PropertyItem
-        if any([city, uf]):
+            # API às vezes traz "Manaus - AM" no city; isola.
+            m = re.match(r"^([^-/]+?)(?:\s*[-/]\s*([A-Z]{2}))?$", city)
+            if m:
+                addr["municipality_name"] = m.group(1).strip()
+                if m.group(2):
+                    addr["uf"] = m.group(2)
+        if uf and "uf" not in addr:
+            # state pode vir como "Amazonas" — converte para sigla via lookup
+            from leilao_scraper.spiders.soleon import _normalize_text as _n
+            uf_upper = (uf or "").upper().strip()
+            if len(uf_upper) == 2:
+                addr["uf"] = uf_upper
+            else:
+                addr["uf"] = _UF_NAME_TO_CODE.get(_n(uf).lower(), None)
+                if not addr["uf"]:
+                    del addr["uf"]
+        if any(v for v in addr.values()):
             item["address"] = addr
 
-        # Imagens da galeria
         gallery_raw = product.get("galleryJson") or product.get("photos") or []
         photos: list[str] = []
         if isinstance(gallery_raw, str):
@@ -301,13 +348,11 @@ class S4BDigitalSpider(ProviderSpider):
                             url = _PHOTO_BASE + url + (".jpg" if "." not in url else "")
                         photos.append(url)
         if not photos:
-            # Fallback: photoCount + photoIds
             for uuid in (product.get("photoIds") or []):
                 photos.append(_PHOTO_BASE + uuid + ".jpg")
         if photos:
-            item["images"] = list(dict.fromkeys(photos))  # dedup preserva ordem
+            item["images"] = list(dict.fromkeys(photos))
 
-        # Cláusulas via parser de texto
         if detailed_desc_clean:
             payment_options, encumbrances = _parse_auction_clauses(detailed_desc_clean)
             if payment_options:
@@ -327,8 +372,20 @@ class S4BDigitalSpider(ProviderSpider):
         yield item
 
 
+_UF_NAME_TO_CODE = {
+    "acre": "AC", "alagoas": "AL", "amapa": "AP", "amazonas": "AM",
+    "bahia": "BA", "ceara": "CE", "distrito federal": "DF",
+    "espirito santo": "ES", "goias": "GO", "maranhao": "MA",
+    "mato grosso": "MT", "mato grosso do sul": "MS", "minas gerais": "MG",
+    "para": "PA", "paraiba": "PB", "parana": "PR", "pernambuco": "PE",
+    "piaui": "PI", "rio de janeiro": "RJ", "rio grande do norte": "RN",
+    "rio grande do sul": "RS", "rondonia": "RO", "roraima": "RR",
+    "santa catarina": "SC", "sao paulo": "SP", "sergipe": "SE",
+    "tocantins": "TO",
+}
+
+
 def _slugify(s: str, max_len: int = 80) -> str:
-    """Slug ASCII pra construir URL canônica do detalhe."""
     s = (s or "").lower()
     s = re.sub(
         r"[áàâãäéèêëíìîïóòôõöúùûüç]",
