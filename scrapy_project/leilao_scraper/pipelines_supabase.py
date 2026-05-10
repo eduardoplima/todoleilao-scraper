@@ -242,21 +242,21 @@ class SupabasePipeline:
         auctioneer_id = self._upsert_auctioneer(cur, a.get("auctioneer") or "desconhecido")
 
         address_id = self._insert_address(cur, a.get("address") or {})
-        unit_id = self._insert_spatial_unit(cur, a, address_id, source_id)
 
+        # Auction + lot UPSERT primeiro pra obter lot_id; spatial_unit é
+        # resolvida via lookup pelo lot_unit_link existente (idempotente,
+        # sem inflação herdada do bug pré-dedup_auction_spatial).
         auction_id = self._upsert_auction(cur, source_id, auctioneer_id, url)
         lot_id, was_new_lot = self._upsert_auction_lot(cur, source_id, auction_id, a, url)
 
-        # Link N:N lot↔unit (com share_pct=NULL → 100% único)
-        if unit_id is not None:
-            cur.execute(
-                """
-                INSERT INTO core.lot_unit_link (lot_id, spatial_unit_id)
-                VALUES (%s, %s)
-                ON CONFLICT DO NOTHING
-                """,
-                (lot_id, unit_id),
-            )
+        unit_id = self._upsert_spatial_unit_for_lot(
+            cur, lot_id, a, address_id, source_id
+        )
+        # Classifica kind a partir da description (caminho A do plano B1).
+        # Trigger AFTER UPDATE OF description em auction_lot só dispara
+        # quando description muda; chamada explícita aqui garante que
+        # spatial_units recém-criadas/UPSERTed também classifiquem.
+        cur.execute("SELECT core.classify_lot_kinds(%s)", (lot_id,))
 
         round_id = self._insert_round(cur, lot_id, a)
         bid_ids = self._insert_bids(cur, lot_id, round_id, source_id, a)
@@ -380,7 +380,68 @@ class SupabasePipeline:
         )
         return cur.fetchone()[0]
 
-    def _insert_spatial_unit(self, cur, a: ItemAdapter, address_id: str | None, source_id: str) -> str | None:
+    def _upsert_spatial_unit_for_lot(
+        self, cur, lot_id: str, a: ItemAdapter, address_id: str | None, source_id: str
+    ) -> str | None:
+        """1 spatial_unit por lot (idempotente).
+
+        Lookup primeiro: se já há spatial_unit linkada via lot_unit_link,
+        UPDATE preservando campos não-nulos. Se não, INSERT + LINK.
+
+        Resolve a inflação histórica em que cada UPSERT do lot criava
+        nova spatial_unit. core.spatial_unit não tem chave natural
+        confiável (registry_number raramente vem), então a chave de
+        idempotência é o relacionamento via lot_unit_link.
+        """
+        kind         = _map_unit_kind(a.get("property_type"))
+        total_area   = _to_decimal(a.get("total_area_sqm"))
+        useful_area  = _to_decimal(a.get("area_sqm"))
+        bedrooms     = _to_int(a.get("bedrooms"))
+        bathrooms    = _to_int(a.get("bathrooms"))
+        parking      = _to_int(a.get("parking_spots"))
+        appraisal    = _to_decimal(a.get("market_value"))
+        scraped      = _parse_dt(a.get("scraped_at"))
+
+        cur.execute(
+            """
+            SELECT su.id FROM core.lot_unit_link lu
+            JOIN core.spatial_unit su ON su.id = lu.spatial_unit_id
+            WHERE lu.lot_id = %s
+            ORDER BY su.created_at LIMIT 1
+            """,
+            (lot_id,),
+        )
+        row = cur.fetchone()
+        if row is not None:
+            unit_id = row[0]
+            cur.execute(
+                """
+                UPDATE core.spatial_unit SET
+                  kind            = CASE WHEN core.spatial_unit.kind = 'desconhecida'
+                                         THEN %s ELSE core.spatial_unit.kind END,
+                  address_id      = COALESCE(%s, address_id),
+                  total_area      = COALESCE(%s, total_area),
+                  useful_area     = COALESCE(%s, useful_area),
+                  bedrooms        = COALESCE(%s, bedrooms),
+                  bathrooms       = COALESCE(%s, bathrooms),
+                  parking_spots   = COALESCE(%s, parking_spots),
+                  appraisal_value = COALESCE(%s, appraisal_value),
+                  scraped_at      = COALESCE(%s, scraped_at),
+                  parser_version  = %s,
+                  updated_at      = now()
+                WHERE id = %s
+                """,
+                (
+                    kind,
+                    address_id,
+                    total_area, useful_area,
+                    bedrooms, bathrooms, parking,
+                    appraisal, scraped, PARSER_VERSION,
+                    unit_id,
+                ),
+            )
+            return unit_id
+
         cur.execute(
             """
             INSERT INTO core.spatial_unit
@@ -391,20 +452,19 @@ class SupabasePipeline:
             RETURNING id
             """,
             (
-                _map_unit_kind(a.get("property_type")),
-                address_id,
-                _to_decimal(a.get("total_area_sqm")),
-                _to_decimal(a.get("area_sqm")),
-                _to_int(a.get("bedrooms")),
-                _to_int(a.get("bathrooms")),
-                _to_int(a.get("parking_spots")),
-                _to_decimal(a.get("market_value")),
-                source_id,
-                _parse_dt(a.get("scraped_at")),
-                PARSER_VERSION,
+                kind, address_id,
+                total_area, useful_area,
+                bedrooms, bathrooms, parking,
+                appraisal, source_id, scraped, PARSER_VERSION,
             ),
         )
-        return cur.fetchone()[0]
+        unit_id = cur.fetchone()[0]
+        cur.execute(
+            "INSERT INTO core.lot_unit_link (lot_id, spatial_unit_id) VALUES (%s, %s) "
+            "ON CONFLICT DO NOTHING",
+            (lot_id, unit_id),
+        )
+        return unit_id
 
     def _upsert_auction(
         self, cur, source_id: str, auctioneer_id: str | None, source_url: str
@@ -412,21 +472,26 @@ class SupabasePipeline:
         # 1 leilão por listagem (source_listing_url) — v1 grosseiro: 1 leilão
         # por scrape_event de URL de detalhe. Refinamento futuro: agrupar por
         # leilao_id extraído da URL /leilao/{id}/lotes.
+        # Idempotente via UNIQUE (source_id, source_auction_code). Antes da
+        # constraint o ON CONFLICT DO NOTHING não disparava (não havia
+        # constraint), causando inflação 1.6× — corrigido em
+        # sql/dedup_auction_spatial.sql.
         code = source_url
         cur.execute(
             """
             INSERT INTO core.auction
                 (modality, origin, auctioneer_id,
                  source_id, source_auction_code, source_url,
-                 scraped_at, parser_version)
-            VALUES ('judicial_cpc', 'desconhecida', %s, %s, %s, %s, now(), %s)
-            ON CONFLICT DO NOTHING
+                 scraped_at, last_seen_at, parser_version)
+            VALUES ('judicial_cpc', 'desconhecida', %s, %s, %s, %s, now(), now(), %s)
+            ON CONFLICT (source_id, source_auction_code) DO UPDATE
+              SET source_url     = EXCLUDED.source_url,
+                  auctioneer_id  = COALESCE(EXCLUDED.auctioneer_id, core.auction.auctioneer_id),
+                  scraped_at     = EXCLUDED.scraped_at,
+                  last_seen_at   = now()
+            RETURNING id
             """,
             (auctioneer_id, source_id, code, source_url, PARSER_VERSION),
-        )
-        cur.execute(
-            "SELECT id FROM core.auction WHERE source_id = %s AND source_auction_code = %s",
-            (source_id, code),
         )
         return cur.fetchone()[0]
 
