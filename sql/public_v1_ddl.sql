@@ -64,6 +64,10 @@ primary_image AS (
 )
 SELECT
   al.id                                                  AS lot_id,
+  -- Sufixo curto pra desambiguar slug colidente em URLs do front
+  -- (`/lote/{slug}-{lot_id_short}`). Não é único, mas com slug + 8 chars
+  -- de UUID a colisão é praticamente impossível.
+  LEFT(al.id::text, 8)                                   AS lot_id_short,
   al.lot_number,
   al.source_url,
   al.current_status,
@@ -138,6 +142,9 @@ CREATE INDEX lot_search_geom_gix
 CREATE INDEX lot_search_slug_idx
   ON public_v1.lot_search (slug);
 
+CREATE INDEX lot_search_lot_id_short_idx
+  ON public_v1.lot_search (lot_id_short);
+
 -- -----------------------------------------------------------------------------
 -- B. View regular de detalhe (sempre atualizada — não materializada)
 -- -----------------------------------------------------------------------------
@@ -161,6 +168,28 @@ SELECT
   au.process_number,
   au.first_round_at,
   au.last_round_at,
+  -- Auctioneer (PJ ou agente público no exercício da função — sem
+  -- PII de PF; juc_uf+jucesp_number são públicos por LAI/jurisprudência)
+  CASE
+    WHEN auc.id IS NOT NULL THEN
+      json_build_object(
+        'full_name',     auc.full_name,
+        'jucesp_number', auc.jucesp_number,
+        'juc_uf',        auc.juc_uf,
+        'cnpj',          auc.cnpj,
+        'contact_email', auc.contact_email
+      )
+  END                                                  AS auctioneer,
+  -- Tribunal (apenas para leilão judicial)
+  CASE
+    WHEN au.modality::text LIKE 'judicial%' AND co.id IS NOT NULL THEN
+      json_build_object(
+        'short_name', co.short_name,
+        'full_name',  co.full_name,
+        'court_url',  co.court_url,
+        'uf',         co.uf
+      )
+  END                                                  AS court,
   -- Rounds
   (
     SELECT json_agg(
@@ -238,14 +267,33 @@ SELECT
       ORDER BY e.kind, e.status, e.created_at
     ) enc
   )                                                    AS encumbrances,
-  -- Spatial unit (DISTINCT pela inflação)
+  -- Spatial unit + occupancy (de ba_unit) + amenities (M:N).
+  -- DISTINCT lu2 pra mitigar inflação herdada de spatial_unit.
   (
     SELECT row_to_json(u)
     FROM (
       SELECT su.kind, su.useful_area, su.private_area, su.total_area,
              su.land_area, su.built_area, su.bedrooms, su.bathrooms,
              su.parking_spots, su.floor_number, su.year_built,
-             su.condominium_name, su.registry_number
+             su.condominium_name, su.registry_number,
+             -- Occupancy do ba_unit vinculado (1 ba_unit por spatial_unit;
+             -- se múltiplos houver, pega o mais antigo).
+             (SELECT b.occupancy FROM core.ba_unit b
+                WHERE b.spatial_unit_id = su.id
+                ORDER BY b.created_at LIMIT 1)             AS occupancy,
+             -- Amenities como array de objetos {code, display_name, category}.
+             COALESCE((
+               SELECT json_agg(
+                        json_build_object(
+                          'code',         at.code,
+                          'display_name', at.display_name,
+                          'category',     at.category
+                        ) ORDER BY at.code
+                      )
+               FROM core.unit_amenity ua
+               JOIN core.amenity_type at ON at.code = ua.amenity_code
+               WHERE ua.spatial_unit_id = su.id
+             ), '[]'::json)                                AS amenities
       FROM core.lot_unit_link lu2
       JOIN core.spatial_unit su ON su.id = lu2.spatial_unit_id
       WHERE lu2.lot_id = al.id
@@ -272,6 +320,8 @@ SELECT
   )                                                    AS address
 FROM core.auction_lot al
 LEFT JOIN core.auction au ON au.id = al.auction_id
+LEFT JOIN core.auctioneer auc ON auc.id = au.auctioneer_id
+LEFT JOIN core.court co ON co.id = au.court_id
 WHERE al.current_status <> 'cancelado'
 ;
 
