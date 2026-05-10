@@ -24,6 +24,7 @@ COPY validator/ ./validator/
 COPY specs/_providers/ ./specs/_providers/
 COPY data/intermediate/site_providers.csv ./data/intermediate/site_providers.csv
 COPY discovery/ ./discovery/
+COPY scripts/ ./scripts/
 
 # ----- Stage 2: runtime -----------------------------------------------------
 FROM python:3.13-slim AS runtime
@@ -46,13 +47,16 @@ COPY --from=builder /app /app
 RUN useradd -m -u 1000 spider && chown -R spider:spider /app
 USER spider
 
-WORKDIR /app/scrapy_project
+WORKDIR /app
 
 # Variáveis configuráveis em runtime (sobrescrever via fly secrets/env):
-#   SUPABASE_DB_URL  — DSN postgresql:// do projeto Supabase
-#   CPF_PEPPER       — chave HMAC para core.hash_cpf (Privacy by Design)
-#   SOLEON_SITES     — quantos sites SOLEON crawlear (default 5)
-ENV SOLEON_SITES=5
+#   SUPABASE_DB_URL    — DSN postgresql:// do projeto Supabase
+#   CPF_PEPPER         — chave HMAC para core.hash_cpf (Privacy by Design)
+#   SOLEON_SITES       — quantos sites SOLEON crawlear (default 5)
+#   GEOCODE_BATCH_LIMIT — máx endereços geocodificados por execução (default 5000)
+ENV SOLEON_SITES=5 \
+    GEOCODE_BATCH_LIMIT=5000
 
-# Default: rodar SOLEON. Override em fly.toml ou docker run.
-CMD ["sh", "-c", "scrapy crawl soleon -a sites=${SOLEON_SITES}"]
+# Default: rodar o spider SOLEON. Para o worker de geocoding, override
+# o command em runtime — vide [processes] em fly.toml.
+CMD ["sh", "-c", "cd /app/scrapy_project && scrapy crawl soleon -a sites=${SOLEON_SITES}"]
