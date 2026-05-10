@@ -33,6 +33,13 @@ dev = [
     "mypy>=1.11",
     "pre-commit>=3.8",
 ]
+geo = [
+    # Carga pontual de centroides/geom municipais via shapefile IBGE.
+    # Pesado (geopandas + fiona + shapely + pyproj). Não vai pra produção.
+    "geobr>=0.2",
+    "geopandas>=1.0",
+    "shapely>=2.0",
+]
 
 [tool.uv]
 package = false
