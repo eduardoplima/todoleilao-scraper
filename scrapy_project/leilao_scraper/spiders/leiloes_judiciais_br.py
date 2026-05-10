@@ -53,6 +53,11 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
     }
 
     LOT_HREF_RE = re.compile(r"/lote/(\d+)/(\d+)")
+    MAX_PAGES_PER_HOST = 100
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._host_seen: dict[str, set[str]] = {}
 
     # ------------------------------------------------------------------
     # Nível 1: home → /imoveis
@@ -66,8 +71,11 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
         )
 
     def parse_listing(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
+        host = response.meta.get("host") or self.host_of(response.url)
+        host_seen = self._host_seen.setdefault(host, set())
         seen: set[str] = set()
         kept = 0
+        total_cards = 0
         for card in response.css("div.base-card, article.base-card"):
             href = card.css("a[href^='/lote/']::attr(href)").get()
             if not href or not self.LOT_HREF_RE.search(href):
@@ -76,6 +84,10 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
             if absolute in seen:
                 continue
             seen.add(absolute)
+            total_cards += 1
+            if absolute in host_seen:
+                continue
+            host_seen.add(absolute)
             kept += 1
             yield self.make_request(
                 absolute,
@@ -84,16 +96,17 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
             )
 
         page = response.meta.get("page", 1)
-        self.log_event("ljb_listing_done", url=response.url, page=page, kept=kept)
+        self.log_event("ljb_listing_done", url=response.url, page=page,
+                       kept=kept, total_cards=total_cards)
 
-        # Paginação via ?pagina=N (robots.txt desencoraja, mas é único
-        # caminho sem sitemap parser)
-        if kept > 0:
+        # Paginação via ?pagina=N — para se a página não trouxe nenhum
+        # card novo (fallback a /imoveis vazio) ou se bateu o cap.
+        if kept > 0 and page < self.MAX_PAGES_PER_HOST:
             next_url = re.sub(r"\?.*$", "", response.url) + f"?pagina={page + 1}"
             yield self.make_request(
                 next_url,
                 callback=self.parse_listing,
-                meta={"page": page + 1, "host": response.meta["host"]},
+                meta={"page": page + 1, "host": host},
             )
 
     # ------------------------------------------------------------------

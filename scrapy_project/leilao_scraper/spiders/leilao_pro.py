@@ -55,6 +55,11 @@ class LeilaoProSpider(ProviderSpider):
 
     LOT_HREF_RE = re.compile(r"/lote_id/(\d+)")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # cards já vistos por host — usado pra detectar fallback page=1 em loop
+        self._host_seen: dict[str, set[str]] = {}
+
     # ------------------------------------------------------------------
     # Nível 1: home → segue para /leilao/lotes/imoveis (categoria imóveis)
     # ------------------------------------------------------------------
@@ -71,11 +76,22 @@ class LeilaoProSpider(ProviderSpider):
     # ------------------------------------------------------------------
     # Nível 2: listagem paginada de lotes
     # ------------------------------------------------------------------
+    # Cap defensivo: páginas reais por host raramente passam de ~100.
+    # Sites do framework leilao_pro retornam a page=1 como fallback quando
+    # page>max em vez de 404, então sem este cap o spider faz loop infinito.
+    MAX_PAGES_PER_HOST = 100
+
     def parse_listing(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
         kept = 0
         dropped = 0
         ambiguous = 0
+        page_hrefs: list[str] = []
         seen: set[str] = set()
+        # Set global por host para detectar fallback "todos os cards já
+        # vistos em páginas anteriores" → fim da paginação.
+        host = self.host_of(response.url)
+        host_seen = self._host_seen.setdefault(host, set())
+
         for card in response.css("div.card-vertical"):
             href = card.css("a[href*='/lote_id/']::attr(href)").get()
             if not href or not self.LOT_HREF_RE.search(href):
@@ -84,6 +100,11 @@ class LeilaoProSpider(ProviderSpider):
             if absolute in seen:
                 continue
             seen.add(absolute)
+            page_hrefs.append(absolute)
+            if absolute in host_seen:
+                # já visto em página anterior — não conta pra "kept" novo
+                continue
+            host_seen.add(absolute)
             verdict = _card_category(card)
             if verdict is False:
                 dropped += 1
@@ -105,10 +126,12 @@ class LeilaoProSpider(ProviderSpider):
             kept=kept,
             dropped=dropped,
             ambiguous=ambiguous,
+            total_cards=len(page_hrefs),
         )
 
-        # Paginação: continua se houver mais cards na página
-        if kept + ambiguous > 0:
+        # Paginação: continua só se a página trouxe pelo menos 1 card novo
+        # (não visto em página anterior) E não atingiu o cap defensivo.
+        if (kept + ambiguous > 0) and page < self.MAX_PAGES_PER_HOST:
             next_page = page + 1
             base = response.url.split("?")[0]
             next_url = f"{base}?page={next_page}"
@@ -116,6 +139,14 @@ class LeilaoProSpider(ProviderSpider):
                 next_url,
                 callback=self.parse_listing,
                 meta={**response.meta, "page": next_page},
+            )
+        elif page_hrefs and kept + ambiguous == 0:
+            # Fallback detectado: página retornou só cards já vistos
+            self.log_event(
+                "lp_pagination_end",
+                host=host,
+                last_page=page,
+                reason="all_cards_seen_before",
             )
 
     # ------------------------------------------------------------------
