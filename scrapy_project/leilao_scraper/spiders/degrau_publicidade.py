@@ -215,11 +215,22 @@ class DegrauPublicidadeSpider(ProviderSpider):
             status = "desconhecido"
         loader.add_value("status", status)
 
-        # No Facebook listings format: <price>=avaliação total, <rate>=lance
-        # mínimo (taxa por interval=sale). Confirmado via amostragem em
-        # gfleiloes onde rate/price ~= 0.75 (2ª praça típica).
+        # Facebook listings format: <price>=avaliação total (formato pt-BR
+        # "N.NNN,NN BRL"). <rate>=valor da 2ª praça/lance mínimo, mas o
+        # framework Degrau emite em centavos quando o valor é inteiro
+        # (sem vírgula): "64844927 BRL" significa R$ 648.449,27. Aplicamos
+        # divisão por 100 quando rate vem sem separador decimal.
+        # Pode haver múltiplos <available_dates_price_config>; achatamento
+        # mantém apenas o último (geralmente a praça final = lance menor).
         mkt = _parse_brl_amount(lote_data.get("price") or "")
-        min_bid = _parse_brl_amount(lote_data.get("rate") or "")
+        rate_raw = (lote_data.get("rate") or "").strip()
+        rate_numeric = rate_raw.split(" ")[0] if rate_raw else ""
+        rate = _parse_brl_amount(rate_raw)
+        # rate em centavos: sem vírgula decimal explícita
+        if rate is not None and "," not in rate_numeric:
+            from decimal import Decimal
+            rate = rate / Decimal(100)
+        min_bid = rate
         if min_bid:
             loader.add_value("minimum_bid", str(min_bid))
         if mkt and mkt != min_bid:
