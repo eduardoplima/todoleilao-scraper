@@ -101,14 +101,19 @@ SELECT
   END                                                    AS discount_pct,
   -- Mídia
   pi.thumb_url,
-  -- Slug humano (kind|municipality|lot_number).
-  -- Sem extensão `unaccent` no Supabase atual: faz translate manual de
-  -- vogais acentuadas e cedilha mais comuns; não-alfanum vira "-".
+  -- Slug humano (kind|[municipality|]lot_number).
+  -- Limpeza determinística pra SEO:
+  --   - 'desconhecida' (enum value, não null) → 'imovel'
+  --   - municipality NULL → omite o segmento (não vira "sem-municipio")
+  -- Sem extensão `unaccent` no Supabase: translate manual de acentos.
   lower(regexp_replace(
     translate(
-      coalesce(pu.kind::text, 'imovel') || '-' ||
-      coalesce(m.name, 'sem-municipio') || '-' ||
-      coalesce(al.lot_number, left(al.id::text, 8)),
+      (CASE
+        WHEN pu.kind IS NULL OR pu.kind::text = 'desconhecida' THEN 'imovel'
+        ELSE pu.kind::text
+       END)
+      || (CASE WHEN m.name IS NOT NULL THEN '-' || m.name ELSE '' END)
+      || '-' || coalesce(al.lot_number, left(al.id::text, 8)),
       'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ',
       'aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC'
     ),
