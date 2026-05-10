@@ -139,9 +139,17 @@ class SoleonSpider(ProviderSpider):
             return
 
         loader = self.new_loader(response)
-        # auctioneer override: usa host como discriminador entre os 116 tenants
         host = self.host_of(response.url)
-        loader.replace_value("auctioneer", f"soleon::{host}")
+        # Tenta extrair o leiloeiro real (nome + JUC) do bloco
+        # <h5>LEILOEIRO OFICIAL</h5>NOME<br>JUC<UF> Nº
+        auctioneer = _extract_auctioneer(response)
+        if auctioneer and auctioneer.get("full_name"):
+            loader.replace_value("auctioneer", auctioneer["full_name"])
+            loader.add_value("auctioneer_data", auctioneer)
+        else:
+            # Fallback: placeholder discriminado por host (preserva comportamento
+            # antigo pra eventuais templates exóticos sem o bloco LEILOEIRO).
+            loader.replace_value("auctioneer", f"soleon::{host}")
 
         # title — meta description: "Lote 001 - {TÍTULO} (ID {lot_id})"
         meta_desc = (
@@ -424,6 +432,72 @@ def _card_category(card) -> bool | None:
 def _normalize_text(s: str) -> str:
     """Espaços únicos, sem leading/trailing. Mantém acentuação."""
     return re.sub(r"\s+", " ", s or "").strip()
+
+
+_VALID_UFS = frozenset(
+    "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split()
+)
+
+# Captura bloco LEILOEIRO OFICIAL completo: nome + linha de matrícula.
+# Cobre os templates SOLEON conhecidos:
+#   JUCEMG 1052           (padrão JUCE<UF>)
+#   JUCESP 633
+#   JUCEPE 26700000323
+#   JUCESC AARC N370
+#   JUCISRS 221/2007      (variante JUCIS<UF> — RS, DF)
+#   JUCISDF 78/2017
+#   25/JUCEPI             (matrícula antes da junta)
+#   AARC 0028/1.999       (sem JUC; só associação dos leiloeiros)
+#   "Leiloeiro - SC - SP - RS"  (sem matrícula explícita — fallback só nome)
+_AUCTIONEER_BLOCK_RE = re.compile(
+    r"<h5[^>]*>\s*LEILOEIR\w+\s+OFICIAL\s*</h5>"
+    r"\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇ][^<\n]{2,120}?)\s*"
+    r"<br[^>]*>\s*"
+    r"([^<]+?)\s*</div>",
+    re.I | re.DOTALL,
+)
+
+# N/JUC<UF> ou N / JUC<UF>
+_JUC_NUM_FIRST_RE = re.compile(
+    r"^([\w\d./-]+)\s*/\s*JUC[A-Z]*?([A-Z]{2})\s*$", re.I
+)
+# JUC<X><UF> [AARC] N
+_JUC_PREFIX_RE = re.compile(
+    r"^JUC[A-Z]*?([A-Z]{2})\s+(?:AARC\s+)?(.+)$", re.I
+)
+
+
+def _parse_juc_matricula(text: str) -> tuple[str | None, str]:
+    """Devolve (juc_uf or None, matricula_str). UF None quando o padrão
+    é só associação (AARC) sem UF explícita ou texto livre."""
+    text = (text or "").strip()
+    m = _JUC_NUM_FIRST_RE.match(text)
+    if m:
+        uf = m.group(2).upper()
+        if uf in _VALID_UFS:
+            return uf, m.group(1)
+    m = _JUC_PREFIX_RE.match(text)
+    if m:
+        uf = m.group(1).upper()
+        if uf in _VALID_UFS:
+            return uf, m.group(2).strip()
+    return None, text
+
+
+def _extract_auctioneer(response) -> dict | None:
+    body = response.text if hasattr(response, "text") else str(response)
+    m = _AUCTIONEER_BLOCK_RE.search(body)
+    if not m:
+        return None
+    full_name = _normalize_text(m.group(1))
+    matricula_text = _normalize_text(m.group(2))
+    juc_uf, matricula = _parse_juc_matricula(matricula_text)
+    return {
+        "full_name": full_name,
+        "juc_uf": juc_uf,
+        # core.auctioneer.jucesp_number é varchar(10); trunca quando excede.
+        "jucesp_number": (matricula or "")[:10] or None,
+    }
 
 
 def _find_edital_url(item) -> str | None:

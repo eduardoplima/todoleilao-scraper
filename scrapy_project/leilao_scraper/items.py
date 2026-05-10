@@ -78,6 +78,11 @@ class PropertyItem(scrapy.Item):
     # core.encumbrance_kind. Distinto de `encumbrances_raw` (textual).
     encumbrances = scrapy.Field()
 
+    # ----- dados do leiloeiro responsável ------------------------------------
+    # dict {full_name, juc_uf, jucesp_number}. Quando ausente, pipeline cai
+    # no placeholder "soleon::<host>" do campo `auctioneer`.
+    auctioneer_data = scrapy.Field()
+
     # ----- mídia / anexos ----------------------------------------------------
     images = scrapy.Field()  # list[str] de URLs absolutas
     documents = scrapy.Field()  # list[{name, url}]

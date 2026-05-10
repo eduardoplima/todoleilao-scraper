@@ -248,7 +248,11 @@ class SupabasePipeline:
         source_id = self._upsert_source(cur, host, url)
         self._insert_scrape_event(cur, source_id, url, a.get("scraped_at"))
 
-        auctioneer_id = self._upsert_auctioneer(cur, a.get("auctioneer") or "desconhecido")
+        auctioneer_id = self._upsert_auctioneer(
+            cur,
+            a.get("auctioneer") or "desconhecido",
+            extra=a.get("auctioneer_data"),
+        )
 
         address_id = self._insert_address(cur, a.get("address") or {})
 
@@ -350,22 +354,31 @@ class SupabasePipeline:
             (source_id, url, _parse_dt(scraped_at), PARSER_VERSION),
         )
 
-    def _upsert_auctioneer(self, cur, slug: str) -> str | None:
-        if not slug:
+    def _upsert_auctioneer(
+        self, cur, full_name: str, extra: dict | None = None
+    ) -> str | None:
+        """UPSERT por full_name. Atualiza juc_uf+jucesp_number se vierem novos.
+
+        full_name é a chave de idempotência (UNIQUE constraint). Extra é o
+        dict opcional com {juc_uf, jucesp_number} extraído pelo spider.
+        """
+        if not full_name:
             return None
-        # Sem coluna `slug` no DDL; usamos full_name como chave e fingimos
-        # que o slug é o nome canônico nesta v1.
+        juc_uf = (extra or {}).get("juc_uf")
+        jucesp = (extra or {}).get("jucesp_number")
         cur.execute(
             """
-            INSERT INTO core.auctioneer (full_name)
-            VALUES (%s)
-            ON CONFLICT DO NOTHING
+            INSERT INTO core.auctioneer (full_name, juc_uf, jucesp_number)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (full_name) DO UPDATE
+              SET juc_uf        = COALESCE(EXCLUDED.juc_uf, core.auctioneer.juc_uf),
+                  jucesp_number = COALESCE(EXCLUDED.jucesp_number, core.auctioneer.jucesp_number),
+                  updated_at    = now()
+            RETURNING id
             """,
-            (slug,),
+            (full_name, juc_uf, jucesp),
         )
-        cur.execute("SELECT id FROM core.auctioneer WHERE full_name = %s", (slug,))
-        row = cur.fetchone()
-        return row[0] if row else None
+        return cur.fetchone()[0]
 
     def _insert_address(self, cur, addr: dict) -> str | None:
         if not addr:
