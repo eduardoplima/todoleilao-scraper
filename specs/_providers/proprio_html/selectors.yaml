@@ -1,0 +1,15 @@
+# Contrato declarativo (placeholder) para proprio_html.
+# Spider best-effort genérico — heurísticas embutidas no código.
+
+auctioneer_slug: "proprio_html"
+platform_hint: "proprio_html"
+
+listing_active:
+  url_pattern: ""
+  card_selector: "a"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1::text"
+    description: "meta[property='og:description']::attr(content)"
