@@ -32,7 +32,23 @@ from urllib.parse import urlparse
 
 from itemadapter import ItemAdapter
 
+import hashlib
+import re
+import unicodedata
+
 logger = logging.getLogger(__name__)
+
+
+# Providers cujos spiders raspam direto do portal do banco. Esses lots viram
+# `secondary` no dedup canonical_link quando há match com lot de leiloeiro.
+BANK_PROVIDERS = frozenset({"caixa", "banco_brasil", "bradesco", "santander"})
+
+# Regex de matrícula imobiliária (CRI). Captura padrões comuns como
+# "matrícula nº 123.456", "matricula 12345", "matr. 12.345 do CRI".
+_REGISTRY_RE = re.compile(
+    r"matr[ií]cula?[^0-9]{0,20}(?:n[ºo°.]?\s*)?(\d{1,3}(?:\.\d{3})*|\d{3,8})",
+    re.I,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -245,7 +261,9 @@ class SupabasePipeline:
             return
 
         host = _host(url)
-        source_id = self._upsert_source(cur, host, url)
+        provider_slug = getattr(spider, "provider_slug", "") or ""
+        source_kind = "bank" if provider_slug in BANK_PROVIDERS else "auctioneer"
+        source_id = self._upsert_source(cur, host, url, source_kind=source_kind)
         self._insert_scrape_event(cur, source_id, url, a.get("scraped_at"))
 
         auctioneer_id = self._upsert_auctioneer(
@@ -327,20 +345,25 @@ class SupabasePipeline:
                 ),
             )
 
+        # Dedup inter-fontes: liga lots da Caixa/BB/etc. ao lote oficial do
+        # leiloeiro quando match por (address_key, registry_key). Idempotente.
+        self._link_canonical(cur, lot_id, source_kind, a)
+
     # ------------------------------------------------------------------
     # UPSERTs / INSERTs específicos
     # ------------------------------------------------------------------
 
-    def _upsert_source(self, cur, host: str, url: str) -> str:
+    def _upsert_source(self, cur, host: str, url: str, source_kind: str = "auctioneer") -> str:
         cur.execute(
             """
             INSERT INTO core.source (short_name, display_name, base_url, source_kind)
-            VALUES (%s, %s, %s, 'auctioneer')
+            VALUES (%s, %s, %s, %s)
             ON CONFLICT (short_name) DO UPDATE
-              SET base_url = EXCLUDED.base_url
+              SET base_url    = EXCLUDED.base_url,
+                  source_kind = EXCLUDED.source_kind
             RETURNING id
             """,
-            (host or "unknown", host or url, f"https://{host}/" if host else url),
+            (host or "unknown", host or url, f"https://{host}/" if host else url, source_kind),
         )
         return cur.fetchone()[0]
 
@@ -699,10 +722,144 @@ class SupabasePipeline:
                 ),
             )
 
+    # ------------------------------------------------------------------
+    # Dedup canonical_link
+    # ------------------------------------------------------------------
+
+    def _link_canonical(
+        self, cur, lot_id: str, source_kind: str, a: ItemAdapter
+    ) -> None:
+        """Inter-fontes dedup: associa lot do banco (secondary) ao lot do
+        leiloeiro (canonical) quando match por (address_key + registry_key).
+
+        Regras:
+          - Se atual é banco e existe match não-banco → atual vira secondary.
+          - Se atual é não-banco e existe match banco → match banco vira
+            secondary, atual fica canonical (UPSERT por secondary_lot_id).
+          - Se mesma source_kind dos dois lados → não faz dedup (mantém
+            ambos como canônicos).
+        """
+        addr_key = _address_key(a.get("address") or {})
+        reg_key = _registry_key(a.get("description") or "")
+        # Sem chaves significativas, nada pra dedupar.
+        if not addr_key and not reg_key:
+            return
+
+        # Busca outros lots com mesma chave. O lookup vai contra os dados
+        # acabados de upsertar — ok porque _persist é dentro de 1 txn.
+        cur.execute(
+            """
+            WITH cand AS (
+              SELECT
+                al.id              AS lot_id,
+                src.source_kind    AS source_kind,
+                core.unaccent_lite(
+                  coalesce(ad.zip,'') || '|' ||
+                  coalesce(ad.street,'') || '|' || coalesce(ad.number,'')
+                )                  AS addr_key,
+                (
+                  SELECT (regexp_match(al.description,
+                    'matr[ií]cula?[^0-9]{0,20}(?:n[ºo°.]?\\s*)?(\\d{1,3}(?:\\.\\d{3})*|\\d{3,8})',
+                    'i'))[1]
+                )                  AS reg_key
+              FROM core.auction_lot al
+              LEFT JOIN core.source src ON src.id = al.source_id
+              LEFT JOIN core.lot_unit_link lu ON lu.lot_id = al.id
+              LEFT JOIN core.spatial_unit su ON su.id = lu.spatial_unit_id
+              LEFT JOIN core.address ad ON ad.id = su.address_id
+              WHERE al.id <> %s
+            )
+            SELECT lot_id, source_kind
+            FROM cand
+            WHERE
+              (CASE WHEN %s = '' THEN false
+                    ELSE addr_key = core.unaccent_lite(%s) END)
+              OR (CASE WHEN %s IS NULL THEN false
+                       ELSE reg_key = %s END)
+            LIMIT 5
+            """,
+            (lot_id, addr_key, addr_key, reg_key, reg_key),
+        )
+        rows = cur.fetchall() or []
+        if not rows:
+            return
+
+        # Particiona em banks/non-banks.
+        non_bank_other = next(((lid, sk) for lid, sk in rows if sk != "bank"), None)
+        bank_other = next(((lid, sk) for lid, sk in rows if sk == "bank"), None)
+
+        match_kind = "address+registry" if (addr_key and reg_key) else \
+                     "registry" if reg_key else "address"
+        confidence = 90 if (addr_key and reg_key) else 70 if reg_key else 55
+
+        if source_kind == "bank" and non_bank_other:
+            # Atual lot é banco; existe match leiloeiro → atual é secondary.
+            self._insert_canonical_link(
+                cur, canonical=non_bank_other[0], secondary=lot_id,
+                match_kind=match_kind, confidence=confidence,
+            )
+        elif source_kind != "bank" and bank_other:
+            # Atual lot é leiloeiro; existe match banco → banco é secondary.
+            self._insert_canonical_link(
+                cur, canonical=lot_id, secondary=bank_other[0],
+                match_kind=match_kind, confidence=confidence,
+            )
+
+    def _insert_canonical_link(
+        self,
+        cur,
+        canonical: str,
+        secondary: str,
+        match_kind: str,
+        confidence: int,
+    ) -> None:
+        cur.execute(
+            """
+            INSERT INTO core.lot_canonical_link
+                (canonical_lot_id, secondary_lot_id, match_kind, confidence)
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT (secondary_lot_id) DO UPDATE
+              SET canonical_lot_id = EXCLUDED.canonical_lot_id,
+                  match_kind       = EXCLUDED.match_kind,
+                  confidence       = EXCLUDED.confidence
+            """,
+            (canonical, secondary, match_kind, confidence),
+        )
+
 
 # ---------------------------------------------------------------------------
 # Helpers de address
 # ---------------------------------------------------------------------------
+
+
+def _strip_accents(s: str) -> str:
+    return "".join(
+        c for c in unicodedata.normalize("NFKD", s)
+        if not unicodedata.combining(c)
+    )
+
+
+def _address_key(addr: dict) -> str:
+    """Chave determinística para dedup. Vazio quando endereço é insuficiente."""
+    if not addr:
+        return ""
+    cep = _normalize_cep(addr.get("zip") or addr.get("cep") or "")
+    street = (addr.get("street") or "").strip().lower()
+    number = str(addr.get("number") or "").strip().lower()
+    if not cep and not (street and number):
+        return ""
+    raw = f"{cep or ''}|{_strip_accents(street)}|{number}"
+    return raw.strip("| ")
+
+
+def _registry_key(description: str) -> str | None:
+    """Extrai número de matrícula CRI ('123.456' → '123456'). None se não bater."""
+    if not description:
+        return None
+    m = _REGISTRY_RE.search(description)
+    if not m:
+        return None
+    return m.group(1).replace(".", "")
 
 
 def _normalize_cep(raw: Any) -> str | None:
