@@ -591,6 +591,29 @@ class CaixaSpider(ProviderSpider):
         elif "venda" in modalidade_lower:
             loader.add_value("auction_phase", "unica")
 
+        # Datas das praças — Caixa serve em "Data do 1º Leilão - DD/MM/YYYY - HHhMM".
+        # O `h` em HHhMM é literal (não dois-pontos). Normalizamos para HH:MM.
+        m_1a = re.search(
+            r"Data\s+do\s+1[ºoº°ª]\s*Leil[ãa]o\s*[-–]\s*"
+            r"(\d{2}/\d{2}/\d{4})\s*[-–]\s*(\d{1,2})h(\d{2})",
+            body_text, re.I,
+        )
+        if m_1a:
+            loader.add_value(
+                "first_auction_date",
+                f"{m_1a.group(1)} {m_1a.group(2).zfill(2)}:{m_1a.group(3)}",
+            )
+        m_2a = re.search(
+            r"Data\s+do\s+2[ºoº°ª]\s*Leil[ãa]o\s*[-–]\s*"
+            r"(\d{2}/\d{2}/\d{4})\s*[-–]\s*(\d{1,2})h(\d{2})",
+            body_text, re.I,
+        )
+        if m_2a:
+            loader.add_value(
+                "second_auction_date",
+                f"{m_2a.group(1)} {m_2a.group(2).zfill(2)}:{m_2a.group(3)}",
+            )
+
         # Preço — Caixa exibe múltiplas estruturas
         m_av = re.search(
             r"(?:Valor\s+de\s+avalia[çc][ãa]o|Avalia[çc][ãa]o)[:\s]*R\$\s*([\d.,]+)",
@@ -604,14 +627,26 @@ class CaixaSpider(ProviderSpider):
             except Exception:
                 pass
 
+        # Lance mínimo — Caixa serve em 3 padrões distintos:
+        #   "Valor mínimo de venda 1º Leilão: R$ 292.000,00"
+        #   "Valor mínimo de venda 2º Leilão: R$ 175.200,00"
+        #   "Valor para venda: R$ N" (venda direta — preço fixo único)
+        # Preferimos 2º Leilão (menor; quando lote está em fase 2), depois
+        # 1º Leilão, depois Venda Direta.
+        m_min_2 = re.search(
+            r"Valor\s+m[íi]nimo\s+de\s+venda\s+2[ºoº°ª]\s*Leil[ãa]o\s*:\s*R\$\s*([\d.,]+)",
+            body_text, re.I,
+        )
+        m_min_1 = re.search(
+            r"Valor\s+m[íi]nimo\s+de\s+venda\s+1[ºoº°ª]\s*Leil[ãa]o\s*:\s*R\$\s*([\d.,]+)",
+            body_text, re.I,
+        )
         m_min = (
-            re.search(
-                r"Valor\s+m[íi]nimo\s+(?:de\s+venda|do\s+\d+[º°ª][^R]{0,30})?[:\s]*R\$\s*([\d.,]+)",
-                body_text, re.I,
-            )
-            or re.search(r"Valor\s+para\s+venda[:\s]*R\$\s*([\d.,]+)", body_text, re.I)
-            or re.search(r"Pelo\s+valor\s+de[:\s]*R\$\s*([\d.,]+)", body_text, re.I)
-            or re.search(r"Preço[:\s]*R\$\s*([\d.,]+)", body_text, re.I)
+            m_min_2
+            or m_min_1
+            or re.search(r"Valor\s+para\s+venda\s*:\s*R\$\s*([\d.,]+)", body_text, re.I)
+            or re.search(r"Pelo\s+valor\s+de\s*:?\s*R\$\s*([\d.,]+)", body_text, re.I)
+            or re.search(r"Pre[çc]o\s*:\s*R\$\s*([\d.,]+)", body_text, re.I)
         )
         if m_min:
             try:
@@ -620,6 +655,13 @@ class CaixaSpider(ProviderSpider):
                     loader.add_value("minimum_bid", str(v))
             except Exception:
                 pass
+
+        # auction_phase: refina baseado em quais valores estão presentes.
+        # Se 2º Leilão tem valor, é 2ª praça; se só 1º, é 1ª praça.
+        if m_min_2:
+            loader.replace_value("auction_phase", "2a_praca")
+        elif m_min_1 and not m_min_2:
+            loader.replace_value("auction_phase", "1a_praca")
 
         # Endereço — Caixa serve uma linha composta:
         #   "RUA NOME,N. 236 APTO. 03 TR 01, BAIRRO - CEP: NNNNN-NNN, CIDADE - ESTADO"
