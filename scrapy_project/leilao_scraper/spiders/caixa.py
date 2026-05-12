@@ -146,18 +146,19 @@ class CaixaSpider(ProviderSpider):
     requires_playwright = True
 
     custom_settings = {
-        "CONCURRENT_REQUESTS_PER_DOMAIN": 2,
-        "DOWNLOAD_DELAY": 1.0,
-        "PLAYWRIGHT_MAX_PAGES_PER_CONTEXT": 4,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 4,
+        "DOWNLOAD_DELAY": 0.5,
+        "PLAYWRIGHT_MAX_PAGES_PER_CONTEXT": 6,
         "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 60_000,
         "USER_AGENT": _BROWSER_UA,
     }
 
-    MAX_LOTS_PER_RUN = 5000
+    MAX_LOTS_PER_RUN = 50000
 
     def __init__(self, *args, estados: str | None = None,
                  modalidades: str | None = None,
-                 cidades: str | None = None, **kwargs):
+                 cidades: str | None = None,
+                 auto_cidades: str | None = None, **kwargs):
         """Argumentos:
           estados      CSV de UFs (default: 5 maiores).
           modalidades  CSV de cmb_modalidade values (default: as 4 ativas).
@@ -193,19 +194,47 @@ class CaixaSpider(ProviderSpider):
         self._cidades_nomes: list[str] = []
         if cidades:
             self._cidades_nomes = [_norm_city(c) for c in cidades.split(",") if c.strip()]
+        # auto_cidades: quando true, descobre todas as cidades por UF via
+        # dropdown carregaListaCidades.asp e itera. Cuidado: pode gerar
+        # milhares de buscas (1000+ cidades × N modalidades).
+        self._auto_cidades = (auto_cidades or "").lower() in {"1", "true", "yes"}
+        if self._auto_cidades and self._cidades_nomes:
+            self.logger.warning(
+                "Caixa: auto_cidades=true ignora arg cidades (mutuamente exclusivos)."
+            )
+            self._cidades_nomes = []
         self.logger.info(
             f"Caixa: estados={self._estados} "
             f"modalidades={[v for v,_ in self._modalidades]} "
-            f"cidades={self._cidades_nomes or '<UF inteira>'}"
+            f"cidades={self._cidades_nomes or ('AUTO' if self._auto_cidades else '<UF inteira>')}"
         )
 
     # ------------------------------------------------------------------
     # Nível 1: Playwright bootstrap por (UF × modalidade × cidade?)
     # ------------------------------------------------------------------
     def start_requests(self) -> Iterable[Any]:
-        # Se cidades_nomes foram passadas, produto cartesiano
-        # UF × modalidade × cidade. Senão, UF × modalidade (busca a UF
-        # inteira). cidade_nome_norm já vem normalizado (UPPER+sem-acento).
+        # Modo 1: auto_cidades=true → primeira passada descobre cidades por
+        # UF via dropdown; depois enfileira (UF × cidade × modalidade).
+        if self._auto_cidades:
+            for uf in self._estados:
+                yield scrapy.Request(
+                    _BUSCA_URL,
+                    callback=self.parse_cidades_discover,
+                    meta={
+                        "playwright": True,
+                        "playwright_include_page": True,
+                        "estado_uf": uf,
+                        "playwright_page_methods": [
+                            PageMethod("wait_for_selector", "select#cmb_estado",
+                                       timeout=30_000),
+                            PageMethod("wait_for_timeout", 5000),  # Radware
+                        ],
+                    },
+                    dont_filter=True,
+                )
+            return
+
+        # Modo 2: cidades explícitas (passadas via -a) OU UF inteira (default).
         cidades = self._cidades_nomes or [""]
         for uf in self._estados:
             for mod_val, mod_label in self._modalidades:
@@ -228,6 +257,53 @@ class CaixaSpider(ProviderSpider):
                         },
                         dont_filter=True,
                     )
+
+    async def parse_cidades_discover(self, response: scrapy.http.Response):
+        """Descobre todas as cidades da UF lendo o dropdown carregaListaCidades.
+        Para cada cidade, enfileira parse_search_bootstrap em todas as modalidades."""
+        page = response.meta.get("playwright_page")
+        uf = response.meta["estado_uf"]
+        if page is None:
+            return
+        try:
+            await page.select_option("select[name='cmb_estado']", uf)
+            await page.wait_for_timeout(4000)
+            await page.wait_for_function(
+                "() => document.querySelector('select[name=cmb_cidade]').options.length > 1",
+                timeout=15000,
+            )
+            cidades = await page.eval_on_selector_all(
+                "select[name='cmb_cidade'] option",
+                "els => els.filter(o => o.value && o.value !== '0' && o.value !== '')"
+                ".map(o => o.textContent.trim())",
+            )
+        finally:
+            try:
+                await page.close()
+            except Exception:
+                pass
+        cidades_norm = [_norm_city(c) for c in cidades if c]
+        self.log_event("caixa_cidades_discovered", uf=uf, total=len(cidades_norm))
+        for cidade_nome_norm in cidades_norm:
+            for mod_val, mod_label in self._modalidades:
+                yield scrapy.Request(
+                    _BUSCA_URL,
+                    callback=self.parse_search_bootstrap,
+                    meta={
+                        "playwright": True,
+                        "playwright_include_page": True,
+                        "estado_uf": uf,
+                        "modalidade_val": mod_val,
+                        "modalidade_label": mod_label,
+                        "cidade_nome_norm": cidade_nome_norm,
+                        "playwright_page_methods": [
+                            PageMethod("wait_for_selector", "select#cmb_estado",
+                                       timeout=30_000),
+                            PageMethod("wait_for_timeout", 5000),
+                        ],
+                    },
+                    dont_filter=True,
+                )
 
     async def parse_search_bootstrap(self, response: scrapy.http.Response):
         """Roda no Playwright. Seta UF + Modalidade (+ Cidade quando
