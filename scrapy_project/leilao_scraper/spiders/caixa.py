@@ -130,6 +130,22 @@ def _norm_city(s: str) -> str:
     s = "".join(c for c in s if not unicodedata.combining(c))
     return " ".join(s.split())
 
+
+# Estado por extenso → sigla UF (Caixa publica "SAO PAULO - SAO PAULO" no
+# endereço; o último é o estado por extenso). Match case-insensitive +
+# sem acentos via _norm_city.
+_NOME_TO_UF: dict[str, str] = {
+    "ACRE": "AC", "ALAGOAS": "AL", "AMAPA": "AP", "AMAZONAS": "AM",
+    "BAHIA": "BA", "CEARA": "CE", "DISTRITO FEDERAL": "DF",
+    "ESPIRITO SANTO": "ES", "GOIAS": "GO", "MARANHAO": "MA",
+    "MATO GROSSO": "MT", "MATO GROSSO DO SUL": "MS", "MINAS GERAIS": "MG",
+    "PARA": "PA", "PARAIBA": "PB", "PARANA": "PR", "PERNAMBUCO": "PE",
+    "PIAUI": "PI", "RIO DE JANEIRO": "RJ", "RIO GRANDE DO NORTE": "RN",
+    "RIO GRANDE DO SUL": "RS", "RONDONIA": "RO", "RORAIMA": "RR",
+    "SANTA CATARINA": "SC", "SAO PAULO": "SP", "SERGIPE": "SE",
+    "TOCANTINS": "TO",
+}
+
 # UA realista — Chromium do scrapy-playwright e Radware esperam mesmo
 # UA do navegador automatizado, senão fingerprint diverge dos cookies.
 _BROWSER_UA = (
@@ -158,7 +174,8 @@ class CaixaSpider(ProviderSpider):
     def __init__(self, *args, estados: str | None = None,
                  modalidades: str | None = None,
                  cidades: str | None = None,
-                 auto_cidades: str | None = None, **kwargs):
+                 auto_cidades: str | None = None,
+                 refazer_sem_data: str | None = None, **kwargs):
         """Argumentos:
           estados      CSV de UFs (default: 5 maiores).
           modalidades  CSV de cmb_modalidade values (default: as 4 ativas).
@@ -203,16 +220,24 @@ class CaixaSpider(ProviderSpider):
                 "Caixa: auto_cidades=true ignora arg cidades (mutuamente exclusivos)."
             )
             self._cidades_nomes = []
+        self._refazer_sem_data = (refazer_sem_data or "").lower() in {"1", "true", "yes"}
         self.logger.info(
             f"Caixa: estados={self._estados} "
             f"modalidades={[v for v,_ in self._modalidades]} "
-            f"cidades={self._cidades_nomes or ('AUTO' if self._auto_cidades else '<UF inteira>')}"
+            f"cidades={self._cidades_nomes or ('AUTO' if self._auto_cidades else '<UF inteira>')} "
+            f"refazer_sem_data={self._refazer_sem_data}"
         )
 
     # ------------------------------------------------------------------
     # Nível 1: Playwright bootstrap por (UF × modalidade × cidade?)
     # ------------------------------------------------------------------
     def start_requests(self) -> Iterable[Any]:
+        # Modo 0: refazer_sem_data=true → query DB pra lots Caixa sem
+        # auction_round, GET direto em cada detail URL via Playwright.
+        if self._refazer_sem_data:
+            yield from self._start_refazer()
+            return
+
         # Modo 1: auto_cidades=true → primeira passada descobre cidades por
         # UF via dropdown; depois enfileira (UF × cidade × modalidade).
         if self._auto_cidades:
@@ -304,6 +329,61 @@ class CaixaSpider(ProviderSpider):
                     },
                     dont_filter=True,
                 )
+
+    def _start_refazer(self) -> Iterable[Any]:
+        """Modo refazer_sem_data: query DB pra lots Caixa sem
+        auction_round, dispatcha Playwright GET direto em cada detail
+        URL. parse_property já corrigido extrai datas+min_bid; pipeline
+        _insert_round persiste o round faltante.
+        """
+        import os
+        import psycopg
+
+        db_url = os.environ.get("SUPABASE_DB_URL")
+        if not db_url:
+            self.logger.error("SUPABASE_DB_URL não definida")
+            return
+        urls: list[str] = []
+        with psycopg.connect(db_url, sslmode="require") as conn, conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT al.source_url
+                FROM core.auction_lot al
+                JOIN core.source s ON s.id = al.source_id
+                WHERE s.short_name LIKE %s
+                  AND NOT EXISTS (SELECT 1 FROM core.auction_round r WHERE r.lot_id = al.id)
+                ORDER BY al.created_at
+                LIMIT %s
+                """,
+                ("%caixa%", self.MAX_LOTS_PER_RUN),
+            )
+            urls = [r[0] for r in cur.fetchall() if r[0]]
+        self.logger.info(f"Caixa refazer_sem_data: {len(urls)} lots a re-extrair")
+        self.log_event("caixa_refazer_inicio", total=len(urls))
+
+        lot_id_re = re.compile(r"hdnimovel=(\d+)")
+        for u in urls:
+            m = lot_id_re.search(u)
+            lot_id = m.group(1) if m else u.rsplit("=", 1)[-1]
+            yield scrapy.Request(
+                u,
+                callback=self.parse_property,
+                meta={
+                    "playwright": True,
+                    "playwright_page_methods": [
+                        PageMethod("wait_for_selector", "body", timeout=30_000),
+                        PageMethod("wait_for_timeout", 4000),
+                    ],
+                    "estado_uf": None,
+                    "cidade_nome": None,
+                    "modalidade_label": "",
+                    "source_lot_code": f"caixa-{lot_id}",
+                    "source_listing_url": "refazer-sem-data",
+                    "cookie_dict": {},
+                    "dont_obey_robotstxt": True,
+                },
+                dont_filter=True,
+            )
 
     async def parse_search_bootstrap(self, response: scrapy.http.Response):
         """Roda no Playwright. Seta UF + Modalidade (+ Cidade quando
@@ -677,7 +757,10 @@ class CaixaSpider(ProviderSpider):
             addr["neighborhood"] = m_full.group(4).strip()
             addr["zip"] = m_full.group(5)
             addr["municipality_name"] = m_full.group(6).strip().title()
-            # group(7) é estado por extenso ("SAO PAULO"); preferimos UF de cmb_estado.
+            # group(7) é estado por extenso ("SAO PAULO"); use como fallback
+            # de uf_meta quando não temos no meta (modo refazer_sem_data).
+            if not uf_meta:
+                uf_meta = _NOME_TO_UF.get(_norm_city(m_full.group(7)))
         else:
             # Fallback antigo regex linha-a-linha
             for label, key in (
