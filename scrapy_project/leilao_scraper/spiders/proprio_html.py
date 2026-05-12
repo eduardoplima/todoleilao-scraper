@@ -77,7 +77,8 @@ _LISTING_FALLBACK_PATHS = [
 _LOT_URL_BLOCKLIST_RE = re.compile(
     r"/(login|cadastr|contato|quem-somos|termos|privacidad|faq|ajuda|"
     r"como-(?:participar|funciona)|alertas?|edital|blog|noticias|"
-    r"vantagens|sair|logout)",
+    r"vantagens|sair|logout|texto\.aspx|contato\.aspx|parceiros\.aspx|"
+    r"leiloes\.aspx|leiloes_realizados\.aspx)",
     re.I,
 )
 
@@ -265,7 +266,13 @@ class ProprioHtmlSpider(ProviderSpider):
             loader.replace_value("auctioneer", auctioneer["full_name"])
             loader.add_value("auctioneer_data", auctioneer)
         else:
-            loader.replace_value("auctioneer", f"proprio_html::{host}")
+            # Subclasses específicas com `provider_slug != "proprio_html"`
+            # usam o próprio slug; o genérico usa `proprio_html::host`
+            # para manter rastreabilidade.
+            if self.auctioneer_slug and self.auctioneer_slug != "proprio_html":
+                loader.replace_value("auctioneer", self.auctioneer_slug)
+            else:
+                loader.replace_value("auctioneer", f"proprio_html::{host}")
 
         # source_lot_code — extrai N do path
         m_id = re.search(r"/(?:lote|item|bem|leilao|oferta|lot)s?/(\d+)",
@@ -432,6 +439,13 @@ class ProprioHtmlSpider(ProviderSpider):
         loader.add_value("scraped_at", self.now_iso())
 
         item = loader.load_item()
+
+        # Hook para subclasses específicas refinarem o item antes do yield.
+        # A default impl é no-op; subclasses sobrescrevem para preencher
+        # campos que a heurística universal não cobriu, sem reimplementar
+        # `parse_property` inteiro.
+        self._fixup_item(item, response, body_text=body_text, host=host)
+
         self.log_event("ph_lote_extracted", url=response.url, host=host,
                        status=item.get("status"), min_bid=item.get("minimum_bid"),
                        mkt=item.get("market_value"))
@@ -447,6 +461,12 @@ class ProprioHtmlSpider(ProviderSpider):
                 meta={"handle_httpstatus_list": [403, 404], "dont_obey_robotstxt": True,
                       "playwright": False, "download_timeout": 15},
             )
+
+    def _fixup_item(self, item, response, *, body_text: str, host: str) -> None:
+        """Hook overridable por subclasses específicas para refinar o item
+        antes do yield. Default: no-op. Subclasses devem mutar `item`
+        in-place (PropertyItem é dict-like)."""
+        return None
 
     def _on_edital_error(self, failure):
         item_html = failure.request.cb_kwargs.get("item_html")

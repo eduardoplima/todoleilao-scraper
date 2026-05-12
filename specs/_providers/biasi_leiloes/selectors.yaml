@@ -1,0 +1,17 @@
+# Contrato declarativo (placeholder) para biasi_leiloes.
+# Spider específico herda de ProprioHtmlSpider — heurísticas universais
+# + fixups embutidos no código (ver scrapy_project/leilao_scraper/
+# spiders/proprio_html_specific/biasi_leiloes.py).
+
+auctioneer_slug: "biasi_leiloes"
+platform_hint: "biasi_leiloes"
+
+listing_active:
+  url_pattern: ""
+  card_selector: "a"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1::text, h2::text"
+    description: "meta[property='og:description']::attr(content)"

@@ -1,0 +1,17 @@
+# Contrato declarativo (placeholder) para portalax.
+# Spider específico herda de ProprioHtmlSpider — heurísticas universais
+# + fixups embutidos no código (ver scrapy_project/leilao_scraper/
+# spiders/proprio_html_specific/portalax.py).
+
+auctioneer_slug: "portalax"
+platform_hint: "portalax"
+
+listing_active:
+  url_pattern: ""
+  card_selector: "a"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1::text, h2::text"
+    description: "meta[property='og:description']::attr(content)"
