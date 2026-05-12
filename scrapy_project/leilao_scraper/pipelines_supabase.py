@@ -406,20 +406,51 @@ class SupabasePipeline:
     def _insert_address(self, cur, addr: dict) -> str | None:
         if not addr:
             return None
+        # Aceita keys variantes: state/uf, zip/cep, street/street_name,
+        # municipality_code (IBGE 7-dígitos quando spider conhece).
+        uf_raw = (addr.get("uf") or addr.get("state") or "").upper().strip()
+        uf = uf_raw[:2] if uf_raw else None
+        muni_code = addr.get("municipality_code") or addr.get("ibge_code")
+        # Valida IBGE (7 dígitos numéricos)
+        if muni_code is not None:
+            muni_code = str(muni_code).strip()
+            if not (muni_code.isdigit() and len(muni_code) == 7):
+                muni_code = None
+        # Fallback: resolve IBGE via lookup core.municipality(name, uf)
+        # quando spider sabe nome+UF mas não tem o código.
+        muni_name = addr.get("municipality_name")
+        if not muni_code and muni_name and uf:
+            try:
+                cur.execute(
+                    """
+                    SELECT ibge_code FROM core.municipality
+                    WHERE uf = %s::core.uf_code
+                      AND core.unaccent_lite(name) = core.unaccent_lite(%s)
+                    LIMIT 1
+                    """,
+                    (uf, muni_name),
+                )
+                row = cur.fetchone()
+                if row:
+                    muni_code = row[0]
+            except Exception:
+                pass
         cur.execute(
             """
             INSERT INTO core.address
-                (street_name, number, complement, district, uf, cep, raw_text)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                (street_name, number, complement, district, uf, cep,
+                 municipality_code, raw_text)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
-                addr.get("street"),
+                addr.get("street_name") or addr.get("street"),
                 addr.get("number"),
                 addr.get("complement"),
-                addr.get("neighborhood"),
-                addr.get("state"),
-                _normalize_cep(addr.get("zip")),
+                addr.get("neighborhood") or addr.get("district"),
+                uf,
+                _normalize_cep(addr.get("cep") or addr.get("zip")),
+                muni_code,
                 addr.get("raw_text") or _build_raw_text(addr),
             ),
         )

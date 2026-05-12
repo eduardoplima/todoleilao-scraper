@@ -70,6 +70,66 @@ _HDN_IMOV_RE = re.compile(
 )
 _MATRICULA_RE = re.compile(r"matr[íi]cula\s*(?:n[º°.]?\s*)?(\d{1,7})", re.I)
 
+# Endereço composto Caixa: "RUA NOME,N. 236 APTO. 03 TR 01, BAIRRO - CEP: 05731-370, CIDADE - ESTADO"
+_ADDRESS_FULL_RE = re.compile(
+    r"([A-ZÀ-Ú][A-ZÀ-Ú0-9.\s]+?)\s*,\s*N[.°º]?\s*(\d+)\s*([^,]*?),\s*"
+    r"([A-ZÀ-Ú][A-ZÀ-Ú0-9\s.]+?)\s*-\s*CEP:\s*(\d{5}-?\d{3})\s*,\s*"
+    r"([A-ZÀ-Ú][A-ZÀ-Ú\s]+?)\s*-\s*([A-ZÀ-Ú\s]+?)(?:\s|$)",
+    re.I,
+)
+
+# Caixa hospeda fotos em URL determinística:
+#   https://venda-imoveis.caixa.gov.br/fotos/F<lot_id><NN>.jpg
+# onde lot_id é o hdnimovel (14 dígitos) e NN começa em 21 para a 1ª foto.
+_PHOTO_BASE = "https://venda-imoveis.caixa.gov.br/fotos"
+_PHOTO_MAX_PROBE = 50   # NN máximo a sondar (21..70 — corte em 50 absoluto)
+_PHOTO_FAIL_STOP = 5    # para após N falhas consecutivas
+
+# PDFs determinísticos (matrícula, edital, laudo)
+_PDF_BASE = "https://venda-imoveis.caixa.gov.br/editais"
+
+
+def _caixa_probe_images(lot_id: str, cookie_dict: dict, ua: str,
+                         max_probe: int = _PHOTO_MAX_PROBE) -> list[str]:
+    """Sonda URLs F<lot_id>NN.jpg começando em NN=21 até max_probe.
+    Para após `_PHOTO_FAIL_STOP` falhas consecutivas. Retorna URLs que
+    responderam HTTP 200."""
+    import httpx
+    urls: list[str] = []
+    fails = 0
+    headers = {
+        "User-Agent": ua,
+        "Referer": "https://venda-imoveis.caixa.gov.br/sistema/busca-imovel.asp",
+        "Accept": "image/avif,image/webp,*/*",
+    }
+    with httpx.Client(cookies=cookie_dict, headers=headers, timeout=10) as cli:
+        for nn in range(21, 21 + max_probe):
+            url = f"{_PHOTO_BASE}/F{lot_id}{nn}.jpg"
+            try:
+                r = cli.head(url, follow_redirects=False)
+            except Exception:
+                fails += 1
+                if fails >= _PHOTO_FAIL_STOP:
+                    break
+                continue
+            if r.status_code == 200:
+                urls.append(url)
+                fails = 0
+            else:
+                fails += 1
+                if fails >= _PHOTO_FAIL_STOP:
+                    break
+    return urls
+
+
+def _norm_city(s: str) -> str:
+    """Normaliza nome de cidade para match no dropdown Caixa:
+    uppercase, sem acentos, sem espaços extras. 'São Paulo' → 'SAO PAULO'."""
+    import unicodedata
+    s = unicodedata.normalize("NFKD", s.strip().upper())
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return " ".join(s.split())
+
 # UA realista — Chromium do scrapy-playwright e Radware esperam mesmo
 # UA do navegador automatizado, senão fingerprint diverge dos cookies.
 _BROWSER_UA = (
@@ -93,70 +153,109 @@ class CaixaSpider(ProviderSpider):
         "USER_AGENT": _BROWSER_UA,
     }
 
-    MAX_LOTS_PER_RUN = 1500
+    MAX_LOTS_PER_RUN = 5000
 
     def __init__(self, *args, estados: str | None = None,
-                 modalidades: str | None = None, **kwargs):
+                 modalidades: str | None = None,
+                 cidades: str | None = None, **kwargs):
+        """Argumentos:
+          estados      CSV de UFs (default: 5 maiores).
+          modalidades  CSV de cmb_modalidade values (default: as 4 ativas).
+          cidades      CSV de NOMES de cidades (ex: 'SAO PAULO,RIO DE JANEIRO').
+                       Match case-insensitive sem acentos contra textContent
+                       de <option> no select cmb_cidade. Quando fornecido,
+                       segmenta a busca por cidade — supera o cap servidor
+                       de ~1410 IDs por (UF × mod) e popula municipality_name
+                       direto no address. Sem ele, busca a UF inteira sem
+                       segmentação.
+
+                       Nota: o site Caixa usa código interno (ex: '9859'
+                       p/ SP capital), NÃO o IBGE. Resolvemos no spider
+                       por lookup do label. O IBGE 7-dígitos pode ser
+                       preenchido depois via match em core.municipality
+                       (name+uf).
+        """
         super().__init__(*args, **kwargs)
         self._yielded = 0
         self._seen_lot_ids: set[str] = set()
-        # Estados (CSV ou default).
         self._estados: list[str] = []
         if estados:
             self._estados = [s.strip().upper() for s in estados.split(",") if s.strip()]
         if not self._estados:
             self._estados = list(_DEFAULT_STATES)
-        # Modalidades.
         self._modalidades: list[tuple[str, str]] = []
         if modalidades:
             wanted = {s.strip() for s in modalidades.split(",") if s.strip()}
             self._modalidades = [(v, lbl) for v, lbl in _DEFAULT_MODALIDADES if v in wanted]
         if not self._modalidades:
             self._modalidades = list(_DEFAULT_MODALIDADES)
+        # Cidades opcionais — nomes (lookup do CEF code dinamicamente no spider).
+        self._cidades_nomes: list[str] = []
+        if cidades:
+            self._cidades_nomes = [_norm_city(c) for c in cidades.split(",") if c.strip()]
         self.logger.info(
-            f"Caixa: estados={self._estados} modalidades={[v for v,_ in self._modalidades]}"
+            f"Caixa: estados={self._estados} "
+            f"modalidades={[v for v,_ in self._modalidades]} "
+            f"cidades={self._cidades_nomes or '<UF inteira>'}"
         )
 
     # ------------------------------------------------------------------
-    # Nível 1: Playwright bootstrap por (UF × modalidade)
+    # Nível 1: Playwright bootstrap por (UF × modalidade × cidade?)
     # ------------------------------------------------------------------
     def start_requests(self) -> Iterable[Any]:
+        # Se cidades_nomes foram passadas, produto cartesiano
+        # UF × modalidade × cidade. Senão, UF × modalidade (busca a UF
+        # inteira). cidade_nome_norm já vem normalizado (UPPER+sem-acento).
+        cidades = self._cidades_nomes or [""]
         for uf in self._estados:
             for mod_val, mod_label in self._modalidades:
-                yield scrapy.Request(
-                    _BUSCA_URL,
-                    callback=self.parse_search_bootstrap,
-                    meta={
-                        "playwright": True,
-                        "playwright_include_page": True,
-                        "estado_uf": uf,
-                        "modalidade_val": mod_val,
-                        "modalidade_label": mod_label,
-                        "playwright_page_methods": [
-                            PageMethod("wait_for_selector", "select#cmb_estado",
-                                       timeout=30_000),
-                            PageMethod("wait_for_timeout", 5000),  # Radware
-                        ],
-                    },
-                    dont_filter=True,
-                )
+                for cidade_nome_norm in cidades:
+                    yield scrapy.Request(
+                        _BUSCA_URL,
+                        callback=self.parse_search_bootstrap,
+                        meta={
+                            "playwright": True,
+                            "playwright_include_page": True,
+                            "estado_uf": uf,
+                            "modalidade_val": mod_val,
+                            "modalidade_label": mod_label,
+                            "cidade_nome_norm": cidade_nome_norm,
+                            "playwright_page_methods": [
+                                PageMethod("wait_for_selector", "select#cmb_estado",
+                                           timeout=30_000),
+                                PageMethod("wait_for_timeout", 5000),  # Radware
+                            ],
+                        },
+                        dont_filter=True,
+                    )
 
     async def parse_search_bootstrap(self, response: scrapy.http.Response):
-        """Roda no Playwright. Seta UF + Modalidade, chama
-        carregaPesquisaImoveis() via evaluate, captura HTML do response
-        XHR (com hdnImov<N>). Encerra Playwright, persiste cookies em
-        meta para os próximos requests Scrapy."""
+        """Roda no Playwright. Seta UF + Modalidade (+ Cidade quando
+        meta tem cidade_ibge), chama carregaPesquisaImoveis() via
+        evaluate, captura HTML do response XHR (com hdnImov<N>).
+        Encerra Playwright, persiste cookies em meta para próximos
+        requests Scrapy.
+
+        Quando cidade_ibge != "":
+          1. Seleciona UF → site dispara carregaListaCidades.asp
+             automaticamente (popular dropdown cmb_cidade)
+          2. Aguarda o select cmb_cidade ter options da UF
+          3. Seleciona cidade pelo IBGE code (value do <option>)
+          4. Chama carregaPesquisaImoveis(cidade_ibge, [], modalidade)
+        """
         page = response.meta.get("playwright_page")
         uf = response.meta["estado_uf"]
         mod_val = response.meta["modalidade_val"]
         mod_label = response.meta["modalidade_label"]
+        cidade_nome_norm = response.meta.get("cidade_nome_norm", "") or ""
+        cidade_cef: str = ""    # código interno do site
+        cidade_nome: str | None = None
 
         if page is None:
             self.logger.warning("Caixa: Playwright page indisponível")
             return
 
         try:
-            # Captura a resposta XHR do carregaPesquisaImoveis.asp.
             search_html_holder: dict[str, str] = {}
 
             async def on_response(resp):
@@ -170,14 +269,54 @@ class CaixaSpider(ProviderSpider):
 
             page.on("response", on_response)
 
-            # Configura form + dispara carregaPesquisaImoveis().
             await page.select_option("select[name='cmb_estado']", uf)
-            await page.wait_for_timeout(1500)
+            await page.wait_for_timeout(2500)  # site dispara carregaListaCidades
             await page.select_option("select[name='cmb_modalidade']", mod_val)
             await page.wait_for_timeout(1000)
+
+            if cidade_nome_norm:
+                # Aguarda o select cmb_cidade ter options da UF, então
+                # match pelo texto normalizado pra obter o CEF code.
+                try:
+                    await page.wait_for_function(
+                        "() => document.querySelector('select[name=cmb_cidade]')"
+                        ".options.length > 1",
+                        timeout=15000,
+                    )
+                    # Resolve nome → CEF code via JS no contexto da página.
+                    cef_info = await page.evaluate(
+                        """(target) => {
+                          const norm = (s) => s.normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').toUpperCase().trim();
+                          const sel = document.querySelector('select[name=cmb_cidade]');
+                          for (const o of sel.options) {
+                            if (norm(o.textContent) === target) {
+                              return { val: o.value, txt: o.textContent.trim() };
+                            }
+                          }
+                          return null;
+                        }""",
+                        cidade_nome_norm,
+                    )
+                    if cef_info:
+                        cidade_cef = cef_info["val"]
+                        cidade_nome = cef_info["txt"]
+                        await page.select_option("select[name='cmb_cidade']", cidade_cef)
+                        await page.wait_for_timeout(1500)
+                    else:
+                        self.logger.warning(
+                            f"Caixa: cidade '{cidade_nome_norm}' não está no dropdown de UF={uf}"
+                        )
+                        return  # skip esse (UF, cidade, mod)
+                except Exception as e:
+                    self.logger.warning(
+                        f"Caixa: erro ao buscar cidade '{cidade_nome_norm}' em UF={uf}: {e}"
+                    )
+                    return
+
             await page.evaluate(
-                "() => { $('#hdn_estado').val($('#cmb_estado :selected').val());"
-                "  carregaPesquisaImoveis('', [], $('#cmb_modalidade :selected').val()); }"
+                "(cidade) => { $('#hdn_estado').val($('#cmb_estado :selected').val());"
+                "  carregaPesquisaImoveis(cidade, [], $('#cmb_modalidade :selected').val()); }",
+                cidade_cef,
             )
             # Aguarda XHR retornar (até 20s).
             for _ in range(40):
@@ -203,6 +342,7 @@ class CaixaSpider(ProviderSpider):
             self.log_event(
                 "caixa_search_empty",
                 uf=uf, modalidade=mod_label,
+                cidade_cef=cidade_cef, cidade_nome=cidade_nome,
                 status=search_html_holder.get("status"),
                 preview=body[:200],
             )
@@ -212,6 +352,7 @@ class CaixaSpider(ProviderSpider):
         pages = list(_HDN_IMOV_RE.finditer(body))
         self.log_event(
             "caixa_search_done", uf=uf, modalidade=mod_label,
+            cidade_cef=cidade_cef, cidade_nome=cidade_nome,
             pages=len(pages),
             total_ids=sum(len(m.group(2).split("||")) for m in pages),
         )
@@ -220,7 +361,6 @@ class CaixaSpider(ProviderSpider):
             ids_str = m.group(2).strip().strip("|")
             if not ids_str:
                 continue
-            # POST direto a carregaListaImoveis.asp (sem Playwright)
             yield scrapy.FormRequest(
                 f"{_BASE}/carregaListaImoveis.asp",
                 formdata={"hdnImov": ids_str},
@@ -238,6 +378,8 @@ class CaixaSpider(ProviderSpider):
                     "playwright": False,
                     "estado_uf": uf,
                     "modalidade_label": mod_label,
+                    "cidade_cef": cidade_cef,
+                    "cidade_nome": cidade_nome,
                     "page_num": page_num,
                     "cookie_dict": cookie_dict,
                     "dont_obey_robotstxt": True,
@@ -288,6 +430,8 @@ class CaixaSpider(ProviderSpider):
                     ],
                     "estado_uf": uf,
                     "modalidade_label": mod_label,
+                    "cidade_cef": response.meta.get("cidade_cef", ""),
+                    "cidade_nome": response.meta.get("cidade_nome"),
                     "source_lot_code": f"caixa-{lot_id}",
                     "source_listing_url": response.url,
                     "dont_obey_robotstxt": True,
@@ -393,57 +537,99 @@ class CaixaSpider(ProviderSpider):
             except Exception:
                 pass
 
-        # Endereço
+        # Endereço — Caixa serve uma linha composta:
+        #   "RUA NOME,N. 236 APTO. 03 TR 01, BAIRRO - CEP: NNNNN-NNN, CIDADE - ESTADO"
         addr: dict[str, Any] = {"raw_text": title_text[:300]}
-        for label, key in (
-            ("Endereço", "street"),
-            ("Bairro", "neighborhood"),
-            ("Cidade", "city"),
-            ("UF", "uf"),
-            ("CEP", "zip"),
-        ):
-            m = re.search(
-                rf"{label}\s*:?\s*([A-Za-zÀ-ú0-9°,.\s/-]+?)(?:\n|<|UF\s*:|CEP\s*:|Cidade\s*:|Bairro\s*:|$)",
-                body_text, re.I,
-            )
-            if m:
-                val = m.group(1).strip()
-                if val and len(val) < 200:
-                    addr[key] = val
-        if "city" in addr and "municipality_name" not in addr:
-            addr["municipality_name"] = addr["city"]
-        if "uf" not in addr:
-            uf_meta = response.meta.get("estado_uf")
-            if uf_meta:
-                addr["uf"] = uf_meta
+        uf_meta = response.meta.get("estado_uf")
+        m_full = _ADDRESS_FULL_RE.search(body_text)
+        if m_full:
+            addr["street"] = m_full.group(1).strip()
+            addr["number"] = m_full.group(2).strip()
+            compl = m_full.group(3).strip()
+            if compl:
+                addr["complement"] = compl
+            addr["neighborhood"] = m_full.group(4).strip()
+            addr["zip"] = m_full.group(5)
+            addr["municipality_name"] = m_full.group(6).strip().title()
+            # group(7) é estado por extenso ("SAO PAULO"); preferimos UF de cmb_estado.
+        else:
+            # Fallback antigo regex linha-a-linha
+            for label, key in (
+                ("Endereço", "street"),
+                ("Bairro", "neighborhood"),
+                ("Cidade", "city"),
+                ("UF", "uf"),
+                ("CEP", "zip"),
+            ):
+                m = re.search(
+                    rf"{label}\s*:?\s*([A-Za-zÀ-ú0-9°,.\s/-]+?)(?:\n|<|UF\s*:|CEP\s*:|Cidade\s*:|Bairro\s*:|$)",
+                    body_text, re.I,
+                )
+                if m:
+                    val = m.group(1).strip()
+                    if val and len(val) < 200:
+                        addr[key] = val
+            if "city" in addr and "municipality_name" not in addr:
+                addr["municipality_name"] = addr["city"]
+
+        # Município/UF do meta tem prioridade sobre regex
+        cidade_nome_meta = response.meta.get("cidade_nome") or ""
+        if cidade_nome_meta:
+            addr["municipality_name"] = cidade_nome_meta.title()
+        if uf_meta:
+            addr["uf"] = uf_meta
+
         m_matr = _MATRICULA_RE.search(body_text)
         if m_matr:
             addr["registry_matricula"] = m_matr.group(1)
         if any(v for v in addr.values()):
             loader.add_value("address", addr)
 
-        # Imagens
-        img_urls = response.css(
-            "img[src*='/sistema/galeria/']::attr(src), "
-            "img[src*='/sistema/imagens/']::attr(src), "
-            "img[src*='/sistema/fotos/']::attr(src)"
-        ).getall()
-        seen_imgs: set[str] = set()
+        # ID real do lote (sem prefixo "caixa-")
+        lot_id_real = (response.meta.get("source_lot_code") or "").replace("caixa-", "")
+
+        # Imagens — Caixa hospeda em URL determinística F<lot_id>NN.jpg.
+        # NN começa em 21 (1ª foto) e aumenta. Probe HEAD via cookies da
+        # sessão (Radware só bloqueia GET HTML, não recursos estáticos).
+        cookie_dict = response.meta.get("cookie_dict") or {}
         unique_imgs: list[str] = []
-        for u in img_urls:
-            if not u or "data:image" in u:
-                continue
-            absolute = response.urljoin(u)
-            if absolute in seen_imgs:
-                continue
-            seen_imgs.add(absolute)
-            unique_imgs.append(absolute)
+        if lot_id_real and cookie_dict:
+            try:
+                unique_imgs = _caixa_probe_images(lot_id_real, cookie_dict, _BROWSER_UA)
+            except Exception as e:
+                self.logger.warning(f"Caixa: probe images falhou {lot_id_real}: {e}")
+        # Fallback: scrape <img> tags caso o probe falhe
+        if not unique_imgs:
+            img_urls = response.css(
+                "img[src*='/fotos/F']::attr(src), "
+                "img[src*='/sistema/galeria/']::attr(src), "
+                "img[src*='/sistema/imagens/']::attr(src), "
+                "img[src*='/sistema/fotos/']::attr(src)"
+            ).getall()
+            seen_imgs: set[str] = set()
+            for u in img_urls:
+                if not u or "data:image" in u:
+                    continue
+                absolute = response.urljoin(u)
+                if absolute in seen_imgs:
+                    continue
+                seen_imgs.add(absolute)
+                unique_imgs.append(absolute)
         if unique_imgs:
             loader.add_value("images", unique_imgs[:20])
 
-        # Documentos
+        # Documentos — Caixa hospeda em URL determinística:
+        #   /editais/{kind}/{UF}/{lot_id}.pdf  (kind ∈ matricula, edital, laudo)
         docs: list[dict] = []
         seen_docs: set[str] = set()
+        if lot_id_real and uf_meta:
+            for kind, name in (("matricula", "Matrícula"),
+                               ("edital", "Edital"),
+                               ("laudo", "Laudo")):
+                url = f"{_PDF_BASE}/{kind}/{uf_meta}/{lot_id_real}.pdf"
+                seen_docs.add(url)
+                docs.append({"name": name, "url": url})
+        # Scrape <a> PDFs adicionais
         for a in response.css("a[href$='.pdf'], a[href*='.pdf?']"):
             url = a.css("::attr(href)").get()
             if not url:
