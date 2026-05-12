@@ -1,0 +1,22 @@
+# Placeholder — portal oficial Caixa Econômica Federal.
+#
+# Duas facetas:
+#   1. Leilão SFI (1ª/2ª praça extrajudicial Lei 9.514) — calendário oficial
+#      em PDF e itens via venda-imoveis.caixa.gov.br/sistema/busca-imovel.asp.
+#   2. Venda direta (BNDU/BNDI) — catálogo pós-leilão preço fixo.
+#
+# SPA Angular protegido por Radware Bot Manager + reCAPTCHA no
+# busca-imovel.asp. requires_playwright = True. Spider tenta interceptar
+# resposta XHR/JSON da busca interna.
+auctioneer_slug: "caixa"
+platform_hint: "caixa"
+
+listing_active:
+  url_pattern: "https://venda-imoveis.caixa.gov.br/sistema/busca-imovel.asp"
+  card_selector: "a"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1::text"
+    description: "meta[property='og:description']::attr(content)"

@@ -1,0 +1,18 @@
+# Placeholder — Santander Imóveis (santanderimoveis.com.br).
+#
+# WordPress theme `shi/ape11` com renderização inicial vazia e listagens
+# carregadas via admin-ajax.php (action=call_api). Para v1 usamos
+# Playwright pra disparar o JS do tema e capturar o DOM já populado.
+# requires_playwright = True.
+auctioneer_slug: "santander"
+platform_hint: "wordpress_shi"
+
+listing_active:
+  url_pattern: "https://www.santanderimoveis.com.br/"
+  card_selector: "a"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1::text"
+    description: "meta[property='og:description']::attr(content)"

@@ -1,0 +1,17 @@
+# Placeholder — Banco do Brasil (Seu Imóvel BB).
+#
+# Portal estático Bootstrap 5 + jQuery. Listagens em /catalogo/*,
+# detalhes em /imovel/id/{ID}. Sem proteção anti-bot agressiva.
+# requires_playwright = False.
+auctioneer_slug: "banco_brasil"
+platform_hint: "seuimovelbb"
+
+listing_active:
+  url_pattern: "https://www.seuimovelbb.com.br/"
+  card_selector: "a[href^='/imovel/id/']"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1::text, h2::text"
+    description: "div.py-4::text"

@@ -1,0 +1,17 @@
+# Placeholder — Vitrine Bradesco (vitrinebradesco.com.br).
+#
+# SPA React (id="root", chunks webpack). Listagens carregadas via XHR.
+# requires_playwright = True. Spider renderiza home/listagem e segue
+# links que casem padrão de detail (/produto/{slug}, /imovel/{slug}).
+auctioneer_slug: "bradesco"
+platform_hint: "hallo_resale"
+
+listing_active:
+  url_pattern: "https://vitrinebradesco.com.br/imoveis"
+  card_selector: "a"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1::text"
+    description: "meta[property='og:description']::attr(content)"
