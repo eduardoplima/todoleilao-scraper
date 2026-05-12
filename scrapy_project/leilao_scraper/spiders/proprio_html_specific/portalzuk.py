@@ -277,14 +277,34 @@ class PortalzukSpider(ProprioHtmlSpider):
         if docs:
             loader.add_value("documents", docs)
 
-        # Datas — "Encerra em DD/MM/YY às HHhMM"
-        m_date = re.search(
-            r"Encerra\s+em\s+(\d{2}/\d{2}/\d{2,4})\s+[àa]s\s+(\d{2}h\d{2})",
+        # Datas — padrão real: "1º Leilão DD/MM/YY às HHhMM" e "2º Leilão DD/MM/YY às HHhMM"
+        # (extraídos via .card-action-item-date no DOM). Year 2 dígitos → 20YY.
+        def _normalize_date(dmy: str, hhmm: str) -> str:
+            d, m, y = dmy.split("/")
+            if len(y) == 2:
+                y = "20" + y
+            return f"{d}/{m}/{y} {hhmm.replace('h', ':')}"
+
+        m_1 = re.search(
+            r"1[ºo°ª]\s*Leil[ãa]o\s+(\d{2}/\d{2}/\d{2,4})\s+[àa]s\s+(\d{1,2}h\d{2})",
             body_text, re.I,
         )
-        if m_date:
-            dt_str = f"{m_date.group(1)} {m_date.group(2).replace('h', ':')}"
-            loader.add_value("second_auction_date", dt_str)
+        if m_1:
+            loader.add_value("first_auction_date",
+                             _normalize_date(m_1.group(1), m_1.group(2)))
+        m_2 = re.search(
+            r"2[ºo°ª]\s*Leil[ãa]o\s+(\d{2}/\d{2}/\d{2,4})\s+[àa]s\s+(\d{1,2}h\d{2})",
+            body_text, re.I,
+        )
+        if m_2:
+            loader.add_value("second_auction_date",
+                             _normalize_date(m_2.group(1), m_2.group(2)))
+        elif m_1:
+            # Fallback: se só tem 1ª praça, persiste como second (pipeline
+            # _insert_round usa second OR first; usa first ou second pra
+            # popular round, não cria 2 separados).
+            loader.add_value("second_auction_date",
+                             _normalize_date(m_1.group(1), m_1.group(2)))
 
         # Status
         if "encerrado" in body_text.lower()[:1000]:
