@@ -543,22 +543,30 @@ class CaixaSpider(ProviderSpider):
         if title_text:
             loader.add_value("title", title_text[:300])
 
-        # Descrição
-        desc_parts = response.css(
-            "div.content-info *::text, "
-            "div.detalhes-imovel *::text, "
-            "div.descricao *::text, "
-            "div.fotoimovel *::text"
-        ).getall()
-        desc = _normalize_text(" ".join(desc_parts))
-        if not desc or len(desc) < 50:
-            desc = body_text[:6000]
+        # Descrição — Caixa serve o trecho real dentro de
+        # "<strong>Descrição:</strong> ... </p>", entre o label e o fim
+        # do parágrafo. Os selectors antigos pegavam o body inteiro
+        # (menu+footer+scripts), poluindo description e inflando
+        # falsamente o trigger SQL extract_creditors.
+        raw_html = response.text
+        m_desc = re.search(
+            r"<strong>\s*Descri[çc][ãa]o\s*:?\s*</strong>(.*?)</p>",
+            raw_html, re.S | re.I,
+        )
+        desc = ""
+        if m_desc:
+            # Remove tags HTML residuais (<br>, <i>, &nbsp;, etc.)
+            inner = re.sub(r"<[^>]+>", " ", m_desc.group(1))
+            inner = inner.replace("&nbsp;", " ").replace("\xa0", " ")
+            desc = _normalize_text(inner)
+        # Sempre prefixa "Comitente: Caixa Econômica Federal." para que o
+        # trigger SQL extract_creditors popule core.party_role_in_auction
+        # — mesmo quando a description original é vazia.
         if desc:
-            # Adiciona "Comitente: Caixa Econômica Federal" no início da
-            # description para que o trigger SQL extract_creditors capture.
-            if "caixa econômica federal" not in desc.lower():
-                desc = f"Comitente: Caixa Econômica Federal. {desc}"
-            loader.add_value("description", desc[:10000])
+            desc = f"Comitente: Caixa Econômica Federal. {desc}"
+        else:
+            desc = "Comitente: Caixa Econômica Federal."
+        loader.add_value("description", desc[:10000])
 
         # Modalidade textual no body
         modalidade_raw = response.meta.get("modalidade_label", "") or ""
