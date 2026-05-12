@@ -754,8 +754,8 @@ class SupabasePipeline:
                 al.id              AS lot_id,
                 src.source_kind    AS source_kind,
                 core.unaccent_lite(
-                  coalesce(ad.zip,'') || '|' ||
-                  coalesce(ad.street,'') || '|' || coalesce(ad.number,'')
+                  coalesce(ad.cep::text,'') || '|' ||
+                  coalesce(ad.street_name,'') || '|' || coalesce(ad.number,'')
                 )                  AS addr_key,
                 (
                   SELECT (regexp_match(al.description,
@@ -772,10 +772,10 @@ class SupabasePipeline:
             SELECT lot_id, source_kind
             FROM cand
             WHERE
-              (CASE WHEN %s = '' THEN false
-                    ELSE addr_key = core.unaccent_lite(%s) END)
-              OR (CASE WHEN %s IS NULL THEN false
-                       ELSE reg_key = %s END)
+              (CASE WHEN %s::text = '' THEN false
+                    ELSE addr_key = core.unaccent_lite(%s::text) END)
+              OR (CASE WHEN %s::text IS NULL THEN false
+                       ELSE reg_key = %s::text END)
             LIMIT 5
             """,
             (lot_id, addr_key, addr_key, reg_key, reg_key),
@@ -840,11 +840,16 @@ def _strip_accents(s: str) -> str:
 
 
 def _address_key(addr: dict) -> str:
-    """Chave determinística para dedup. Vazio quando endereço é insuficiente."""
+    """Chave determinística para dedup. Vazio quando endereço é insuficiente.
+
+    Campos aceitos (em ordem de precedência): cep/zip, street_name/street, number.
+    A SQL counterpart no DB usa exatamente cep + street_name + number
+    (`core.unaccent_lite(cep || '|' || street_name || '|' || number)`).
+    """
     if not addr:
         return ""
-    cep = _normalize_cep(addr.get("zip") or addr.get("cep") or "")
-    street = (addr.get("street") or "").strip().lower()
+    cep = _normalize_cep(addr.get("cep") or addr.get("zip") or "")
+    street = (addr.get("street_name") or addr.get("street") or "").strip().lower()
     number = str(addr.get("number") or "").strip().lower()
     if not cep and not (street and number):
         return ""
