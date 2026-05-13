@@ -47,9 +47,23 @@ from leilao_scraper.spiders.soleon import (
 
 _AUCTION_HREF_RE = re.compile(r"/leilao/(\d+)/")
 _LOT_HREF_RE = re.compile(r"/lote/(\d+)/")
-_LABEL_VALUE_RE = re.compile(r'"label":"([^"]+)","value":"([^"]{1,400})"')
+# Aceita aspas escapadas dentro do value (Topo Leilões emite "value":"<span
+# class=\"block\">..."); o regex anterior cortava no primeiro \"  produzindo
+# value truncado e regex de R$ falhando.
+_LABEL_VALUE_RE = re.compile(
+    r'"label":"((?:[^"\\]|\\.)+?)","value":"((?:[^"\\]|\\.){1,2000})"'
+)
 _BRL_PRICE_RE = re.compile(r"R\$\s*([\d.,]+)")
 _PROC_RE = re.compile(r"(\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4})")
+
+# Datas de praças em texto da forma "1º. LEILÃO: Qui, DD/MM/YYYY - HH:MMh
+# - R$ ..." (Topo Leilões / leilotech). Captura praça + data + hora.
+_LEILOTECH_PRACA_RE = re.compile(
+    r"([12])[ºº°o.]?\s*\.?\s*LEIL[ÃA]O\s*:?\s*"
+    r"(?:[A-Za-zãç]+,?\s*)?"  # opcional weekday "Qui, "
+    r"(\d{2}/\d{2}/\d{4})\s*[-–]?\s*(\d{1,2})(?:h|:)(\d{2})?",
+    re.I,
+)
 
 
 class LeilotechSpider(ProviderSpider):
@@ -148,8 +162,10 @@ class LeilotechSpider(ProviderSpider):
         raw = html_lib.unescape(response.text)
         pairs: dict[str, str] = {}
         for m in _LABEL_VALUE_RE.finditer(raw):
-            label = m.group(1).encode().decode("unicode_escape", errors="replace")
-            value = m.group(2).encode().decode("unicode_escape", errors="replace")
+            # Decoder cobre tanto \uXXXX (unicode_escape) quanto \/ \" \\
+            # (escapes JSON em literais embutidos em HTML).
+            label = _decode_jsonish(m.group(1))
+            value = _decode_jsonish(m.group(2))
             # Limpa HTML residual dentro do value
             value = re.sub(r"<[^>]+>", " ", value)
             value = re.sub(r"\s+", " ", value).strip()
@@ -206,21 +222,28 @@ class LeilotechSpider(ProviderSpider):
             except Exception:
                 pass
 
-        # Lance inicial (minimum_bid)
+        # Lance inicial (minimum_bid) — quando há 2 praças, o value do label
+        # "Lance inicial" tem ambos preços + datas embutidos:
+        #   "1º. LEILÃO: Sex, 12/06/2026 - 10:00h - R$ 810.000,00
+        #    2º. LEILÃO: Sex, 19/06/2026 - 10:00h - R$ 405.000,00"
+        # Estratégia: tentar parsear todas praças primeiro (extraindo
+        # min_bid + datas); fallback genérico para BRL único.
         min_str = pairs.get("Lance inicial") or pairs.get("Valor mínimo") or pairs.get("Lance mínimo") or ""
-        m_min = _BRL_PRICE_RE.search(min_str)
-        if not m_min:
-            # Fallback: procurar "Pelo valor de:" no body
-            m_min = re.search(r"Pelo valor de[^R]{0,30}R\$\s*([\d.,]+)", raw, re.I)
+        first_dt, second_dt, first_bid, second_bid = _parse_leilotech_pracas(min_str)
+        # Quando min_str não tem "1º LEILÃO" / "2º LEILÃO", min_str é só "R$ N"
+        if not (first_bid or second_bid):
+            m_min = _BRL_PRICE_RE.search(min_str)
+            if not m_min:
+                # Fallback: procurar "Pelo valor de:" no body
+                m_min = re.search(r"Pelo valor de[^R]{0,30}R\$\s*([\d.,]+)", raw, re.I)
             if m_min:
-                m_min_value = m_min.group(1)
-            else:
-                m_min_value = None
-        else:
-            m_min_value = m_min.group(1)
-        if m_min_value:
+                first_bid = m_min.group(1)
+
+        # min_bid escolhido: prefere 2ª praça (mais barata e ativa em judicial)
+        chosen_min = second_bid or first_bid
+        if chosen_min:
             try:
-                loader.add_value("minimum_bid", str(_brl_to_decimal(m_min_value)))
+                loader.add_value("minimum_bid", str(_brl_to_decimal(chosen_min)))
             except Exception:
                 pass
 
@@ -234,11 +257,22 @@ class LeilotechSpider(ProviderSpider):
         if any(v for v in addr.values()):
             loader.add_value("address", addr)
 
-        # Data (procura DD/MM/YYYY HH:MM no body — tipicamente após "Pra ça")
-        m_dt = re.search(r"(\d{2}/\d{2}/\d{4})[^,<]{0,8}(\d{2}:\d{2})", raw)
-        if m_dt:
-            loader.add_value("second_auction_date", f"{m_dt.group(1)} {m_dt.group(2)}")
+        # Datas das praças
+        if first_dt:
+            loader.add_value("first_auction_date", first_dt)
+        if second_dt:
+            loader.add_value("second_auction_date", second_dt)
             loader.add_value("auction_phase", "2a_praca")
+        elif first_dt:
+            loader.add_value("auction_phase", "1a_praca")
+
+        # Fallback: data DD/MM/YYYY HH:MM no body (sem rótulo de praça)
+        if not (first_dt or second_dt):
+            m_dt = re.search(r"(\d{2}/\d{2}/\d{4})[^,<]{0,8}(\d{1,2}):(\d{2})", raw)
+            if m_dt:
+                d, h, mi = m_dt.group(1), m_dt.group(2), m_dt.group(3)
+                loader.add_value("second_auction_date", f"{d} {int(h):02d}:{mi}")
+                loader.add_value("auction_phase", "2a_praca")
 
         # Images: cdn.leilotech.workers.dev/{tenant}/lotes/{lot_id}/...
         img_urls = response.css(
@@ -340,3 +374,59 @@ class LeilotechSpider(ProviderSpider):
         new_item["payment_options"] = merged_pay
         new_item["encumbrances"] = merged_enc
         yield new_item
+
+
+def _decode_jsonish(s: str) -> str:
+    """Decodifica escapes JSON comuns em strings inline (\\/, \\", \\\\, \\uXXXX).
+
+    Mais robusto que `s.encode().decode('unicode_escape')`, que falha em
+    bytes não-ASCII (UTF-8 multi-byte vira mojibake) e ignora `\\/`.
+    """
+    if not s:
+        return s
+    import json as _json
+    # Tenta primeiro via json.loads (cobre todos escapes JSON corretamente).
+    try:
+        return _json.loads('"' + s + '"')
+    except Exception:
+        pass
+    # Fallback: troca manual dos escapes mais comuns
+    out = s.replace("\\/", "/").replace('\\"', '"').replace("\\\\", "\\")
+    return out
+
+
+def _parse_leilotech_pracas(text: str) -> tuple[str | None, str | None, str | None, str | None]:
+    """Extrai (first_dt, second_dt, first_bid, second_bid) do value de
+    "Lance inicial" da Leilotech.
+
+    Texto típico:
+        "1º. LEILÃO: Sex, 12/06/2026 - 10:00h - R$ 810.000,00
+         2º. LEILÃO: Sex, 19/06/2026 - 10:00h - R$ 405.000,00"
+
+    Retorna strings 'DD/MM/YYYY HH:MM' e valores R$ (sem o "R$").
+    """
+    if not text:
+        return None, None, None, None
+    first_dt = second_dt = first_bid = second_bid = None
+    # Padrão: "Nº. LEILÃO: weekday?, DD/MM/YYYY - HH:MMh - R$ V"
+    pat = re.compile(
+        r"([12])[ºº°o.]?\s*\.?\s*LEIL[ÃA]O\s*:?\s*"
+        r"(?:[A-Za-zãç]+,?\s*)?"
+        r"(\d{2}/\d{2}/\d{4})\s*[-–]?\s*(\d{1,2})(?:[h:](\d{2}))?h?\s*"
+        r"(?:[-–]\s*R\$\s*([\d.,]+))?",
+        re.I,
+    )
+    for m in pat.finditer(text):
+        n = m.group(1)
+        d = m.group(2)
+        h = int(m.group(3))
+        mi = m.group(4) or "00"
+        bid = m.group(5)
+        dt = f"{d} {h:02d}:{mi}"
+        if n == "1" and not first_dt:
+            first_dt = dt
+            first_bid = bid
+        elif n == "2" and not second_dt:
+            second_dt = dt
+            second_bid = bid
+    return first_dt, second_dt, first_bid, second_bid
