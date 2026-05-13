@@ -215,25 +215,42 @@ class SuporteLeiloesSpider(ProviderSpider):
             except Exception:
                 pass
 
-        # minimum_bid — do meta (1ª praça)
+        # minimum_bid + datas — Suporte Leilões embute um JSON inline com
+        # `valorInicial`, `valorInicial2`, `valorInicial3`, `data1`, `data2`,
+        # `data3` no script da página de detalhe. É a fonte mais confiável
+        # quando o card de listagem (rounds_meta) não trouxe os valores.
+        json_bids, json_dates = _extract_json_pracas(response.text)
+
         rounds_meta: list[dict] = list(response.meta.get("evento_rounds") or [])
         first_min_bid = next(
             (r["minimum_bid"] for r in rounds_meta if r.get("minimum_bid")),
             None,
         )
-        if first_min_bid:
-            loader.add_value("minimum_bid", first_min_bid)
-        else:
-            # fallback: og:title pode ter Lance Inicial
-            fallback = _extract_brl_from_og_title(og_title, "Lance Inicial")
-            if fallback:
-                loader.add_value("minimum_bid", fallback)
+        # Preferência: JSON inline (1ª praça) > card meta > og:title
+        chosen_min_bid = (json_bids[0] if json_bids else None) or first_min_bid
+        if not chosen_min_bid:
+            chosen_min_bid = _extract_brl_from_og_title(og_title, "Lance Inicial")
+        if chosen_min_bid:
+            loader.add_value("minimum_bid", chosen_min_bid)
 
-        # second_auction_date — fechamento da última praça (se houver 2)
-        if len(rounds_meta) >= 2:
-            self._set_round_date(loader, rounds_meta[-1])
-        elif rounds_meta:
-            self._set_round_date(loader, rounds_meta[0])
+        # Datas: prefere JSON inline (data1=1ª praça, data2=2ª praça)
+        # quando disponível; fallback para dates do card.
+        first_dt = json_dates[0] if json_dates and len(json_dates) > 0 else None
+        second_dt = json_dates[1] if json_dates and len(json_dates) > 1 else None
+
+        if first_dt:
+            loader.add_value("first_auction_date", first_dt)
+        if second_dt:
+            loader.add_value("second_auction_date", second_dt)
+            loader.add_value("auction_phase", "2a_praca")
+        elif first_dt:
+            loader.add_value("auction_phase", "1a_praca")
+
+        if not (first_dt or second_dt):
+            if len(rounds_meta) >= 2:
+                self._set_round_date(loader, rounds_meta[-1])
+            elif rounds_meta:
+                self._set_round_date(loader, rounds_meta[0])
 
         # description — Suporte Leilões embute JSON inline com `descricao`
         # do bem (mesmo texto que aparece no h1 + descrição expandida em
@@ -436,3 +453,62 @@ def _parse_address_loose(raw: str) -> dict:
             out["municipality_name"] = m2.group(1).strip()
             out["uf"] = m2.group(2)
     return out
+
+
+# Regex para os campos do JSON inline da Suporte Leilões.
+# valorInicial (1ª praça), valorInicial2 (2ª praça), valorInicial3 (3ª praça)
+_VALOR_INICIAL_RE = re.compile(
+    r'"valorInicial(\d?)"\s*:\s*([\d.]+)'
+)
+# data1/data2/data3 são objetos com "date":"YYYY-MM-DD HH:MM:SS.UUUUUU"
+_DATA_PRACA_RE = re.compile(
+    r'"data(\d)"\s*:\s*\{[^}]*?"date"\s*:\s*"(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})'
+)
+
+
+def _extract_json_pracas(html: str) -> tuple[list[str], list[str]]:
+    """Extrai (lista de min_bids brl, lista de datas BR) do JSON inline.
+
+    min_bids = ['valorInicial', 'valorInicial2', 'valorInicial3'] ordenadas.
+    datas    = ['data1', 'data2', 'data3'] ordenadas (formato 'DD/MM/YYYY HH:MM').
+
+    Cada praça pode estar ausente; o índice mantém a ordem.
+    """
+    bids_by_n: dict[int, str] = {}
+    for m in _VALOR_INICIAL_RE.finditer(html or ""):
+        n_str = m.group(1) or "1"  # valorInicial == 1ª praça
+        n = int(n_str)
+        val = m.group(2)
+        # Trata "0", "0.0" como ausente (lots sem 2ª praça)
+        try:
+            if float(val) <= 0:
+                continue
+        except ValueError:
+            continue
+        if n in bids_by_n:
+            continue  # mantém o primeiro match (do bloco do próprio lote)
+        # Trunca pra 2 decimais (JSON da Suporte Leilões emite floats sujos
+        # com 30+ casas: "597078.93000000005122274160385131..." causaria
+        # InvalidOperation no Decimal). Converte via Decimal pra preservar
+        # precisão monetária.
+        try:
+            from decimal import Decimal, ROUND_HALF_UP
+            quantized = Decimal(val).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            bids_by_n[n] = str(quantized)
+        except Exception:
+            bids_by_n[n] = val
+    bids = [bids_by_n[k] for k in sorted(bids_by_n.keys())]
+
+    dates_by_n: dict[int, str] = {}
+    for m in _DATA_PRACA_RE.finditer(html or ""):
+        n = int(m.group(1))
+        # "2026-05-27 10:00:00" → "27/05/2026 10:00"
+        iso = m.group(2)
+        try:
+            y, mo, d = iso[:4], iso[5:7], iso[8:10]
+            h, mi = iso[11:13], iso[14:16]
+            dates_by_n[n] = f"{d}/{mo}/{y} {h}:{mi}"
+        except (IndexError, ValueError):
+            continue
+    dates = [dates_by_n[k] for k in sorted(dates_by_n.keys())]
+    return bids, dates
