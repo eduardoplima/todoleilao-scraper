@@ -51,6 +51,20 @@ _PRACA_1A_RE = re.compile(
 _PRACA_2A_RE = re.compile(
     r"2[ªa]?\s*Pra[çc]a[:\s]*(\d{2}/\d{2}/\d{4})\s*[àa]s\s*(\d{2}:\d{2})", re.I
 )
+# Extrajudicial (x-codes): sem "Praça", usa "Início:" e "Data:" no painel
+# da instância ativa. Início = abertura do leilão, Data = encerramento.
+# IMPORTANTE: o detail page tem cards de "outros lotes" abaixo com os
+# mesmos rótulos; filtramos restringindo a busca ao bloco antes do
+# carrossel de relacionados.
+_INICIO_RE = re.compile(
+    r"In[íi]cio\s*:\s*(\d{2}/\d{2}/\d{4})\s*[àa]s\s*(\d{2}:\d{2})", re.I
+)
+_DATA_LABEL_RE = re.compile(
+    r"\bData\s*:\s*(\d{2}/\d{2}/\d{4})\s*[àa]s\s*(\d{2}:\d{2})", re.I
+)
+# Marker do início da seção "outros lotes": col-sm-6 col-md-4 col-lg-3
+# (grid de cards). Antes disso, tudo pertence ao lote atual.
+_RELATED_LOTS_MARKER = 'class="col-sm-6 col-md-4 col-lg-3"'
 
 
 # Mapping de slug → unit_kind (parcial; SQL classify_lot_kind cobre o resto)
@@ -218,7 +232,13 @@ class MegaLeiloesSpider(ProviderSpider):
             except Exception:
                 pass
 
-        # Praças
+        # Praças — 2 templates:
+        #   judicial (j-codes): "1ª Praça: DD/MM/YYYY às HH:MM" e
+        #                       "2ª Praça: DD/MM/YYYY às HH:MM" no corpo
+        #   extrajudicial (x-codes): "Início: DD/MM/YYYY às HH:MM" (abertura)
+        #                            "Data: DD/MM/YYYY às HH:MM" (encerramento)
+        # Para extrajudicial, restringir ao detail block antes do carrossel
+        # de lotes relacionados (que repete labels "Data:" para outros lots).
         m_1a = _PRACA_1A_RE.search(body_text)
         m_2a = _PRACA_2A_RE.search(body_text)
         if m_1a:
@@ -230,6 +250,28 @@ class MegaLeiloesSpider(ProviderSpider):
             loader.add_value("auction_phase", "2a_praca")
         elif m_1a:
             loader.add_value("auction_phase", "1a_praca")
+
+        # Fallback extrajudicial: Início: + Data: no detail block
+        if not (m_1a or m_2a):
+            detail_html = response.text
+            cut = detail_html.find(_RELATED_LOTS_MARKER)
+            detail_html = detail_html[:cut] if cut > 0 else detail_html
+            detail_text = _normalize_text(re.sub(r"<[^>]+>", " ", detail_html))
+            m_inicio = _INICIO_RE.search(detail_text)
+            m_data = _DATA_LABEL_RE.search(detail_text)
+            if m_inicio:
+                loader.add_value(
+                    "first_auction_date",
+                    f"{m_inicio.group(1)} {m_inicio.group(2)}",
+                )
+            if m_data:
+                loader.add_value(
+                    "second_auction_date",
+                    f"{m_data.group(1)} {m_data.group(2)}",
+                )
+                loader.add_value("auction_phase", "2a_praca")
+            elif m_inicio:
+                loader.add_value("auction_phase", "1a_praca")
 
         # Endereço — URL traz uf+cidade, parsing direto
         m_loc = re.search(r"/imoveis/[^/]+/([a-z]{2})/([^/]+)/", response.url)
