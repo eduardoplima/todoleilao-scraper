@@ -234,6 +234,20 @@ class BradescoSpider(ProviderSpider):
             except Exception:
                 pass
 
+        # Datas do leilão — Bradesco vitrine usa rótulos como
+        #   "Data do leilão" / "Início do leilão" / "Fim do leilão" /
+        #   "1ª Praça" / "2ª Praça" / "Encerramento"
+        # Quando o lote está em modo "Convencional" (pré-leilão), nenhum
+        # desses rótulos aparece; nesses casos não há round associado.
+        first_dt, second_dt = _extract_bradesco_dates(body_text)
+        if first_dt:
+            loader.add_value("first_auction_date", first_dt)
+        if second_dt:
+            loader.add_value("second_auction_date", second_dt)
+            loader.add_value("auction_phase", "2a_praca")
+        elif first_dt:
+            loader.add_value("auction_phase", "1a_praca")
+
         # Endereço — formato Bradesco: "Casa - Tupã /SP - Rua X, 123"
         # Cidade vem após o primeiro " - ", UF é o /XX que segue.
         addr: dict[str, Any] = {"raw_text": title[:300]}
@@ -325,3 +339,52 @@ class BradescoSpider(ProviderSpider):
             mkt=item.get("market_value"),
         )
         yield item
+
+
+# Patterns aplicados ao body_text já normalizado (sem HTML).
+# Bradesco vitrine usa diversos rótulos em ordem de prioridade:
+_BRADESCO_DATE_PATTERNS = (
+    # "1ª Praça/Data: DD/MM/YYYY às HH:MM"  e variantes
+    re.compile(
+        r"1[ªa°]?\s*(?:Pra[çc]a|Data)\s*[:\-]?\s*(\d{2}/\d{2}/\d{4})"
+        r"\s*(?:[àa]s|-)?\s*(\d{2}):?(\d{2})",
+        re.I,
+    ),
+    re.compile(
+        r"2[ªa°]?\s*(?:Pra[çc]a|Data)\s*[:\-]?\s*(\d{2}/\d{2}/\d{4})"
+        r"\s*(?:[àa]s|-)?\s*(\d{2}):?(\d{2})",
+        re.I,
+    ),
+)
+# "Data do leilão" / "Encerramento" / "Início do leilão" — fallback único
+_BRADESCO_DATE_SINGLE = re.compile(
+    r"(?:Data\s+do\s+Leil[ãa]o|Encerramento|In[íi]cio\s+do\s+Leil[ãa]o|"
+    r"Pr[óo]ximo\s+Leil[ãa]o|Data\s+(?:e|\/)\s+Hora)"
+    r"[:\s]*(\d{2}/\d{2}/\d{4})\s*(?:[àa]s|-)?\s*(\d{2}):?(\d{2})",
+    re.I,
+)
+
+
+def _extract_bradesco_dates(body_text: str) -> tuple[str | None, str | None]:
+    """Extrai (first_dt, second_dt) do body_text já normalizado do Bradesco.
+
+    Strings retornadas em 'DD/MM/YYYY HH:MM' (sem timezone).
+    """
+    if not body_text:
+        return None, None
+    # 1ª/2ª praça explícitas
+    m_1 = _BRADESCO_DATE_PATTERNS[0].search(body_text)
+    m_2 = _BRADESCO_DATE_PATTERNS[1].search(body_text)
+    first_dt = (
+        f"{m_1.group(1)} {m_1.group(2)}:{m_1.group(3)}" if m_1 else None
+    )
+    second_dt = (
+        f"{m_2.group(1)} {m_2.group(2)}:{m_2.group(3)}" if m_2 else None
+    )
+    if first_dt or second_dt:
+        return first_dt, second_dt
+    # Fallback rótulo único
+    m_single = _BRADESCO_DATE_SINGLE.search(body_text)
+    if m_single:
+        return None, f"{m_single.group(1)} {m_single.group(2)}:{m_single.group(3)}"
+    return None, None
