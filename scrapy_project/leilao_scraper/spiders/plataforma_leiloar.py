@@ -40,9 +40,19 @@ _LOT_HREF_RE = re.compile(r"/externo/lote/(\d+)")
 _PRICE_1A = re.compile(r"1[ºº°]?\s*Leil[ãa]o[:\s]*R\$\s*([\d.,]+)", re.I)
 _PRICE_2A = re.compile(r"2[ºº°]?\s*Leil[ãa]o[:\s]*R\$\s*([\d.,]+)", re.I)
 _PRICE_AV = re.compile(r"AVALIA[ÇC][ÃA]O[^R]{0,200}R\$\s*([\d.,]+)", re.I | re.S)
-# Fallback: alguns tenants usam "Lance inicial: R$ ..." quando há praça
-# única ou ainda não definiu 1ª/2ª praça.
-_PRICE_LANCE_INICIAL = re.compile(r"Lance\s+inicial[:\s]*R\$\s*([\d.,]+)", re.I)
+# Fallback: alguns tenants usam "Lance inicial" / "Lance mínimo" quando há
+# praça única ou venda direta (sem 1ª/2ª praça nomeada). Santos Moraes usa
+# "LANCE MÍNIMO" em caixa alta — case-insensitive captura ambos.
+_PRICE_LANCE_INICIAL = re.compile(
+    r"Lance\s+(?:inicial|m[íi]nimo)[:\s]*R\$\s*([\d.,]+)", re.I
+)
+# "Este lote se encerrará no dia: DD/MM/YYYY às HH:MM:SS" — padrão de
+# venda direta (Santos Moraes, e tenants similares).
+_DATE_ENCERRA = re.compile(
+    r"(?:Este\s+lote\s+se\s+encerrar[áa]?\s+no\s+dia[:\s]*|Data\s+do\s+Leil[ãa]o[:\s]*)"
+    r"(\d{2}/\d{2}/\d{4})\s*(?:[àa]s|-)?\s*(\d{2}:\d{2})(?::\d{2})?",
+    re.I,
+)
 
 
 class PlataformaLeiloarSpider(ProviderSpider):
@@ -188,11 +198,20 @@ class PlataformaLeiloarSpider(ProviderSpider):
             except Exception:
                 pass
 
-        # Data: DD/MM/YYYY HH:MM no body
-        m_dt = re.search(r"(\d{2}/\d{2}/\d{4})[^,<]{0,10}(\d{2}:\d{2})", body_text)
-        if m_dt:
-            loader.add_value("second_auction_date", f"{m_dt.group(1)} {m_dt.group(2)}")
+        # Data: prioriza labels específicos ("Este lote se encerrará", "Data do
+        # Leilão"); fallback genérico para DD/MM/YYYY HH:MM no body.
+        m_dt_label = _DATE_ENCERRA.search(body_text)
+        if m_dt_label:
+            loader.add_value(
+                "second_auction_date",
+                f"{m_dt_label.group(1)} {m_dt_label.group(2)}",
+            )
             loader.add_value("auction_phase", "2a_praca")
+        else:
+            m_dt = re.search(r"(\d{2}/\d{2}/\d{4})[^,<]{0,10}(\d{2}:\d{2})", body_text)
+            if m_dt:
+                loader.add_value("second_auction_date", f"{m_dt.group(1)} {m_dt.group(2)}")
+                loader.add_value("auction_phase", "2a_praca")
 
         # Endereço — tenta extrair "em CIDADE/UF" do título ou body
         m_cuf = re.search(r"\bem\s+([A-ZÀ-Úa-zà-ú\s.'-]{3,40})/([A-Z]{2})\b", og_title)
