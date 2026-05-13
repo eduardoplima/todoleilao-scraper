@@ -221,6 +221,21 @@ class LeilaoProSpider(ProviderSpider):
             except Exception:
                 pass
 
+        # Datas das praças — leilao_pro emite UM bloco "Data do Leilão" no
+        # painel info-adicional-item. Estrutura:
+        #   <h5 class="info-adicional-titulo">Data do Leilão</h5>
+        #   <p class="info-adicional-valor">QUI - 21/05/2026</p>
+        #   <p class="info-adicional-horario"><i .../>10h00min</p>
+        # Quando há 2 praças, os preços vêm como "LANCE INICIAL 1ª DATA" /
+        # "LANCE INICIAL 2ª DATA" mas a data exibida é a próxima/única.
+        # Tratamos como second_auction_date (mais comum em judicial); para
+        # tenants que só têm 1 praça (venda direta CAIXA), também segue
+        # como scheduled_at via segunda data.
+        sched_dt = _extract_leilao_pro_date(response)
+        if sched_dt:
+            loader.add_value("second_auction_date", sched_dt)
+            loader.add_value("auction_phase", "2a_praca")
+
         # description — bloco accordion DESCRIÇÃO DO LOTE
         desc_nodes = response.css("div#collapseDescricao div.card-body, "
                                   "div.aviso-descricao-container ~ div.card-body")
@@ -356,6 +371,54 @@ def _map_status_text(text: str) -> str:
         if key in t:
             return value
     return "aberto"
+
+
+_LEILAO_PRO_DATE_RE = re.compile(
+    r"\b(\d{2})/(\d{2})/(\d{4})\b"
+)
+_LEILAO_PRO_TIME_RE = re.compile(
+    # Aceita "10h00min", "10h00", "10:00", "10:00:00"
+    r"(\d{1,2})\s*(?:h|:)\s*(\d{2})(?:\s*min)?"
+)
+
+
+def _extract_leilao_pro_date(response) -> str | None:
+    """Extrai data+hora do leilão a partir do bloco info-adicional Data do Leilão.
+
+    Retorna string 'DD/MM/YYYY HH:MM' ou None se ausente.
+
+    Estrutura típica:
+      <div class="info-adicional-item">
+        <div class="info-adicional-icon">...</div>
+        <div class="info-adicional-content">
+          <h5 class="info-adicional-titulo">Data do Leilão</h5>
+          <p class="info-adicional-valor">QUI - 21/05/2026</p>
+          <p class="info-adicional-horario"><i .../>10h00min</p>
+        </div>
+      </div>
+    """
+    # XPath direto pro item com título "Data do Leilão"
+    item_nodes = response.xpath(
+        "//div[contains(@class,'info-adicional-item')]"
+        "[.//h5[contains(., 'Data do Leil')]]"
+    )
+    for node in item_nodes:
+        value_text = " ".join(
+            node.css(".info-adicional-valor *::text, .info-adicional-valor::text").getall()
+        )
+        m_d = _LEILAO_PRO_DATE_RE.search(value_text)
+        if not m_d:
+            continue
+        date_str = f"{m_d.group(1)}/{m_d.group(2)}/{m_d.group(3)}"
+        time_text = " ".join(
+            node.css(".info-adicional-horario *::text, .info-adicional-horario::text").getall()
+        )
+        m_t = _LEILAO_PRO_TIME_RE.search(time_text)
+        if m_t:
+            h, mi = int(m_t.group(1)), m_t.group(2)
+            return f"{date_str} {h:02d}:{mi}"
+        return f"{date_str} 00:00"
+    return None
 
 
 _ADDRESS_LOOSE_RE = re.compile(
