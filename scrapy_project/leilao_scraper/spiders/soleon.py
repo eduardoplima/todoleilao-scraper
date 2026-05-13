@@ -82,6 +82,18 @@ class SoleonSpider(ProviderSpider):
             encumbrances=[e["kind"] for e in encumbrances],
         )
 
+        # Datas das praças extraídas no nível /leilao/{id}/lotes.
+        # Tenants como Cassiano e Purcena (Leilões) mostram "1º Leilão: DD/MM/YYYY"
+        # + "Pregão do primeiro lote a partir das: HH:MM" no cabeçalho do leilão
+        # — o lote detail NÃO repete as datas. Propaga via meta.
+        first_dt, second_dt = _parse_auction_level_dates(page_text)
+        self.log_event(
+            "soleon_leilao_dates",
+            url=response.url,
+            first=first_dt,
+            second=second_dt,
+        )
+
         seen: set[str] = set()
         kept = 0
         dropped_non_imovel = 0
@@ -109,6 +121,8 @@ class SoleonSpider(ProviderSpider):
                     "category_verdict_listing": verdict,  # True | None (ambíguo)
                     "auction_payment_options": payment_options,
                     "auction_encumbrances": encumbrances,
+                    "auction_first_date": first_dt,
+                    "auction_second_date": second_dt,
                 },
             )
         self.log_event(
@@ -182,22 +196,68 @@ class SoleonSpider(ProviderSpider):
             price_market = _extract_brl_from_og_title(og_title, "Avaliação")
         loader.add_value("market_value", price_market)
 
-        # data — h6 com "Encerramento" (judicial) OU "Envie sua proposta até"
-        # (venda direta). Fallback: og:description "Leilão: DD/MM/YYYY HH:MM"
-        # Passa string BR para o ItemLoader (parse_br_date no input_processor).
-        br_dt_text = _text_after_label(
+        # data — múltiplos templates SOLEON, em ordem de precedência:
+        #   1. <h6>Data 1º Leilão</h6> + <h6>Data 2º Leilão</h6>
+        #      (template judicial ferreira/patiorocha) — captura ambas praças
+        #   2. <h6>Encerramento</h6> | <h6>Envie sua proposta até</h6>
+        #      (template histórico — preservado para tenants que ainda usam)
+        #   3. <p>Encerramento: DD/MM/YYYY às Nhs.</p> em "Detalhes do Lote"
+        #      (template venda direta da própria página)
+        #   4. og:description "Leilão: DD/MM/YYYY às HH:MM"
+        #   5. Meta do leilão pai (cassiano/purcena: data está no /leilao/N/lotes,
+        #      não na detail page)
+        first_dt_text = _text_after_label(
             response,
-            ["Encerramento", "Encerramento do Leilão", "Envie sua proposta até"],
+            ["Data 1º Leilão", "Data 1o Leilão", "Data 1 Leilão", "Data 1º Leilao"],
         )
-        if not br_dt_text:
-            og_desc = response.css("meta[property='og:description']::attr(content)").get() or ""
-            m_dt = re.search(r"(\d{2}/\d{2}/\d{4}[^,]*\d{2}:\d{2})", og_desc)
+        second_dt_text = _text_after_label(
+            response,
+            ["Data 2º Leilão", "Data 2o Leilão", "Data 2 Leilão", "Data 2º Leilao"],
+        )
+        # Strip rótulos do _text_after_label (pega <h6> inteiro, inclui "Data Xº Leilão:")
+        first_dt = _extract_br_dt(first_dt_text)
+        second_dt = _extract_br_dt(second_dt_text)
+
+        # Fallback 1: <h6> "Encerramento" / "Envie sua proposta até"
+        if not (first_dt or second_dt):
+            br_dt_text = _text_after_label(
+                response,
+                ["Encerramento", "Encerramento do Leilão", "Envie sua proposta até"],
+            )
+            if br_dt_text:
+                second_dt = _extract_br_dt(br_dt_text)
+
+        # Fallback 2: "Detalhes do Lote" <p>Encerramento: DD/MM/YYYY às Nhs.</p>
+        # (ferreira venda direta). Procura no body texto.
+        if not (first_dt or second_dt):
+            body_text = " ".join(response.css("body *::text").getall())
+            m_enc = re.search(
+                r"Encerramento[:\s]+(\d{2}/\d{2}/\d{4})\s*(?:[àa]s\s*)?(\d{1,2})(?:[:h](\d{2})|hs?)",
+                body_text, re.I,
+            )
+            if m_enc:
+                d, h, mi = m_enc.group(1), m_enc.group(2), (m_enc.group(3) or "00")
+                second_dt = f"{d} {int(h):02d}:{mi}"
+
+        # Fallback 3: og:description
+        if not (first_dt or second_dt):
+            og_desc_dt = response.css("meta[property='og:description']::attr(content)").get() or ""
+            m_dt = re.search(r"(\d{2}/\d{2}/\d{4})\s*[àa]s\s*(\d{2}:\d{2})", og_desc_dt)
             if m_dt:
-                br_dt_text = m_dt.group(1)
-        if br_dt_text:
-            # Single-round: trata como segunda praça (judicial padrão SOLEON)
-            loader.add_value("second_auction_date", br_dt_text)
+                second_dt = f"{m_dt.group(1)} {m_dt.group(2)}"
+
+        # Fallback 4: data do leilão pai (cassiano/purcena/etc.)
+        if not (first_dt or second_dt):
+            first_dt = response.meta.get("auction_first_date")
+            second_dt = response.meta.get("auction_second_date")
+
+        if first_dt:
+            loader.add_value("first_auction_date", first_dt)
+        if second_dt:
+            loader.add_value("second_auction_date", second_dt)
             loader.add_value("auction_phase", "2a_praca")
+        elif first_dt:
+            loader.add_value("auction_phase", "1a_praca")
 
         # description — `<div><b>Descrição: </b>texto livre do anúncio</div>`.
         # XPath cirúrgico: pega só o div cujo filho <b> começa com 'Descrição',
@@ -847,6 +907,58 @@ def _text_after_label(response, labels: list[str]) -> str:
         if text:
             return text
     return ""
+
+
+_BR_DT_FULL_RE = re.compile(
+    r"(\d{2}/\d{2}/\d{4})\s*(?:[àa]s|-)?\s*(\d{1,2}):(\d{2})"
+)
+
+
+def _extract_br_dt(text: str | None) -> str | None:
+    """Extrai 'DD/MM/YYYY HH:MM' do primeiro datetime encontrado em texto livre.
+
+    Aceita separadores variados ('às', '-', espaço); normaliza hora para 2 dígitos.
+    """
+    if not text:
+        return None
+    m = _BR_DT_FULL_RE.search(text)
+    if not m:
+        return None
+    return f"{m.group(1)} {int(m.group(2)):02d}:{m.group(3)}"
+
+
+# Pattern do cabeçalho do leilão (cassiano/purcena) onde a data está
+# separada do horário:
+#   "1º Leilão: 13/05/2026 (quarta-feira) Pregão do primeiro lote a partir das: 10:00"
+#   "2º Leilão: 20/05/2026 (quarta-feira) Pregão do primeiro lote a partir das: 10:00"
+_AUCTION_LEVEL_DATE_RE = re.compile(
+    r"([12])[ºº°o]?\s*Leil[ãa]o\s*:\s*(\d{2}/\d{2}/\d{4})"
+    r"(?:[^0-9]{0,200}?(?:Preg[ãa]o[^:]*?:\s*|[àa]s\s+))?"
+    r"(\d{1,2}:\d{2})?",
+    re.I,
+)
+
+
+def _parse_auction_level_dates(page_text: str) -> tuple[str | None, str | None]:
+    """Extrai (first_dt, second_dt) do cabeçalho /leilao/{id}/lotes.
+
+    Retorna strings 'DD/MM/YYYY HH:MM' (sem timezone) ou None.
+    """
+    first: str | None = None
+    second: str | None = None
+    for m in _AUCTION_LEVEL_DATE_RE.finditer(page_text or ""):
+        n = m.group(1)
+        d = m.group(2)
+        h = m.group(3) or "00:00"
+        # Normaliza hora "10:00"
+        if ":" not in h:
+            h = f"{h}:00"
+        value = f"{d} {h}"
+        if n == "1" and not first:
+            first = value
+        elif n == "2" and not second:
+            second = value
+    return first, second
 
 
 def _brl_to_decimal(raw: str) -> Decimal:
