@@ -439,8 +439,14 @@ class SupabasePipeline:
             """
             INSERT INTO core.address
                 (street_name, number, complement, district, uf, cep,
-                 municipality_code, raw_text)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                 municipality_code, raw_text,
+                 geom, geocoding_source, geocoding_confidence)
+            VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s,
+                (SELECT centroid FROM core.municipality WHERE ibge_code = %s),
+                CASE WHEN %s IS NOT NULL THEN 'municipality_centroid' ELSE NULL END,
+                CASE WHEN %s IS NOT NULL THEN 0.1 ELSE NULL END
+            )
             RETURNING id
             """,
             (
@@ -452,6 +458,7 @@ class SupabasePipeline:
                 _normalize_cep(addr.get("cep") or addr.get("zip")),
                 muni_code,
                 addr.get("raw_text") or _build_raw_text(addr),
+                muni_code, muni_code, muni_code,
             ),
         )
         return cur.fetchone()[0]

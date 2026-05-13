@@ -327,6 +327,22 @@ class S4BDigitalSpider(ProviderSpider):
                 addr["uf"] = _UF_NAME_TO_CODE.get(_n(uf).lower(), None)
                 if not addr["uf"]:
                     del addr["uf"]
+        # Fallback de UF: location veio incompleto da API mas o slug
+        # /oferta/<descricao>-<cidade>-<UF>[-<sufixo>]-<id> publica a sigla.
+        # Tomamos a última sigla válida no slug (UF aparece sempre antes do
+        # id numérico). municipality_name fica por conta da API/geocoder
+        # porque slugs com cidades compostas e bairros intercalam tokens.
+        if "uf" not in addr:
+            slug = re.sub(r"^.*/oferta/", "", response.url)
+            slug = re.sub(r"-\d+/?$", "", slug)
+            for tok in reversed(slug.split("-")):
+                if tok.upper() in {
+                    "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG",
+                    "MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR",
+                    "RS","SC","SE","SP","TO",
+                }:
+                    addr["uf"] = tok.upper()
+                    break
         if any(v for v in addr.values()):
             item["address"] = addr
 
