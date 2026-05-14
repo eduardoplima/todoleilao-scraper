@@ -443,9 +443,9 @@ class SupabasePipeline:
                  geom, geocoding_source, geocoding_confidence)
             VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s,
-                (SELECT centroid FROM core.municipality WHERE ibge_code = %s),
-                CASE WHEN %s IS NOT NULL THEN 'municipality_centroid' ELSE NULL END,
-                CASE WHEN %s IS NOT NULL THEN 0.1 ELSE NULL END
+                (SELECT centroid FROM core.municipality WHERE ibge_code = %s::text),
+                CASE WHEN %s::text IS NOT NULL THEN 'municipality_centroid' ELSE NULL END,
+                CASE WHEN %s::text IS NOT NULL THEN 0.1 ELSE NULL END
             )
             RETURNING id
             """,
