@@ -27,15 +27,15 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 
 ## Tier 3 — Sites próprios com 2 leiloeiros (high)
 
-- [ ] amaralleiloes.com.br
-- [ ] focoleiloes.com.br
+- [x] amaralleiloes.com.br *(rico clone — 2 items)*
+- [x] focoleiloes.com.br *(rico clone)*
 - [ ] thaisteixeiraleiloes.com.br
 - [ ] upleilao.com.br
 - [ ] cpkleiloes.com.br
 - [ ] d1lance.com.br
 - [ ] multipliqueleiloes.com.br
 - [ ] leiloaria.com.br
-- [ ] lottileiloes.com.br
+- [x] lottileiloes.com.br *(rico clone)*
 - [ ] frazaoleiloes.com.br
 - [ ] conceitoleiloes.com.br
 - [ ] desantileiloes.com.br
