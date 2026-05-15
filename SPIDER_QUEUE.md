@@ -20,7 +20,7 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 - [x] ricoleiloes.com.br (11 leiloeiros, 11 high). *Spider dedicado em proprio_html_specific. Site tem só 1 imóvel ativo agora (Bem Imóvel Urbano, Dourado/SP, R$3.5M); extraído OK.*
 - [~] fernandoleiloeiro.com.br (6, 6 high). *SKIP: Cloudflare managed challenge bloqueia httpx/Playwright simples. Requer cloudflare-bypass ou conta autenticada.*
 - [~] tripolonileiloes.com.br (5, 5 high). *SKIP: React SPA (id=root, bundle.js dinâmico) com API encapsulada em configStore.getApiUrl(). Requer recon Playwright + descobrir API base.*
-- [~] destakleiloes.com.br (4, 4 high). *SKIP: HTML estático tem título/descrição/processo, mas preços/datas das praças são renderizados client-side via templates jQuery + WebSocket/AJAX. Sem min_bid no static → falha validação smoke. Requer Playwright.*
+- [x] destakleiloes.com.br (4, 4 high). *2026-05-15: spider `dg_platform` (subclass de degrau_publicidade) usando sitemap Facebook-listings. Smoke test 19 items com min_bid + market_value.*
 - [x] grupolance.com.br (4, 4 high). *2026-05-14: smoke test 19 items, ~8 com min_bid + market, ~11 só market (lotes ainda não em praça aberta).*
 - [x] nossoleilao.com.br (4, 4 high). *2026-05-14: mesma plataforma que rico. Subclass com home crawl. 2 items extraídos (catálogo majoritariamente sucata/ferramentas — apenas 2 imóveis ativos).*
 - [x] cencin.com.br (3, 3 high). *2026-05-14: subclass de RicoLeiloesSpider. Smoke test 2 items com min_bid.*
@@ -30,16 +30,16 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 - [x] amaralleiloes.com.br *(rico clone — 2 items)*
 - [x] focoleiloes.com.br *(rico clone)*
 - [~] thaisteixeiraleiloes.com.br *(SPA/sem lote links no HTML)*
-- [~] upleilao.com.br *(mesma plataforma "dg" templates JS)*
+- [x] upleilao.com.br *(2026-05-15: coberto por `dg_platform`, sitemap Facebook-listings)*
 - [~] cpkleiloes.com.br *(Laravel sem lotes inline, provavelmente JS-rendered)*
 - [~] d1lance.com.br *(301 redirect — não inspecionado)*
-- [~] multipliqueleiloes.com.br *(mesma plataforma "dg" que destakleiloes — preços via JS templates; skip)*
+- [x] multipliqueleiloes.com.br *(2026-05-15: coberto por `dg_platform`)*
 - [~] leiloaria.com.br *(React SPA, mesma toolchain que tripolonileiloes)*
 - [x] lottileiloes.com.br *(rico clone)*
 - [~] frazaoleiloes.com.br *(SPA ASP.NET — `/Auction/Index/{id}/{tab}` mas conteúdo dos lotes não está no HTML estático)*
 - [~] conceitoleiloes.com.br *(rico clone — sem imóveis no catálogo no momento do smoke; spider em standby)*
 - [~] desantileiloes.com.br *(rico clone — 0 leilões na home no smoke; spider em standby)*
-- [~] vivaleiloes.com.br *(plataforma "dg" — preços/datas via JS templates)*
+- [x] vivaleiloes.com.br *(2026-05-15: coberto por `dg_platform`)*
 - [~] hastapublica.com.br *(HTML estático apenas meta tags; conteúdo via AJAX)*
 
 ## Tier 4 — Sites próprios com 1 leiloeiro (high)
@@ -68,11 +68,18 @@ Adicionados em `_rico_clones2.py` após batch-recon que identificou
 - [x] ccjleiloes.com.br (3)
 - [x] jgcargneluttileiloes.com.br (3)
 
-Sites com plataforma "dg" (preços/datas via JS templates, fora do
-escopo v1 single-fetch):
-- [~] teza.com.br (4)
-- [~] silvaleiloes.com.br (3)
-- [~] gfleiloes.com.br (8)
+Sites com plataforma "dg" (cobertos via sitemap Facebook-listings —
+spider `dg_platform`, subclass de `degrau_publicidade`, 2026-05-15):
+
+- [x] teza.com.br (4) — smoke 7+ items
+- [x] silvaleiloes.com.br (3) — smoke 18 items
+- [x] gfleiloes.com.br (8) — smoke 8 items min_bid+market
+- [x] casareisleiloes.com.br (2) — smoke 14 items
+- [x] inovaleilao.com.br (2) — smoke 110 items mapeados
+
+Spider `dg_platform` cobre os 9 hosts via DG_DEFAULT_HOSTS. Roda com:
+    scrapy crawl dg_platform                 # todos
+    scrapy crawl dg_platform -a urls=...     # subset
 
 ## Skipped (baixo ROI ou complexidade alta)
 
