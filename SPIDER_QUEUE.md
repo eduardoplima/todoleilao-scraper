@@ -22,8 +22,8 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 - [~] tripolonileiloes.com.br (5, 5 high). *SKIP: React SPA (id=root, bundle.js dinâmico) com API encapsulada em configStore.getApiUrl(). Requer recon Playwright + descobrir API base.*
 - [~] destakleiloes.com.br (4, 4 high). *SKIP: HTML estático tem título/descrição/processo, mas preços/datas das praças são renderizados client-side via templates jQuery + WebSocket/AJAX. Sem min_bid no static → falha validação smoke. Requer Playwright.*
 - [x] grupolance.com.br (4, 4 high). *2026-05-14: smoke test 19 items, ~8 com min_bid + market, ~11 só market (lotes ainda não em praça aberta).*
-- [ ] nossoleilao.com.br (4, 4 high)
-- [ ] cencin.com.br (3, 3 high)
+- [x] nossoleilao.com.br (4, 4 high). *2026-05-14: mesma plataforma que rico. Subclass com home crawl. 2 items extraídos (catálogo majoritariamente sucata/ferramentas — apenas 2 imóveis ativos).*
+- [x] cencin.com.br (3, 3 high). *2026-05-14: subclass de RicoLeiloesSpider. Smoke test 2 items com min_bid.*
 
 ## Tier 3 — Sites próprios com 2 leiloeiros (high)
 
