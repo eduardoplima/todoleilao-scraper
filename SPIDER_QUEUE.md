@@ -18,10 +18,10 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 ## Tier 2 — Sites próprios com ≥3 leiloeiros
 
 - [x] ricoleiloes.com.br (11 leiloeiros, 11 high). *Spider dedicado em proprio_html_specific. Site tem só 1 imóvel ativo agora (Bem Imóvel Urbano, Dourado/SP, R$3.5M); extraído OK.*
-- [ ] fernandoleiloeiro.com.br (6, 6 high)
-- [ ] tripolonileiloes.com.br (5, 5 high)
-- [ ] destakleiloes.com.br (4, 4 high)
-- [ ] grupolance.com.br (4, 4 high)
+- [~] fernandoleiloeiro.com.br (6, 6 high). *SKIP: Cloudflare managed challenge bloqueia httpx/Playwright simples. Requer cloudflare-bypass ou conta autenticada.*
+- [~] tripolonileiloes.com.br (5, 5 high). *SKIP: React SPA (id=root, bundle.js dinâmico) com API encapsulada em configStore.getApiUrl(). Requer recon Playwright + descobrir API base.*
+- [~] destakleiloes.com.br (4, 4 high). *SKIP: HTML estático tem título/descrição/processo, mas preços/datas das praças são renderizados client-side via templates jQuery + WebSocket/AJAX. Sem min_bid no static → falha validação smoke. Requer Playwright.*
+- [x] grupolance.com.br (4, 4 high). *2026-05-14: smoke test 19 items, ~8 com min_bid + market, ~11 só market (lotes ainda não em praça aberta).*
 - [ ] nossoleilao.com.br (4, 4 high)
 - [ ] cencin.com.br (3, 3 high)
 
