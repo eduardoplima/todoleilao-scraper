@@ -7,7 +7,7 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 
 - [ ] **leiloes_judiciais_br** — 24 sites, 32 leiloeiros (32 high). Hosts ex: `mariafixerleiloes.com.br`, `capitalvalorleiloes.com.br`, `rioleiloes.com.br`. Recon em `specs/_providers/leiloes_judiciais_br/` se existir. *2026-05-14: spider existente quebrado (path `/imoveis` mudou para `/leilao/index/imoveis` + Vue SPA dinâmico). Ver ISSUES_TODO.md.*
 - [x] **leilao_br** — 14 sites, 20 leiloeiros (16 high). Subdomínios `*.leilao.br`. Hosts ex: `mercadoleiloes.com.br`, `jmleiloes.leilao.br`, `e-leiloeiro.leilao.br`. *2026-05-14: spider Laravel e-leiloes. Smoke test 16 items com min_bid+market_value.*
-- [ ] **sishp** — 2 sites, 9 leiloeiros (8 high). Hosts: `lancenoleilao.com.br`, `sfrazao.com.br`.
+- [x] **sishp** — 2 sites, 9 leiloeiros (8 high). Hosts: `lancenoleilao.com.br`, `sfrazao.com.br`. *2026-05-14: 3 tenants (sfrazao/lancenoleilao/lancetotal). Smoke test 10+12 items.*
 - [ ] **palacio_dos_leiloes** — 1 site, 7 leiloeiros (7 high). `palaciodosleiloes.com.br`.
 - [ ] **sodre_santoro** — 1 site, 6 leiloeiros (6 high). `sodresantoro.com.br`.
 - [ ] **leiloesweb** — 3 sites, 3 leiloeiros (3 high). `leiloeslaraforster.com.br`, `bampileiloes.com.br`, `selectleiloes.com.br`.
