@@ -1,0 +1,25 @@
+name: Caixa Refazer (semanal)
+
+# Domingo 04:00 UTC (01:00 BRT). Re-raspa lots Caixa órfãos
+# (sem auction_round). Cobre UFs que não estão na rotação diária.
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly machines run --process caixa-refazer
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl machines run --rm \
+            -a todoleilao-caixa \
+            --process caixa-refazer \
+            registry.fly.io/todoleilao-caixa:latest

@@ -1,0 +1,25 @@
+name: Providers Large Daily
+
+# 06:00 UTC (03:00 BRT). Roda soleon (116 tenants) + s4b_digital (43) +
+# leilao_pro (84) em série. ~3-4h.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly machines run --process providers-large
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl machines run --rm \
+            -a todoleilao-soleon \
+            --process providers-large \
+            registry.fly.io/todoleilao-soleon:latest

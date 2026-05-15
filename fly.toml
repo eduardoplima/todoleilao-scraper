@@ -1,30 +1,24 @@
 # Fly.io app config — todoleilao-soleon
 #
+# App "main": providers SaaS, sites próprios, bancos leves, geocoder.
+# Caixa vive em app separado (`fly.caixa.toml`) por exigir VM maior.
+#
+# Schedules: orquestrados por GitHub Actions cron (.github/workflows/cron-*.yml).
+# `fly machines run --schedule` não permite hora fixa — gh actions resolve.
+#
+# Ephemeral: cada workflow dispara `fly machines run --rm` que cria
+# machine, executa, autodestrói. Cobra só por segundos rodando.
+#
 # Bootstrap:
-#   fly launch --no-deploy --copy-config --name todoleilao-soleon
 #   fly secrets set \
 #       SUPABASE_DB_URL='postgresql://...' \
 #       CPF_PEPPER='098c9c941...' \
 #       -a todoleilao-soleon
-#   fly deploy
+#   fly deploy -a todoleilao-soleon
 #
-# Primeira execução manual (smoke):
-#   fly machines run --rm . -a todoleilao-soleon \
-#       sh -c 'cd /app/scrapy_project && scrapy crawl soleon -a sites=2'
-#
-# Cron diário do spider (uma Machine que dispara todo dia):
-#   fly machines run --schedule daily --process spider -a todoleilao-soleon
-#
-# Cron diário do geocoder (1 req/s ao Nominatim, ~25min pra ~1500 endereços):
-#   fly machines run --schedule daily --process geocode -a todoleilao-soleon
-#
-# Os dois schedules são independentes — o geocode é idempotente e só
-# processa endereços novos (geocoding_source IS NULL OR
-# = 'municipality_centroid'), então pode rodar em qualquer horário.
-# Convenção: spider de manhã (~08:00 UTC), geocode à noite (~02:00 UTC),
-# pra não competir por shared CPU. Não há jeito declarativo de fixar
-# horário no fly.toml — use --at no comando run, ou ajuste via cron
-# externo (GitHub Actions) se latência precisar ser fina.
+# Smoke manual:
+#   fly machines run --rm . -a todoleilao-soleon --process spider
+#   fly machines run --rm . -a todoleilao-soleon --process banks-simple
 
 app = "todoleilao-soleon"
 primary_region = "gru"  # São Paulo — perto dos sites BR e do Supabase BR
@@ -32,21 +26,25 @@ primary_region = "gru"  # São Paulo — perto dos sites BR e do Supabase BR
 [build]
   dockerfile = "Dockerfile"
 
-# Sem [http_service] — esse app não expõe porta, é puro batch.
+# Sem [http_service] — app é puro batch.
 
 [env]
-  SOLEON_SITES = "5"
+  SOLEON_SITES = "all"
   GEOCODE_BATCH_LIMIT = "5000"
 
-# Múltiplos roles (processes). A CLI do Fly seleciona qual rodar via
-# `--process <name>` em `fly machines run`. Sem --process, usa "spider".
+# Processes. `--process <name>` em `fly machines run` seleciona qual.
+# Sem --process, usa "spider".
 [processes]
-  spider  = "sh -c 'cd /app/scrapy_project && scrapy crawl soleon -a sites=${SOLEON_SITES}'"
-  geocode = "python /app/scripts/geocode_addresses.py --limit ${GEOCODE_BATCH_LIMIT}"
+  spider              = "sh -c 'cd /app/scrapy_project && scrapy crawl soleon -a sites=${SOLEON_SITES}'"
+  geocode             = "python /app/scripts/geocode_addresses.py --limit ${GEOCODE_BATCH_LIMIT}"
+  providers-large     = "bash /app/scripts/run_batch_providers_large.sh"
+  providers-medium    = "bash /app/scripts/run_batch_providers_medium.sh"
+  proprio-html-batch  = "bash /app/scripts/run_batch_proprio_html.sh"
+  banks-simple        = "bash /app/scripts/run_batch_banks_simple.sh"
 
 [[vm]]
   size = "shared-cpu-1x"
-  memory = "256mb"
+  memory = "1024mb"
 
 [deploy]
   strategy = "immediate"

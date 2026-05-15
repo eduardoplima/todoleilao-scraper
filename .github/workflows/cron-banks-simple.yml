@@ -1,0 +1,25 @@
+name: Banks Simple Daily
+
+# 09:00 UTC (06:00 BRT). Bradesco + Banco do Brasil. Santander fora
+# (Akamai bloqueia headless).
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly machines run --process banks-simple
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl machines run --rm \
+            -a todoleilao-soleon \
+            --process banks-simple \
+            registry.fly.io/todoleilao-soleon:latest

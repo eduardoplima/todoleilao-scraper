@@ -1,0 +1,45 @@
+name: Caixa UF Daily
+
+# Dispara 03:00 UTC (00:00 BRT) e rotaciona UF por dia da semana:
+#   Seg=SP, Ter=RJ, Qua=MG, Qui=PR, Sex=RS, Sáb=GO, Dom=BA.
+# UFs pequenas ficam pra cron-caixa-refazer (semanal) ou disparo manual.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      uf:
+        description: 'UF override (ex: AC, SP). Vazio = rotação automática.'
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720  # 12h cap — workflow só dispara o run, mas mantém slot
+    steps:
+      - name: Resolve UF
+        id: uf
+        run: |
+          if [ -n "${{ github.event.inputs.uf }}" ]; then
+            UF="${{ github.event.inputs.uf }}"
+          else
+            case $(date -u +%u) in
+              1) UF=SP ;; 2) UF=RJ ;; 3) UF=MG ;; 4) UF=PR ;;
+              5) UF=RS ;; 6) UF=GO ;; 7) UF=BA ;;
+            esac
+          fi
+          echo "uf=$UF" >> "$GITHUB_OUTPUT"
+          echo "Selected UF: $UF"
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly machines run --process caixa-uf-day
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl machines run --rm \
+            -a todoleilao-caixa \
+            --process caixa-uf-day \
+            -e CAIXA_UF=${{ steps.uf.outputs.uf }} \
+            registry.fly.io/todoleilao-caixa:latest

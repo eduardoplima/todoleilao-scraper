@@ -1,0 +1,25 @@
+name: Sites Próprios Semanal
+
+# Quarta 16:00 UTC (13:00 BRT). 27 spiders em proprio_html_specific,
+# 5min cada. ~90min total.
+
+on:
+  schedule:
+    - cron: '0 16 * * 3'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly machines run --process proprio-html-batch
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl machines run --rm \
+            -a todoleilao-soleon \
+            --process proprio-html-batch \
+            registry.fly.io/todoleilao-soleon:latest

@@ -31,20 +31,34 @@ FROM python:3.13-slim AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/app/.venv/bin:${PATH}"
+    PATH="/app/.venv/bin:${PATH}" \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
-# Pacotes mínimos: libxml2/libxslt para lxml, ca-certificates para HTTPS.
+# Pacotes runtime:
+#   - libxml2/libxslt: parser lxml (BeautifulSoup)
+#   - ca-certificates: HTTPS
+#   - Demais libs: dependências do Chromium headless (Caixa Radware, s4b CF,
+#     bradesco Hallo). playwright install --with-deps abaixaria o set completo
+#     mas pesa ~150MB extra; lista enxuta cobre o necessário pro headless.
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
         ca-certificates libxml2 libxslt1.1 \
+        libnss3 libatk-bridge2.0-0 libxkbcommon0 libgbm1 libasound2 \
+        libxcomposite1 libxdamage1 libxrandr2 libxfixes3 libpango-1.0-0 \
+        libcairo2 libdrm2 fonts-liberation \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY --from=builder /app /app
 
-# Executa como non-root
-RUN useradd -m -u 1000 spider && chown -R spider:spider /app
+# Instala o binário do Chromium em /ms-playwright (compartilhado com o user
+# `spider` via chown abaixo). Roda ANTES do useradd pra cachear no layer.
+RUN /app/.venv/bin/playwright install chromium
+
+# Executa como non-root. ms-playwright precisa ser readable pelo spider.
+RUN useradd -m -u 1000 spider \
+ && chown -R spider:spider /app /ms-playwright
 USER spider
 
 WORKDIR /app
