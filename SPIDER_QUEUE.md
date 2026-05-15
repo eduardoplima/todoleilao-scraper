@@ -108,6 +108,44 @@ leilao_pro: +2 tenants adicionados ao site_providers.csv:
 - [~] daux.com.br: site único (Felipe Daux SC), 11 leilões totais,
   baixo volume. Skip v1.
 
+### Batch 3 (agentC, 2026-05-15)
+
+**prism_leiloes (novo spider)**: cobre hosts da plataforma Prism IT:
+- [x] hastapublica.com.br (2 high, EUCLIDES MARASCHI JR + outro)
+- [x] valland.com.br (1 high, MARCELO VALLAND)
+Smoke combinado: 12 items, maioria com min_bid + market_value + status.
+
+**dg_platform +5 hosts**: ktzleiloes, brancalliao, sublimeleiloes (103
+listings!), arremaxleiloes (49), pecinileiloes (24). Smoke sublime: 19 items.
+
+**SOLEON +9 tenants** (sem código novo, só providers csv):
+quadradoleiloes, danyliraleiloes, benozzati, isabelleiloes, editalleiloes,
+arenaleilao, glleiloes, andradeleiloes, bidmax.
+
+**LJB +6 tenants** (idem, já existing spider): simleiloes, superaleiloes,
+gilsonleiloes, alessandroteixeiraleiloes, thaisteixeiraleiloes, diasleiloes.
+
+**leilao_pro +7 tenants** (idem): cpkleiloes, leilaobutia, ceciliadelzeir,
+rafaelcoutinho, costasalmanleiloes, bianchileiloes, elevaleiloes. Smoke
+em rafael+bianchi: 19 items.
+
+**suporte_leiloes +1**: leiloespb.
+
+### Famílias confirmadas como skip (recon batch 2)
+
+- Superbid landing SPA (~70kB idêntico, content via Angular):
+  mgrleiloes, marangoni, bezerra, clebercardoso, acostaleiloes,
+  cariocaleiloes, fernandafreireleiloes, lubreleiloes, totalleiloes,
+  miguelperezleiloes, megavaleleiloes, sold, rmoyses, dantasleiloes.
+- TZ3 (leiloariasmart): 1 leiloeiro low-confidence, baixo ROI.
+- LiveTi (formulaleiloes): 1 leiloeiro, baixo ROI.
+- Custom proprietários sem padrão (lanceja, leiloeiropublico, leilaodearte,
+  mirandacarvalho, alinemarques, idleiloes, leiloesdonorte, allianceleiloes,
+  formulaleiloes, savoyleiloes): 1 leiloeiro cada, total ~10 sites. Skip v1.
+- turanileiloes.com.br: HTML estático bonito (/imoveis/{id}-{slug}) com
+  prices server-rendered — único leiloeiro, skip por ROI mas viável recon
+  futuro.
+
 ### Spiders rico-clone batch (2026-05-14)
 
 Adicionados em `_rico_clones2.py` após batch-recon que identificou
