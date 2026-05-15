@@ -47,6 +47,30 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 Atacar só se tempo permitir. ~30+ sites; listagem completa em
 `data/intermediate/auctioneers_real_estate_v3.csv` filtro `confidence=high`.
 
+### Spiders rico-clone batch (2026-05-14)
+
+Adicionados em `_rico_clones2.py` após batch-recon que identificou
+12+ sites usando a mesma plataforma Laravel/PHP do RicoLeiloes:
+
+- [x] casamartillo.com.br (26 leiloeiros high!) — 1 item smoke
+- [x] clicleiloes.com.br (4)
+- [x] rjleiloes.com.br (4) — 6 items smoke
+- [x] cargneluttileiloes.com.br (4)
+- [x] leiloesaguiar.com.br (3)
+- [x] maraurzedoleilao.com.br (3)
+- [x] lancese.com.br (3)
+- [x] realizaleiloes.com.br (3)
+- [x] patiorochaleiloes.com.br (3)
+- [x] mullerleiloes.com.br (3) → renomeado mullerleiloes_rico para não conflitar com muller.py existente
+- [x] ccjleiloes.com.br (3)
+- [x] jgcargneluttileiloes.com.br (3)
+
+Sites com plataforma "dg" (preços/datas via JS templates, fora do
+escopo v1 single-fetch):
+- [~] teza.com.br (4)
+- [~] silvaleiloes.com.br (3)
+- [~] gfleiloes.com.br (8)
+
 ## Skipped (baixo ROI ou complexidade alta)
 
 - `proprio_html` (34 sites tag genérica, sem padrão comum — long tail)
