@@ -74,6 +74,7 @@ DG_DEFAULT_HOSTS: list[str] = [
     "https://sublimeleiloes.com.br/",         # 1 high (Lidianicy Xavier) — 103 listings!
     "https://arremaxleiloes.com.br/",         # 1 high (João Simão) — 49 listings
     "https://pecinileiloes.com.br/",          # 1 high (Angela Pecini) — 24 listings
+    "https://camargoleiloes.com.br/",         # 1 high (Camargo) — 24 listings
 ]
 
 
