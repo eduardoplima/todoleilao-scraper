@@ -10,7 +10,7 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 - [x] **sishp** — 2 sites, 9 leiloeiros (8 high). Hosts: `lancenoleilao.com.br`, `sfrazao.com.br`. *2026-05-14: 3 tenants (sfrazao/lancenoleilao/lancetotal). Smoke test 10+12 items.*
 - [~] **palacio_dos_leiloes** — 1 site, 7 leiloeiros (7 high). `palaciodosleiloes.com.br`. *SKIP: recon confirma que catálogo público do site só tem Automóvel/Eletro/Maquinário, sem categoria Imóveis. Real-estate score foi inflado por PDFs antigos. Reavaliar trimestralmente.*
 - [~] **sodre_santoro** — 1 site, 6 leiloeiros (6 high). `sodresantoro.com.br`. *SKIP: Nuxt SPA + Azion WAF + Elasticsearch passthrough API que exige cookie bootstrap. Generic Playwright já existente retorna 0 items. Recon de 2026-05-01 indicava 47 imóveis ativos; provider não publica encerrados. Necessita spider Playwright dedicado com bootstrap de sessão.*
-- [ ] **leiloesweb** — 3 sites, 3 leiloeiros (3 high). `leiloeslaraforster.com.br`, `bampileiloes.com.br`, `selectleiloes.com.br`.
+- [x] **leiloesweb** — 3 sites, 3 leiloeiros (3 high). `leiloeslaraforster.com.br`, `bampileiloes.com.br`, `selectleiloes.com.br`. *2026-05-14: PHP server-side com ISO-8859-1. Smoke 16 items.*
 - [ ] **leiloesbr** — 6 sites, 6 leiloeiros (1 high). Baixa prioridade.
 - [ ] **bomvalor** — 1 site `apabrfleiloes.com.br` (1 high)
 - [ ] **araujo_leiloes** — 1 site `andrearaujoleiloes.com.br` (1 high)

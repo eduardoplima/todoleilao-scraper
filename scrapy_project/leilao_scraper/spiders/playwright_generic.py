@@ -39,10 +39,7 @@ class PalacioDosLeiloesSpider(ProprioHtmlSpider):
     auctioneer_slug = "palacio_dos_leiloes"
 
 
-class LeiloeswebSpider(ProprioHtmlSpider):
-    name = "leiloesweb"
-    provider_slug = "leiloesweb"
-    auctioneer_slug = "leiloesweb"
+# LeiloeswebSpider movido para leilao_scraper.spiders.leiloesweb (2026-05-14).
 
 
 class WixSpider(ProprioHtmlSpider):
