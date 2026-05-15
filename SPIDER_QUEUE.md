@@ -60,6 +60,10 @@ Atacar só se tempo permitir. ~30+ sites; listagem completa em
   smoke 33 items.
 - [~] erickleiloes.com.br (Erick Câmara, RN, high) — SPA Superbid Exchange
   (Angular) + reCAPTCHA + GTM. Conteúdo via API. Skip v1.
+- [x] atlanticoleiloes.com.br (Francisco Luã, RN, medium) — spider
+  `atlantico_leiloes`. Site PHP server-rendered com dados do lote inline
+  como JSON (`var lote = {...}; var leilao = {...};`). Home expõe ~100
+  /lote/{id} URLs. Smoke 17 items com min_bid.
 
 ### Spiders rico-clone batch (2026-05-14)
 
