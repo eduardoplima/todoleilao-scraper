@@ -36,11 +36,11 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 - [~] multipliqueleiloes.com.br *(mesma plataforma "dg" que destakleiloes — preços via JS templates; skip)*
 - [ ] leiloaria.com.br
 - [x] lottileiloes.com.br *(rico clone)*
-- [ ] frazaoleiloes.com.br
+- [~] frazaoleiloes.com.br *(SPA ASP.NET — `/Auction/Index/{id}/{tab}` mas conteúdo dos lotes não está no HTML estático)*
 - [~] conceitoleiloes.com.br *(rico clone — sem imóveis no catálogo no momento do smoke; spider em standby)*
 - [~] desantileiloes.com.br *(rico clone — 0 leilões na home no smoke; spider em standby)*
 - [~] vivaleiloes.com.br *(plataforma "dg" — preços/datas via JS templates)*
-- [ ] hastapublica.com.br
+- [~] hastapublica.com.br *(HTML estático apenas meta tags; conteúdo via AJAX)*
 
 ## Tier 4 — Sites próprios com 1 leiloeiro (high)
 
