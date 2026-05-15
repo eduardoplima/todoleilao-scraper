@@ -23,10 +23,8 @@ from __future__ import annotations
 from leilao_scraper.spiders.proprio_html import ProprioHtmlSpider
 
 
-class SishpSpider(ProprioHtmlSpider):
-    name = "sishp"
-    provider_slug = "sishp"
-    auctioneer_slug = "sishp"
+# SishpSpider movido para leilao_scraper.spiders.sishp (2026-05-14)
+# Mantida apenas a versão dedicada com parser PHP server-rendered.
 
 
 class SoftgtSpider(ProprioHtmlSpider):
