@@ -12,6 +12,42 @@ Spider reescrito usando API JSON `/core/api/get-leiloes` + POST
 Smoke 22 items. Padrão funciona em todos os tenants do cluster
 (32 leiloeiros high cobertos).
 
+### Plataformas "dg" e "Next/React" — SPA-heavy bloqueadas
+Identificada uma família grande de sites usando o mesmo template
+"dg-lote-titulo" + `<span class="ValorMinimoLancePrimeiraPraca">`
+(preços/datas renderizados client-side via jQuery templates +
+WebSocket/AJAX). HTML estático tem só título, ID, imagens —
+preços vêm vazios. Lista parcial:
+
+- destakleiloes.com.br (4 high)
+- gfleiloes.com.br (8 high)
+- vivaleiloes.com.br (2 high)
+- multipliqueleiloes.com.br (2 high)
+- teza.com.br (4 high)
+- silvaleiloes.com.br (3 high)
+- upleilao.com.br (2 high)
+- casareisleiloes.com.br (2 high)
+- inovaleilao.com.br (2 high)
+
+Total ~30 leiloeiros high bloqueados. **Resolução**: spider Playwright
+único que renderiza a página, espera o XHR resolver e extrai os
+valores `dg-lote-titulo` + `ValorMinimoLance*`. Investimento ~3h.
+
+### Cloudflare Managed Challenge
+- fernandoleiloeiro.com.br (6 high) — bloqueia tudo
+- vipleiloes.com.br (12 high!) — maior site bloqueado por CF
+
+### Next.js / React SSR
+- simonleiloes.com.br (2 high) — Next.js streaming RSC
+- tripolonileiloes.com.br (5 high) — React SPA
+- balbinoleiloes.com.br (5 high) — React SPA
+- leilo.com.br (8 high) — Vue SPA, 110+ chunks
+
+### Sodre Santoro
+Nuxt SPA + Azion WAF + Elasticsearch passthrough. prd-api existe mas
+imóveis ainda exigem bootstrap de sessão. ~6 leiloeiros high, todos
+da mesma família.
+
 ---
 
 ## 🔴 Alta — disparando em prod ou bloqueando feature
