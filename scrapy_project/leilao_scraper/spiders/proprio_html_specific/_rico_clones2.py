@@ -103,3 +103,21 @@ class JGCargneluttiLeiloesSpider(NossoLeilaoSpider):
     name = "jgcargneluttileiloes"
     auctioneer_slug = "jgcargneluttileiloes"
     start_urls = ["https://www.jgcargneluttileiloes.com.br/"]
+
+
+class PimentelLeiloesSpider(NossoLeilaoSpider):
+    name = "pimentelleiloes"
+    auctioneer_slug = "pimentelleiloes"
+    start_urls = ["https://www.pimentelleiloes.com.br/"]
+
+
+class TresTorresLeiloesSpider(NossoLeilaoSpider):
+    name = "tresttorresleiloes"
+    auctioneer_slug = "tresttorresleiloes"
+    start_urls = ["https://www.3torresleiloes.com.br/"]
+
+
+class VictorDortaLeiloesSpider(NossoLeilaoSpider):
+    name = "victordortaleiloes"
+    auctioneer_slug = "victordortaleiloes"
+    start_urls = ["https://www.victordortaleiloes.com.br/"]

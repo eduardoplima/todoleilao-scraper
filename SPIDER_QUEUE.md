@@ -53,6 +53,9 @@ Adicionados em `_rico_clones2.py` após batch-recon que identificou
 12+ sites usando a mesma plataforma Laravel/PHP do RicoLeiloes:
 
 - [x] casamartillo.com.br (26 leiloeiros high!) — 1 item smoke
+- [x] pimentelleiloes.com.br (2) — 6 items smoke
+- [x] 3torresleiloes.com.br (2)
+- [x] victordortaleiloes.com.br (2)
 - [x] clicleiloes.com.br (4)
 - [x] rjleiloes.com.br (4) — 6 items smoke
 - [x] cargneluttileiloes.com.br (4)
