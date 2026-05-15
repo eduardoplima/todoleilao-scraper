@@ -1,19 +1,26 @@
-"""Spider para o cluster Nuxt de leiloesjudiciais.com.br.
+"""Spider para o cluster `leiloes_judiciais_br` (Vue SPA + JSON API).
 
-Família de subdomínios state-specific compartilhando a mesma base via
-Nuxt 3 SSR. Recon: specs/_providers/leiloes_judiciais_br/.
+Rewrite de 2026-05-14 — em algum momento desde 2026-05-01 o cluster
+migrou para Vue SPA e o spider anterior (Nuxt-based, baseado em DOM
+`/lote/{leilao_id}/{lot_id}`) parou de funcionar (paths quebrados).
+A nova versão usa a API JSON discovered via JS bundle:
 
-NOTA: o agrupamento `_input.json` lista 30 sites mas ~25 são plataformas
-distintas (Giordano MVC legacy etc.). Este spider cobre apenas o
-cluster Nuxt canônico (leiloesjudiciais.com.br + leiloesjudiciaisXX.com.br).
+```
+POST /core/api/get-lotes
+Content-Type: application/json
+Body: {"id_leilao": N}
+→ {"items": [{lote_id, vl_lanceminimo, nm_descricao, imovel_id, ...}]}
+```
 
-Estratégia:
-  1. /imoveis (lista paginada)
-  2. div.base-card → href /lote/{leilao_id}/{lot_id}
-  3. Detail page é SSR puro — extrai do HTML.
+E para listar leilões:
 
-Particularidade Nuxt: __NUXT_DATA__ JSON inline traz o dump completo
-do lote. Spider tenta primeiro o JSON; cai no DOM se falhar.
+```
+GET /core/api/get-leiloes?pg=1&itens_pagina=40
+→ {"items": [{id, nm, dt, ...}], "totalPages": ...}
+```
+
+Esses endpoints existem em todos os sites do cluster (verificado:
+joserodovalholeiloes, mariafixerleiloes, capitalvalorleiloes, etc).
 
 Uso:
     scrapy crawl leiloes_judiciais_br -a sites=1
@@ -24,21 +31,65 @@ from __future__ import annotations
 import json
 import re
 from typing import Any, Iterable
+from urllib.parse import urljoin, urlparse
 
 import scrapy
 
 from leilao_scraper.spiders._provider_base import ProviderSpider
 from leilao_scraper.spiders.soleon import (
-    _BRL_RE,
     _brl_to_decimal,
-    _detail_is_imovel,
-    _dedup_clauses,
-    _extract_auctioneer,
-    _find_edital_url,
     _normalize_text,
-    _parse_auction_clauses,
-    _pdf_to_text,
+    _parse_br_datetime_iso,
 )
+
+
+_TYPE_MAP = {
+    "apartamento": "apartamento",
+    "apartamentos": "apartamento",
+    "casa": "casa",
+    "casas": "casa",
+    "terreno": "terreno",
+    "terrenos": "terreno",
+    "lote": "terreno",
+    "fazenda": "rural",
+    "fazendas": "rural",
+    "sitio": "rural",
+    "chácara": "rural",
+    "chacara": "rural",
+    "rural": "rural",
+    "loja": "comercial",
+    "sala": "comercial",
+    "comercial": "comercial",
+    "galpão": "comercial",
+}
+
+
+def _classify_from_subcat(subcat: str, cat: str) -> str | None:
+    s = (subcat or "").lower()
+    c = (cat or "").lower()
+    for key, val in _TYPE_MAP.items():
+        if key in s or key in c:
+            return val
+    if "imove" in c or "imóve" in c:
+        return "outro"
+    return None
+
+
+def _iso_from_api_dt(s: str | None) -> str | None:
+    """API retorna '2026-05-29 16:00:00-03' → '2026-05-29T16:00:00-03:00'."""
+    if not s:
+        return None
+    m = re.match(
+        r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*([+-]\d{2}):?(\d{2})?",
+        s,
+    )
+    if m:
+        y, mo, d, h, mi, se, tzh, tzm = m.groups()
+        return f"{y}-{mo}-{d}T{h}:{mi}:{se}{tzh}:{tzm or '00'}"
+    m2 = re.match(r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})", s)
+    if m2:
+        return s.replace(" ", "T") + "-03:00"
+    return None
 
 
 class LeiloesJudiciaisBrSpider(ProviderSpider):
@@ -49,314 +100,208 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
 
     custom_settings = {
         "CONCURRENT_REQUESTS_PER_DOMAIN": 2,
-        "DOWNLOAD_DELAY": 1.5,
+        "DOWNLOAD_DELAY": 1.0,
     }
 
-    LOT_HREF_RE = re.compile(r"/lote/(\d+)/(\d+)")
-    MAX_PAGES_PER_HOST = 100
+    MAX_LEILAO_PAGES = 50
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._host_seen: dict[str, set[str]] = {}
+        self._seen_leiloes: set[str] = set()
+        self._seen_lotes: set[str] = set()
 
-    # ------------------------------------------------------------------
-    # Nível 1: home → /imoveis
-    # ------------------------------------------------------------------
-    def parse(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
-        listing_url = response.urljoin("/imoveis")
-        yield self.make_request(
-            listing_url,
-            callback=self.parse_listing,
-            meta={"page": 1, "host": self.host_of(response.url)},
-        )
-
-    def parse_listing(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
-        host = response.meta.get("host") or self.host_of(response.url)
-        host_seen = self._host_seen.setdefault(host, set())
-        seen: set[str] = set()
-        kept = 0
-        total_cards = 0
-        for card in response.css("div.base-card, article.base-card"):
-            href = card.css("a[href^='/lote/']::attr(href)").get()
-            if not href or not self.LOT_HREF_RE.search(href):
-                continue
-            absolute = response.urljoin(href)
-            if absolute in seen:
-                continue
-            seen.add(absolute)
-            total_cards += 1
-            if absolute in host_seen:
-                continue
-            host_seen.add(absolute)
-            kept += 1
+    # ----- Override start_urls handling -------------------------------------
+    def start_requests(self) -> Iterable[scrapy.Request]:
+        for url in self.start_urls:
+            host = urlparse(url).hostname or ""
+            api_url = f"https://{host}/core/api/get-leiloes?pg=1&itens_pagina=40"
             yield self.make_request(
-                absolute,
-                callback=self.parse_property,
-                meta={"source_listing_url": response.url},
+                api_url,
+                callback=self.parse_leiloes_api,
+                meta={
+                    "broker_host": host,
+                    "source_listing_url": url,
+                    "page": 1,
+                },
             )
 
+    # ----- Nível 1: leilões via API -----------------------------------------
+    def parse_leiloes_api(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
+        host = response.meta.get("broker_host")
         page = response.meta.get("page", 1)
-        self.log_event("ljb_listing_done", url=response.url, page=page,
-                       kept=kept, total_cards=total_cards)
-
-        # Paginação via ?pagina=N — para se a página não trouxe nenhum
-        # card novo (fallback a /imoveis vazio) ou se bateu o cap.
-        if kept > 0 and page < self.MAX_PAGES_PER_HOST:
-            next_url = re.sub(r"\?.*$", "", response.url) + f"?pagina={page + 1}"
-            yield self.make_request(
-                next_url,
-                callback=self.parse_listing,
-                meta={"page": page + 1, "host": host},
-            )
-
-    # ------------------------------------------------------------------
-    # Nível 2: detail → PropertyItem
-    # ------------------------------------------------------------------
-    def parse_property(self, response: scrapy.http.Response):
-        # Filtro de imóvel — usa h1+breadcrumb
-        h1 = (response.css("h1::text").get() or "").strip()
-        og_title = response.css("meta[property='og:title']::attr(content)").get() or h1
-        og_desc = response.css("meta[property='og:description']::attr(content)").get() or ""
-        # meta description traz a sinopse real do lote — confiável para
-        # filtro mesmo quando body_blob começa pelo menu.
-        meta_desc = response.css("meta[name='description']::attr(content)").get() or ""
-        # Body blob: precisamos ir além do menu (que ocupa ~1500 chars).
-        body_blob = " ".join(response.css("body *::text").getall())[:8000]
-        if not _detail_is_imovel(og_title or h1, " ".join([og_desc, meta_desc, body_blob[:2000]])):
-            self.log_event(
-                "ljb_lote_dropped_non_imovel",
-                url=response.url,
-                title=og_title[:80],
-            )
+        try:
+            data = json.loads(response.text)
+        except json.JSONDecodeError:
+            self.log_event("ljb_leiloes_api_bad_json", host=host, status=response.status)
             return
+        items = data.get("items") or []
+        total_pages = int(data.get("totalPages") or 1)
+        self.log_event("ljb_leiloes_api", host=host, page=page,
+                       count=len(items), total_pages=total_pages)
 
-        loader = self.new_loader(response)
-        host = self.host_of(response.url)
-        auctioneer = _extract_auctioneer(response)
-        if auctioneer and auctioneer.get("full_name"):
-            loader.replace_value("auctioneer", auctioneer["full_name"])
-            loader.add_value("auctioneer_data", auctioneer)
+        for leilao in items:
+            leilao_id = str(leilao.get("id") or "")
+            if not leilao_id or f"{host}:{leilao_id}" in self._seen_leiloes:
+                continue
+            self._seen_leiloes.add(f"{host}:{leilao_id}")
+            # POST /core/api/get-lotes
+            yield scrapy.Request(
+                f"https://{host}/core/api/get-lotes",
+                method="POST",
+                headers={"Content-Type": "application/json"},
+                body=json.dumps({"id_leilao": int(leilao_id)}),
+                callback=self.parse_lotes_api,
+                meta={
+                    "broker_host": host,
+                    "leilao_id": leilao_id,
+                    "leilao_data": leilao,
+                    "source_listing_url": response.meta.get("source_listing_url"),
+                },
+            )
+
+        # Próxima página
+        if page < total_pages and page < self.MAX_LEILAO_PAGES:
+            yield self.make_request(
+                f"https://{host}/core/api/get-leiloes?pg={page + 1}&itens_pagina=40",
+                callback=self.parse_leiloes_api,
+                meta={
+                    "broker_host": host,
+                    "source_listing_url": response.meta.get("source_listing_url"),
+                    "page": page + 1,
+                },
+            )
+
+    # ----- Nível 2: lotes do leilão via API ---------------------------------
+    def parse_lotes_api(self, response: scrapy.http.Response):
+        host = response.meta.get("broker_host")
+        leilao = response.meta.get("leilao_data") or {}
+        try:
+            data = json.loads(response.text)
+        except json.JSONDecodeError:
+            return
+        items = data.get("items") or []
+        kept = 0
+        for lote in items:
+            # Filtro de imóvel: id_segmento=3 ou nm_segmento contém "imov"
+            seg = (lote.get("nm_segmento") or "").lower()
+            id_seg = lote.get("id_segmento")
+            is_imovel = (id_seg == 3) or ("imove" in seg or "imóve" in seg)
+            if not is_imovel:
+                continue
+            lote_id = str(lote.get("lote_id") or "")
+            if not lote_id or f"{host}:{lote_id}" in self._seen_lotes:
+                continue
+            self._seen_lotes.add(f"{host}:{lote_id}")
+            kept += 1
+            yield from self._emit_item(host, leilao, lote, response.url)
+        self.log_event("ljb_lotes_api", host=host,
+                       leilao_id=response.meta.get("leilao_id"),
+                       imoveis_kept=kept,
+                       total_items=len(items))
+
+    def _emit_item(self, host: str, leilao: dict, lote: dict, src_url: str):
+        """Emite PropertyItem a partir do dict do lote da API."""
+        # Construir a URL canônica (front-end) — placeholder com lote_id
+        canonical_url = f"https://{host}/lote/{lote.get('leilao_id')}/{lote.get('lote_id')}"
+
+        # Usar loader manualmente porque não há response
+        from leilao_scraper.items import PropertyItem
+        from leilao_scraper.loaders import PropertyLoader
+
+        item = PropertyItem()
+        loader = PropertyLoader(item=item)
+        loader.add_value("url", canonical_url)
+        loader.add_value("source_listing_url", src_url)
+
+        leiloeiro_name = lote.get("nm_leiloeiro")
+        if leiloeiro_name:
+            loader.add_value("auctioneer", _normalize_text(leiloeiro_name))
+            loader.add_value("auctioneer_data", {"full_name": _normalize_text(leiloeiro_name)})
         else:
-            loader.replace_value("auctioneer", f"leiloes_judiciais_br::{host}")
+            loader.add_value("auctioneer", f"leiloes_judiciais_br::{host}")
 
-        # source_lot_code do path /lote/{leilao_id}/{lot_id}
-        m_lot = self.LOT_HREF_RE.search(response.url)
-        if m_lot:
-            loader.add_value("source_lot_code", m_lot.group(2))
+        loader.add_value("source_lot_code", str(lote.get("lote_id")))
+        if lote.get("nu"):
+            loader.add_value("lot_number", str(lote["nu"]))
 
-        # Title
-        if h1:
-            loader.add_value("title", h1)
+        title = lote.get("nm_titulo_lote") or lote.get("nm_titulo_leilao")
+        if title:
+            loader.add_value("title", _normalize_text(title))
 
-        # status: heurística sobre badge + texto
-        body_text_lower = body_blob.lower()
-        if "arrematado" in body_text_lower:
+        desc_raw = lote.get("nm_descricao") or ""
+        desc = re.sub(r"<[^>]+>", " ", desc_raw)
+        desc = _normalize_text(desc)
+        if len(desc) > 20:
+            loader.add_value("description", desc[:10000])
+
+        pt = _classify_from_subcat(lote.get("nm_subcategoria"), lote.get("nm_categoria"))
+        if pt:
+            loader.add_value("property_type", pt)
+
+        # Endereço
+        cidade = lote.get("nm_cidade")
+        uf = lote.get("nm_estado")
+        if cidade or uf:
+            addr = {"municipality_name": cidade, "uf": uf}
+            addr["raw_text"] = f"{cidade or ''} / {uf or ''}".strip(" /")
+            loader.add_value("address", addr)
+
+        # Status
+        status_lote = lote.get("nm_statuslote") or ""
+        s_low = status_lote.lower()
+        if "arrematad" in s_low or "vendido" in s_low:
             status = "arrematado"
-        elif "encerrad" in body_text_lower or "finalizad" in body_text_lower:
+        elif "encerrad" in s_low or "fechad" in s_low or "finaliza" in s_low:
             status = "desconhecido"
-        elif "suspens" in body_text_lower:
+        elif "suspens" in s_low:
             status = "suspenso"
-        elif "cancel" in body_text_lower:
+        elif "cancelad" in s_low:
             status = "cancelado"
+        elif "aberto" in s_low:
+            status = "aberto"
         else:
             status = "aberto"
         loader.add_value("status", status)
 
-        # Avaliação — div.vl-avaliacao traz "Avaliação:" + "R$ ..."
-        av_text = " ".join(response.css(
-            "div.vl-avaliacao *::text, div[class*='vl-avaliacao'] *::text"
-        ).getall())
-        m_av = re.search(r"R\$\s*([\d.,]+)", av_text)
-        if m_av:
+        # Valores
+        vl_min = lote.get("vl_lanceminimo")
+        vl_aval = lote.get("vl_avaliacao") or lote.get("vl_lanceminimo_2praca")
+        if vl_min:
             try:
-                loader.add_value("market_value", str(_brl_to_decimal(m_av.group(1))))
+                from decimal import Decimal
+                loader.add_value("minimum_bid", str(Decimal(str(vl_min))))
+            except Exception:
+                pass
+        if vl_aval:
+            try:
+                from decimal import Decimal
+                loader.add_value("market_value", str(Decimal(str(vl_aval))))
             except Exception:
                 pass
 
-        # Lance mínimo — button.vl-minimo
-        min_text = " ".join(response.css(
-            "button.vl-minimo *::text, .vl-minimo *::text, "
-            ".lance-minimo *::text, .vl-lance-minimo *::text"
-        ).getall())
-        m_min = re.search(r"R\$\s*([\d.,]+)", min_text)
-        if m_min:
-            try:
-                loader.add_value("minimum_bid", str(_brl_to_decimal(m_min.group(1))))
-            except Exception:
-                pass
+        # Data
+        dt_iso = _iso_from_api_dt(lote.get("dt_fechamento"))
+        if not dt_iso:
+            dt_iso = _iso_from_api_dt(leilao.get("dt"))
+        if dt_iso:
+            loader.add_value("first_auction_date", dt_iso)
+            loader.add_value("auction_phase", "unica")
 
-        # Fallback regex em body_blob caso DOM não tenha ainda esses divs
-        if not m_av:
-            m_av_fb = re.search(r"avalia[çc][ãa]o[^R]{0,40}R\$\s*([\d.,]+)", body_blob, re.I)
-            if m_av_fb:
-                try:
-                    loader.add_value("market_value", str(_brl_to_decimal(m_av_fb.group(1))))
-                except Exception:
-                    pass
-        if not m_min:
-            m_min_fb = re.search(r"(?:lance|valor)\s+(?:m[íi]nimo|inicial)[^R]{0,40}R\$\s*([\d.,]+)", body_blob, re.I)
-            if m_min_fb:
-                try:
-                    loader.add_value("minimum_bid", str(_brl_to_decimal(m_min_fb.group(1))))
-                except Exception:
-                    pass
-
-        # Data: tenta encontrar DD/MM/YYYY HH:MM no body
-        m_dt = re.search(r"(\d{2}/\d{2}/\d{4})[^,<]{0,8}(\d{2}:\d{2})", body_blob)
-        if m_dt:
-            loader.add_value("second_auction_date",
-                             f"{m_dt.group(1)} {m_dt.group(2)}")
-            loader.add_value("auction_phase", "2a_praca")
-
-        # Description: tentar bloco de descrição via classe Vue/Nuxt
-        desc_nodes = response.css(
-            "div.descricao *::text, "
-            "section.descricao *::text, "
-            "div[class*='descricao'] *::text"
-        )
-        desc = _normalize_text(" ".join(desc_nodes.getall()))
-        if not desc or len(desc) < 30:
-            # Fallback: se há um __NUXT_DATA__ JSON inline, tenta parsear
-            nuxt_match = re.search(r"<script\s+id=\"__NUXT_DATA__\"[^>]*>(.+?)</script>", response.text, re.S)
-            if nuxt_match:
-                try:
-                    nuxt = json.loads(nuxt_match.group(1))
-                    desc = _extract_description_from_nuxt(nuxt)
-                except Exception:
-                    pass
-        if desc:
-            loader.add_value("description", desc[:10000])
-
-        # Endereço — extrai cidade/UF do body
-        addr_text = body_blob
-        m_addr = re.search(r"([A-ZÀ-Úa-zà-ú\s.'-]+?)\s*[/-]\s*([A-Z]{2})\b", addr_text)
-        if m_addr:
-            cidade = m_addr.group(1).strip().rstrip(",-").strip()
-            if 3 <= len(cidade) <= 50 and not re.search(r"\d", cidade):
-                loader.add_value("address", {
-                    "raw_text": addr_text[:300],
-                    "municipality_name": cidade,
-                    "uf": m_addr.group(2).upper(),
-                })
-
-        # Imagens — S3 sa-east-1
-        img_urls = response.css(
-            "img[src*='s3.sa-east-1.amazonaws.com']::attr(src), "
-            "img[src*='/public/fotos/imoveis/']::attr(src)"
-        ).getall()
-        seen_imgs: set[str] = set()
-        unique_imgs: list[str] = []
-        for u in img_urls:
-            if not u:
-                continue
-            absolute = response.urljoin(u)
-            if absolute in seen_imgs:
-                continue
-            seen_imgs.add(absolute)
-            unique_imgs.append(absolute)
-        if unique_imgs:
-            loader.add_value("images", unique_imgs)
-
-        # Documentos
-        docs: list[dict] = []
-        seen_doc_urls: set[str] = set()
-        for a in response.css("a[href*='/public/anexo/'][href$='.pdf'], a[href$='.pdf']"):
-            url = a.css("::attr(href)").get()
-            label = _normalize_text(" ".join(a.css("*::text").getall())) or None
-            if not url:
-                continue
-            abs_url = response.urljoin(url)
-            if abs_url in seen_doc_urls:
-                continue
-            seen_doc_urls.add(abs_url)
-            docs.append({"name": label or "documento", "url": abs_url})
-        if docs:
-            loader.add_value("documents", docs)
-
-        # Cláusulas
-        page_text = _normalize_text(" ".join(response.css("body *::text").getall()))
-        payment_options, encumbrances = _parse_auction_clauses(page_text)
-        if payment_options:
-            loader.add_value("payment_options", payment_options)
-        if encumbrances:
-            loader.add_value("encumbrances", encumbrances)
+        # Imagens — convenção do provider: /core/imagens/lote/{lote_id}/{nu}.jpg
+        # API geralmente não traz lista de arquivos; deixamos vazio v1.
 
         loader.add_value("scraped_at", self.now_iso())
 
-        item = loader.load_item()
+        result = loader.load_item()
         self.log_event(
             "ljb_lote_extracted",
-            url=response.url,
+            url=canonical_url,
             host=host,
-            status=item.get("status"),
-            min_bid=item.get("minimum_bid"),
+            min_bid=result.get("minimum_bid"),
+            status=status,
         )
-        yield item
+        yield result
 
-        edital_url = _find_edital_url(item)
-        if edital_url:
-            yield self.make_request(
-                edital_url,
-                callback=self._merge_edital_clauses,
-                cb_kwargs={"item_html": item},
-                errback=self._on_edital_error,
-                meta={"handle_httpstatus_list": [403, 404], "dont_obey_robotstxt": True},
-            )
-
-    def _on_edital_error(self, failure):
-        item_html = failure.request.cb_kwargs.get("item_html")
-        if item_html is not None:
-            yield item_html
-
-    def _merge_edital_clauses(self, response: scrapy.http.Response, item_html):
-        if response.status >= 400:
-            yield item_html
-            return
-        try:
-            text = _pdf_to_text(response.body)
-        except Exception:
-            yield item_html
-            return
-        pdf_pay, pdf_enc = _parse_auction_clauses(text) if text else ([], [])
-        if not pdf_pay and not pdf_enc:
-            yield item_html
-            return
-        existing_pay = list(item_html.get("payment_options") or [])
-        existing_enc = list(item_html.get("encumbrances") or [])
-        merged_pay = _dedup_clauses(existing_pay + pdf_pay, key="kind")
-        merged_enc = _dedup_clauses(existing_enc + pdf_enc, key="kind")
-        if len(merged_pay) == len(existing_pay) and len(merged_enc) == len(existing_enc):
-            yield item_html
-            return
-        new_item = item_html.copy()
-        new_item["payment_options"] = merged_pay
-        new_item["encumbrances"] = merged_enc
-        yield new_item
-
-
-def _extract_description_from_nuxt(nuxt: Any) -> str:
-    """__NUXT_DATA__ é um array compactado; varre recursivamente buscando
-    chave 'descricao' ou similar. Retorna string ou ''."""
-    seen = set()
-
-    def walk(obj):
-        if id(obj) in seen:
-            return None
-        seen.add(id(obj))
-        if isinstance(obj, dict):
-            for k in ("descricao", "descricaoCompleta", "description"):
-                if isinstance(obj.get(k), str) and len(obj[k]) > 30:
-                    return obj[k]
-            for v in obj.values():
-                r = walk(v)
-                if r:
-                    return r
-        elif isinstance(obj, list):
-            for v in obj:
-                r = walk(v)
-                if r:
-                    return r
+    # Parse padrão não é usado, mas precisa existir para satisfazer Scrapy.
+    def parse(self, response):
         return None
-
-    result = walk(nuxt) or ""
-    return _normalize_text(re.sub(r"<[^>]+>", " ", result))

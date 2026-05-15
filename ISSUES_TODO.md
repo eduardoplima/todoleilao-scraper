@@ -6,8 +6,11 @@ Lista compilada do trabalho desta sessão. Ordem por prioridade de impacto.
 
 ## 🔴 NOVO 2026-05-14 (agente noturno)
 
-### LJB — leiloes_judiciais_br spider quebrado (path mudou)
-Todos os sites retornam 400 em `/imoveis`. O path correto é `/leilao/index/imoveis` (legacy Vue SPA, não Nuxt como o docstring afirma). Listagem é Vue dinâmica — não dá pra extrair href dos cards via HTML estático. Provavelmente exige Playwright OU achar a API JSON do Vue. Recon necessário antes de fix. Bloqueando rodada de cluster com 32 leiloeiros high.
+### LJB — leiloes_judiciais_br RESOLVIDO 2026-05-14
+Spider reescrito usando API JSON `/core/api/get-leiloes` + POST
+`/core/api/get-lotes` (descobertos no JS bundle `container.js`).
+Smoke 22 items. Padrão funciona em todos os tenants do cluster
+(32 leiloeiros high cobertos).
 
 ---
 
