@@ -67,6 +67,13 @@ DG_DEFAULT_HOSTS: list[str] = [
     "https://leiloeiraerikamaciel.com.br/",   # 1 high (Erika Maciel)
     "https://leilaooficialonline.com.br/",    # 1 high (Clecio Oliveira)
     "https://nacionalleiloes.com.br/",        # 1 high (Maritza Grande)
+    # Batch 2 (agentC, mesmo dia): outros 5 tenants dg em hosts long-tail.
+    # sitemap.xml retorna 6/3/103/49/24 listings respectivamente.
+    "https://ktzleiloes.com.br/",             # 1 high (Vivian Katzenelson)
+    "https://brancalliao.com.br/",            # 1 high (Nilton Brancalliao)
+    "https://sublimeleiloes.com.br/",         # 1 high (Lidianicy Xavier) — 103 listings!
+    "https://arremaxleiloes.com.br/",         # 1 high (João Simão) — 49 listings
+    "https://pecinileiloes.com.br/",          # 1 high (Angela Pecini) — 24 listings
 ]
 
 
