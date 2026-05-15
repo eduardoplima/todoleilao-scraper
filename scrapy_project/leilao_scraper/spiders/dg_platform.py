@@ -58,6 +58,15 @@ DG_DEFAULT_HOSTS: list[str] = [
     "https://www.upleilao.com.br/",           # 2 high
     "https://www.casareisleiloes.com.br/",    # 2 high
     "https://www.inovaleilao.com.br/",        # 2 high
+    # Adicionados 2026-05-15 (agentC): mais 4 tenants dg identificados
+    # via batch-recon de footer/meta — todos servem sitemap Facebook-
+    # listings idêntico. Sitemaps de erika+nacional retornam 0 listings
+    # ativos hoje, mas o template é o mesmo — spider extrai 0 items
+    # idempotentemente, sem regressão.
+    "https://grupoarremateleiloes.com.br/",   # 1 high (Fernando Cabeças)
+    "https://leiloeiraerikamaciel.com.br/",   # 1 high (Erika Maciel)
+    "https://leilaooficialonline.com.br/",    # 1 high (Clecio Oliveira)
+    "https://nacionalleiloes.com.br/",        # 1 high (Maritza Grande)
 ]
 
 

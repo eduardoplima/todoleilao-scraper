@@ -65,6 +65,49 @@ Atacar só se tempo permitir. ~30+ sites; listagem completa em
   como JSON (`var lote = {...}; var leilao = {...};`). Home expõe ~100
   /lote/{id} URLs. Smoke 17 items com min_bid.
 
+### Batch 2026-05-15 (agentC) — extensão de providers existentes
+
+SOLEON: adicionados 7 novos tenants ao site_providers.csv (cobertura via
+spider `soleon` existente — sem mudança de código):
+- [x] leiloeirosdebrasilia.com.br (3 leiloeiros, high) — smoke 3 items
+  via /leiloes/encerrados.
+- [x] lkleiloes.com.br (3 leiloeiros, high) — SOLEON tenant.
+- [x] hastaleiloes.com.br (2, high) — SOLEON tenant.
+- [x] calilleiloes.com.br (1, high) — SOLEON tenant.
+- [x] machadoleiloes.com.br (1, high) — SOLEON tenant.
+- [x] joaoemilio.com.br (1, high) — SOLEON tenant.
+- [x] argleiloes.com.br (1, high) — SOLEON tenant, smoke 7 items.
+- [x] macedoleiloes.com.br (1, high) — SOLEON tenant.
+
+dg_platform (Degrau Publicidade): +4 hosts em DG_DEFAULT_HOSTS:
+- [x] grupoarremateleiloes.com.br (1 high) — smoke 18 items (combinado).
+- [x] leiloeiraerikamaciel.com.br (1 high) — sitemap vazio agora, spider
+  idempotente.
+- [x] leilaooficialonline.com.br (1 high) — smoke OK.
+- [x] nacionalleiloes.com.br (1 high) — sitemap vazio agora.
+
+leilao_pro: +2 tenants adicionados ao site_providers.csv:
+- [x] cpkleiloes.com.br (2, high) — leilao_pro tenant, 0 imóveis ativos
+  no momento; spider registered.
+- [x] leilaobutia.com.br (2, high) — leilao_pro tenant, 0 imóveis
+  ativos no momento.
+
+### Sites SPA bloqueados ou de baixa prioridade
+
+- [~] mgrleiloes.com.br, marangonileiloes.com.br, bezerraleiloes.com.br,
+  clebercardosoleiloes.com.br, acostaleiloes.com.br, cariocaleiloes.com.br,
+  fernandafreireleiloes.com.br: family "Superbid landing" — todos ~70kB
+  HTML estático identical, conteúdo via Angular SPA. Skip v1.
+- [~] lancecertoleiloes.com.br, dearaujoleiloes.com.br, leje.com.br,
+  simonleiloes.com.br, lipinskileiloes.com.br: Cloudflare managed
+  challenge ou heavy JS. Skip v1.
+- [~] formulaleiloes.com.br: plataforma "LiveTi" custom — recon
+  posterior necessária.
+- [~] leiloariasmart.com.br: plataforma "TZ3" — `/imovel/N` mas
+  só 1 leiloeiro low confidence. Skip.
+- [~] daux.com.br: site único (Felipe Daux SC), 11 leilões totais,
+  baixo volume. Skip v1.
+
 ### Spiders rico-clone batch (2026-05-14)
 
 Adicionados em `_rico_clones2.py` após batch-recon que identificou
