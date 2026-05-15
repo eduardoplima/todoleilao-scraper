@@ -29,17 +29,17 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 
 - [x] amaralleiloes.com.br *(rico clone — 2 items)*
 - [x] focoleiloes.com.br *(rico clone)*
-- [ ] thaisteixeiraleiloes.com.br
-- [ ] upleilao.com.br
-- [ ] cpkleiloes.com.br
-- [ ] d1lance.com.br
-- [ ] multipliqueleiloes.com.br
+- [~] thaisteixeiraleiloes.com.br *(SPA/sem lote links no HTML)*
+- [~] upleilao.com.br *(mesma plataforma "dg" templates JS)*
+- [~] cpkleiloes.com.br *(Laravel sem lotes inline, provavelmente JS-rendered)*
+- [~] d1lance.com.br *(301 redirect — não inspecionado)*
+- [~] multipliqueleiloes.com.br *(mesma plataforma "dg" que destakleiloes — preços via JS templates; skip)*
 - [ ] leiloaria.com.br
 - [x] lottileiloes.com.br *(rico clone)*
 - [ ] frazaoleiloes.com.br
-- [ ] conceitoleiloes.com.br
-- [ ] desantileiloes.com.br
-- [ ] vivaleiloes.com.br
+- [~] conceitoleiloes.com.br *(rico clone — sem imóveis no catálogo no momento do smoke; spider em standby)*
+- [~] desantileiloes.com.br *(rico clone — 0 leilões na home no smoke; spider em standby)*
+- [~] vivaleiloes.com.br *(plataforma "dg" — preços/datas via JS templates)*
 - [ ] hastapublica.com.br
 
 ## Tier 4 — Sites próprios com 1 leiloeiro (high)
