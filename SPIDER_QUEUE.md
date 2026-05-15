@@ -34,7 +34,7 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 - [~] cpkleiloes.com.br *(Laravel sem lotes inline, provavelmente JS-rendered)*
 - [~] d1lance.com.br *(301 redirect — não inspecionado)*
 - [~] multipliqueleiloes.com.br *(mesma plataforma "dg" que destakleiloes — preços via JS templates; skip)*
-- [ ] leiloaria.com.br
+- [~] leiloaria.com.br *(React SPA, mesma toolchain que tripolonileiloes)*
 - [x] lottileiloes.com.br *(rico clone)*
 - [~] frazaoleiloes.com.br *(SPA ASP.NET — `/Auction/Index/{id}/{tab}` mas conteúdo dos lotes não está no HTML estático)*
 - [~] conceitoleiloes.com.br *(rico clone — sem imóveis no catálogo no momento do smoke; spider em standby)*
@@ -58,7 +58,7 @@ Adicionados em `_rico_clones2.py` após batch-recon que identificou
 - [x] victordortaleiloes.com.br (2)
 - [x] clicleiloes.com.br (4)
 - [x] rjleiloes.com.br (4) — 6 items smoke
-- [x] cargneluttileiloes.com.br (4)
+- [x] cargneluttileiloes.com.br (4) — spider OK, 0 items no smoke (sem imóveis ativos)
 - [x] leiloesaguiar.com.br (3)
 - [x] maraurzedoleilao.com.br (3)
 - [x] lancese.com.br (3)
