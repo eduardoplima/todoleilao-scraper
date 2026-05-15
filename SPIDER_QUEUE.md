@@ -47,6 +47,20 @@ Marcar `[x]` ao completar. Cada item commit isolado.
 Atacar só se tempo permitir. ~30+ sites; listagem completa em
 `data/intermediate/auctioneers_real_estate_v3.csv` filtro `confidence=high`.
 
+### Sites RN (2026-05-15)
+
+- [x] leiloesrn.com.br (Stella, RN, high) — tenant SOLEON, adicionado em
+  site_providers.csv; soleon spider extrai 17 items no smoke.
+- [x] mnleilao.com.br (Marcus Dantas, RN, medium) — spider `mnleilao` em
+  proprio_html_specific. Site Laravel server-rendered com URLs
+  `/show/{auction}` + `/show/lot/{lot}`. Smoke 86 items, todos com
+  min_bid + market_value.
+- [x] franciscofreitasleiloes.com.br (Francisco Jonnathan, RN, high) —
+  coberto por `leiloes_judiciais_br` (já mapeado em site_providers.csv);
+  smoke 33 items.
+- [~] erickleiloes.com.br (Erick Câmara, RN, high) — SPA Superbid Exchange
+  (Angular) + reCAPTCHA + GTM. Conteúdo via API. Skip v1.
+
 ### Spiders rico-clone batch (2026-05-14)
 
 Adicionados em `_rico_clones2.py` após batch-recon que identificou
