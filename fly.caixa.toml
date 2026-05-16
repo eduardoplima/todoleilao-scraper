@@ -26,16 +26,10 @@ primary_region = "gru"
   dockerfile = "Dockerfile"
 
 [env]
-  # UF a raspar no run. Sobrescrito por --env do `fly machines run` ou pelo
-  # GH Actions workflow (mapeia dia da semana → UF).
+  # UF default. Sobrescrito por --env do `fly machines run` (GH Actions).
   CAIXA_UF = "AC"
 
-[processes]
-  # Raspagem por UF — auto_cidades varre todas as cidades da UF.
-  # CLOSESPIDER_TIMEOUT=36000 = 10h (SP completo demora 8-12h).
-  caixa-uf-day  = "sh -c 'cd /app/scrapy_project && scrapy crawl caixa -a estados=${CAIXA_UF} -a auto_cidades=true -s CLOSESPIDER_TIMEOUT=36000'"
-  # Catch-up: re-raspa lots Caixa que ficaram sem auction_round.
-  caixa-refazer = "sh -c 'cd /app/scrapy_project && scrapy crawl caixa -a refazer_sem_data=true'"
+# SEM [processes] — comandos vão nos workflows GH como argumento posicional.
 
 [[vm]]
   size = "performance-1x"

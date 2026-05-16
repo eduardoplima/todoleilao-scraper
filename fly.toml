@@ -32,15 +32,11 @@ primary_region = "gru"  # São Paulo — perto dos sites BR e do Supabase BR
   SOLEON_SITES = "all"
   GEOCODE_BATCH_LIMIT = "5000"
 
-# Processes. `--process <name>` em `fly machines run` seleciona qual.
-# Sem --process, usa "spider".
-[processes]
-  spider              = "sh -c 'cd /app/scrapy_project && scrapy crawl soleon -a sites=${SOLEON_SITES}'"
-  geocode             = "python /app/scripts/geocode_addresses.py --limit ${GEOCODE_BATCH_LIMIT}"
-  providers-large     = "bash /app/scripts/run_batch_providers_large.sh"
-  providers-medium    = "bash /app/scripts/run_batch_providers_medium.sh"
-  proprio-html-batch  = "bash /app/scripts/run_batch_proprio_html.sh"
-  banks-simple        = "bash /app/scripts/run_batch_banks_simple.sh"
+# SEM [processes] declarados. Multi-process do Fly criaria 1 machine
+# por process group AUTOMATICAMENTE no deploy e iniciaria o CMD —
+# desastroso pra batch jobs (queremos só rodar via fly machines run --rm
+# disparado pelo GH Actions). Os comandos vivem nos workflows
+# .github/workflows/cron-*.yml como argumento posicional após a imagem.
 
 [[vm]]
   size = "shared-cpu-1x"
