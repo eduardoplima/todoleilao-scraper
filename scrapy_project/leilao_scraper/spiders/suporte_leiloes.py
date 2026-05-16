@@ -27,10 +27,12 @@ from __future__ import annotations
 
 import re
 from typing import Any, Iterable
+from urllib.parse import urlparse
 
 import scrapy
 
 from leilao_scraper.spiders._provider_base import ProviderSpider
+from leilao_scraper.spiders.proprio_html_specific._common import _uf_from_url_slug
 from leilao_scraper.spiders.soleon import (
     _BRL_RE,
     _brl_to_decimal,
@@ -285,10 +287,22 @@ class SuporteLeiloesSpider(ProviderSpider):
         addr_nodes = response.xpath(
             "//*[self::h2 or self::h3 or self::strong][contains(., 'Localização')]/following::*[1]"
         )
+        addr_parsed: dict = {}
         if addr_nodes:
             addr_text = _normalize_text(" ".join(addr_nodes[0].css("*::text").getall()))
             if addr_text:
-                loader.add_value("address", _parse_address_loose(addr_text))
+                addr_parsed = _parse_address_loose(addr_text)
+                loader.add_value("address", addr_parsed)
+
+        # Fallback: extrai UF do slug da URL quando o bloco de localização
+        # não continha UF (ex.: endereço truncado ou ausente).
+        # URLs Suporte Leilões: /eventos/leilao/<auction-slug>/lote/<id>/<lote-slug>
+        # Tanto auction-slug como lote-slug podem terminar com "-rj", "-sp" etc.
+        if not addr_parsed.get("uf"):
+            uf = _uf_from_url_slug(response.url)
+            if uf:
+                addr_parsed["uf"] = uf
+                loader.replace_value("address", addr_parsed)
 
         # images — CDN externa
         img_urls = response.css(
