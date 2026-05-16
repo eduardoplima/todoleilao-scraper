@@ -6,7 +6,9 @@ Concentra:
   - função de pós-processamento que aplica os ajustes mais comuns sobre
     um item já carregado pelo `parse_property` do genérico;
   - blacklist de paths que o `_LOT_PATH_PATTERNS` universal aceita por
-    engano (`/texto.aspx`, `/lotes/<id>` paginação, etc.).
+    engano (`/texto.aspx`, `/lotes/<id>` paginação, etc.);
+  - `_uf_from_url_slug` — extrai UF das 27 siglas brasileiras a partir
+    do path da URL (tokens `-XX` no slug).
 """
 
 from __future__ import annotations
@@ -14,8 +16,42 @@ from __future__ import annotations
 import re
 from decimal import Decimal
 from typing import Any
+from urllib.parse import urlparse
 
 from leilao_scraper.spiders.soleon import _brl_to_decimal
+
+
+# ---------------------------------------------------------------------------
+# Extração de UF a partir do slug da URL
+# ---------------------------------------------------------------------------
+
+_BR_UFS = frozenset({
+    "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG",
+    "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR",
+    "RS", "SC", "SE", "SP", "TO",
+})
+
+_UF_SLUG_RE = re.compile(r"-([a-z]{2})(?:[-/]|$)")
+
+
+def _uf_from_url_slug(url: str) -> str | None:
+    """Extrai UF do path do slug da URL.
+
+    Procura tokens `-XX` no path da URL (não no hostname) onde XX é uma
+    das 27 siglas brasileiras. Retorna a ÚLTIMA correspondência válida
+    (posição mais próxima do fim do slug — geralmente a UF do lote).
+    Retorna None se não encontrar nada.
+    """
+    try:
+        path = urlparse(url).path.lower()
+    except Exception:
+        path = url.lower()
+    found: list[str] = []
+    for m in _UF_SLUG_RE.finditer(path):
+        candidate = m.group(1).upper()
+        if candidate in _BR_UFS:
+            found.append(candidate)
+    return found[-1] if found else None
 
 
 # ---------------------------------------------------------------------------
