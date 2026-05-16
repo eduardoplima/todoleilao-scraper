@@ -338,6 +338,7 @@ class PropertyLoader(ItemLoader):
 
     first_auction_date_in = MapCompose(parse_br_date)
     second_auction_date_in = MapCompose(parse_br_date)
+    direct_sale_deadline_in = MapCompose(parse_br_date)
 
     property_type_in = MapCompose(detect_property_type)
 

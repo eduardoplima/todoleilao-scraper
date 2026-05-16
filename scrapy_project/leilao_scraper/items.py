@@ -48,10 +48,18 @@ class PropertyItem(scrapy.Item):
     discount_pct = scrapy.Field()  # calculado pela EnrichmentPipeline
 
     # ----- leilão ------------------------------------------------------------
-    auction_phase = scrapy.Field()  # 1a_praca|2a_praca|unica
+    auction_phase = scrapy.Field()  # 1a_praca|2a_praca|unica (NÃO inclui venda_direta — usar sale_mode)
     first_auction_date = scrapy.Field()  # ISO 8601 com timezone
     second_auction_date = scrapy.Field()
     status = scrapy.Field()  # aberto|arrematado|cancelado|desconhecido
+
+    # ----- modalidade de venda -----------------------------------------------
+    # sale_mode: leilao | venda_direta | leilao_e_venda_direta
+    # direct_sale_deadline: ISO 8601 do prazo final pra propostas em venda direta.
+    # Quando sale_mode='leilao' (default), ambos NULL e fluxo segue por
+    # first/second_auction_date + _insert_round normalmente.
+    sale_mode = scrapy.Field()
+    direct_sale_deadline = scrapy.Field()
 
     # ----- histórico de lances (encerrados) ----------------------------------
     # list[{timestamp, value_brl, bidder_raw}] — espelha PilotBid em

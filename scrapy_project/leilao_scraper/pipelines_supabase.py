@@ -592,13 +592,21 @@ class SupabasePipeline:
         # public_v1.lot_search faz COALESCE pra escolher.
         min_bid = _to_decimal(a.get("minimum_bid"))
 
+        # sale_mode: leilao (default) | venda_direta | leilao_e_venda_direta
+        # Spider só envia non-null quando detecta texto "Venda direta até ...".
+        sale_mode = (a.get("sale_mode") or "").strip().lower() or None
+        direct_sale_deadline_at = _parse_dt(a.get("direct_sale_deadline"))
+
         cur.execute(
             """
             INSERT INTO core.auction_lot
                 (auction_id, source_id, source_lot_code, source_url,
                  lot_number, current_status, appraisal_value, minimum_bid,
-                 description, scraped_at, parser_version)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s)
+                 description, scraped_at, parser_version,
+                 sale_mode, direct_sale_deadline_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s,
+                    COALESCE(%s::core.sale_mode, 'leilao'),
+                    %s)
             ON CONFLICT (source_id, source_lot_code) DO UPDATE
               SET current_status   = EXCLUDED.current_status,
                   appraisal_value  = COALESCE(EXCLUDED.appraisal_value, core.auction_lot.appraisal_value),
@@ -606,6 +614,15 @@ class SupabasePipeline:
                   lot_number       = COALESCE(EXCLUDED.lot_number, core.auction_lot.lot_number),
                   description      = COALESCE(EXCLUDED.description, core.auction_lot.description),
                   source_url       = EXCLUDED.source_url,
+                  sale_mode        = CASE
+                                       WHEN EXCLUDED.sale_mode <> 'leilao'
+                                         THEN EXCLUDED.sale_mode
+                                       ELSE core.auction_lot.sale_mode
+                                     END,
+                  direct_sale_deadline_at = COALESCE(
+                      EXCLUDED.direct_sale_deadline_at,
+                      core.auction_lot.direct_sale_deadline_at
+                  ),
                   last_seen_at     = now(),
                   scraped_at       = EXCLUDED.scraped_at
             RETURNING id, (xmax = 0) AS inserted
@@ -613,6 +630,7 @@ class SupabasePipeline:
             (
                 auction_id, source_id, lot_code, url,
                 lot_number, status, appraisal, min_bid, description, PARSER_VERSION,
+                sale_mode, direct_sale_deadline_at,
             ),
         )
         row = cur.fetchone()

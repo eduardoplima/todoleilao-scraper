@@ -65,6 +65,19 @@ _LEILOTECH_PRACA_RE = re.compile(
     re.I,
 )
 
+# "Venda direta disponível até: </span>Seg, 15/06/2026 - 11:00h" — Livewire
+# renderiza com </span></span> intercalado entre "até:" e a data.
+# Aceita tags HTML opcionais entre tokens. O fato de existir o texto +
+# status banner "ABERTO PARA PROPOSTAS" indica modalidade venda_direta ativa.
+_LEILOTECH_VENDA_DIRETA_RE = re.compile(
+    r"Venda\s+direta\s+(?:dispon[íi]vel\s+)?at[ée]\s*:?\s*"
+    r"(?:</?[a-zA-Z][^>]{0,40}>\s*)*"   # tags HTML opcionais entre rótulo e data
+    r"(?:[A-Za-zãç]+,?\s*)?"            # opcional weekday "Seg, "
+    r"(\d{2}/\d{2}/\d{4})\s*[-–]?\s*"   # data
+    r"(\d{1,2})(?:h|:)(\d{2})?",        # hora
+    re.I,
+)
+
 
 class LeilotechSpider(ProviderSpider):
     name = "leilotech"
@@ -199,10 +212,23 @@ class LeilotechSpider(ProviderSpider):
         if desc:
             loader.add_value("description", desc[:10000])
 
-        # status — heurística sobre o body
+        # status — heurística sobre o body. Ordem importa:
+        # 1. Arrematado sempre vence (vendido_venda_direta:true OU "arrematado" no body)
+        # 2. Venda direta ATIVA ("Aberto para propostas" + flag false) tem
+        #    prioridade sobre suspenso/cancelado/encerrado: o nome do leilão
+        #    pode conter "Suspenso" mas o lot individual aceita propostas.
+        # 3. Suspenso/cancelado capturam o estado real só quando NÃO há venda direta.
         body_lower = raw.lower()
-        if "arrematado" in body_lower:
+        is_venda_direta_ativa = (
+            "aberto para propostas" in body_lower
+            or '"vendido_venda_direta":false' in raw
+        ) and bool(_LEILOTECH_VENDA_DIRETA_RE.search(raw))
+        is_venda_direta_concluida = '"vendido_venda_direta":true' in raw
+
+        if is_venda_direta_concluida or "arrematado" in body_lower:
             status = "arrematado"
+        elif is_venda_direta_ativa:
+            status = "aberto"
         elif "suspens" in body_lower:
             status = "suspenso"
         elif "cancelad" in body_lower:
@@ -266,8 +292,29 @@ class LeilotechSpider(ProviderSpider):
         elif first_dt:
             loader.add_value("auction_phase", "1a_praca")
 
+        # Venda direta: extrai deadline "Venda direta disponível até: DD/MM/YYYY - HHhMM"
+        # e marca sale_mode. Quando há também praça(s), modo é leilao_e_venda_direta.
+        m_vd = _LEILOTECH_VENDA_DIRETA_RE.search(raw)
+        if m_vd:
+            d, h, mi = m_vd.group(1), m_vd.group(2), m_vd.group(3) or "00"
+            deadline_str = f"{d} {int(h):02d}:{mi}"
+            loader.add_value("direct_sale_deadline", deadline_str)
+            loader.add_value(
+                "sale_mode",
+                "leilao_e_venda_direta" if (first_dt or second_dt) else "venda_direta",
+            )
+            # Quando é só venda direta, "Pelo valor de:" carrega o min_bid
+            # — já tratado pelo fallback acima, mas vale garantir aqui.
+            if not chosen_min:
+                m_min_vd = re.search(r"Pelo valor de[^R]{0,30}R\$\s*([\d.,]+)", raw, re.I)
+                if m_min_vd:
+                    try:
+                        loader.add_value("minimum_bid", str(_brl_to_decimal(m_min_vd.group(1))))
+                    except Exception:
+                        pass
+
         # Fallback: data DD/MM/YYYY HH:MM no body (sem rótulo de praça)
-        if not (first_dt or second_dt):
+        if not (first_dt or second_dt or m_vd):
             m_dt = re.search(r"(\d{2}/\d{2}/\d{4})[^,<]{0,8}(\d{1,2}):(\d{2})", raw)
             if m_dt:
                 d, h, mi = m_dt.group(1), m_dt.group(2), m_dt.group(3)
