@@ -43,3 +43,6 @@ primary_region = "gru"
 
 [deploy]
   strategy = "immediate"
+  # Sem machines always-on. Ephemeral via GH Actions.
+  min_machines_running = 0
+  max_unavailable = 1

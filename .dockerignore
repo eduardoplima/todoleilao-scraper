@@ -5,11 +5,13 @@ data/intermediate/cache/
 data/intermediate/auctioneers_*.csv
 data/intermediate/site_analysis.csv
 
-# specs internas (somente _providers/<provider>/selectors.yaml é necessário,
-# que já está incluído via COPY explícito no Dockerfile)
-specs/[!_]*/
-specs/_template/
-specs/_status.md
+# specs internas — só queremos _providers/<provider>/selectors.yaml.
+# BuildKit interpreta `[!_]*` ERRADO (exclui `_providers` apesar do `_`).
+# Solução: exclui specs/ inteiro e reinclui _providers via negation.
+specs/
+!specs/_providers/
+!specs/_providers/**
+# Re-exclui arquivos pesados/transientes dentro de _providers/
 specs/_providers/_status.md
 specs/_providers/*/pilot_*.html
 specs/_providers/*/pilot_xhr*.har*

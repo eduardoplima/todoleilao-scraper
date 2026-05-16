@@ -48,3 +48,9 @@ primary_region = "gru"  # São Paulo — perto dos sites BR e do Supabase BR
 
 [deploy]
   strategy = "immediate"
+  # Sem auto-scale persistente. Machines são efêmeras: criadas pelo
+  # `fly machines run --rm` quando o GH Actions dispara, autodestruídas.
+  # `fly deploy` registra a imagem no registry mas não mantém machines
+  # always-on — economiza ~12 × shared-cpu-1x@1GB = $66/mês ociosos.
+  min_machines_running = 0
+  max_unavailable = 1

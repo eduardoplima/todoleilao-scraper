@@ -36,7 +36,7 @@ jobs:
 
       - name: Fly machines run --process caixa-uf-day
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_CAIXA }}
         run: |
           flyctl machines run --rm \
             -a todoleilao-caixa \
