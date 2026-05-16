@@ -28,6 +28,7 @@ from typing import Any, Iterable
 import scrapy
 
 from leilao_scraper.spiders._provider_base import ProviderSpider
+from leilao_scraper.spiders.proprio_html_specific._common import _uf_from_url_slug
 from leilao_scraper.spiders.soleon import (
     _BRL_RE,
     _brl_to_decimal,
@@ -251,6 +252,15 @@ class LeilaoProSpider(ProviderSpider):
         addr = _parse_address_loose(addr_blob)
         if addr.get("uf") or addr.get("municipality_name"):
             loader.add_value("address", addr)
+
+        # Fallback: extrai UF do slug da URL quando o título/og_desc não
+        # continha UF (ex.: "Terreno - Capão de Canoa RS" → "-rs-" no slug
+        # do leilão: /leilao/justica-civel-de-capao-de-canoa-rs-06-05-2024-...).
+        if not addr.get("uf"):
+            uf = _uf_from_url_slug(response.url)
+            if uf:
+                addr["uf"] = uf
+                loader.replace_value("address", addr)
 
         # images — /uploads/media/default/
         img_urls = response.css(
