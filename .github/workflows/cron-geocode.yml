@@ -16,11 +16,12 @@ jobs:
     steps:
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Fly machines run --process geocode
+      - name: Fly machines run (geocode)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           flyctl machines run --rm \
             -a todoleilao-soleon \
-            --process geocode \
-            registry.fly.io/todoleilao-soleon:latest
+            -e GEOCODE_BATCH_LIMIT=5000 \
+            registry.fly.io/todoleilao-soleon:latest \
+            sh -c 'python /app/scripts/geocode_addresses.py --limit ${GEOCODE_BATCH_LIMIT}'

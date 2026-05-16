@@ -15,11 +15,11 @@ jobs:
     steps:
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Fly machines run --process caixa-refazer
+      - name: Fly machines run (caixa-refazer)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_CAIXA }}
         run: |
           flyctl machines run --rm \
             -a todoleilao-caixa \
-            --process caixa-refazer \
-            registry.fly.io/todoleilao-caixa:latest
+            registry.fly.io/todoleilao-caixa:latest \
+            sh -c 'cd /app/scrapy_project && scrapy crawl caixa -a refazer_sem_data=true'

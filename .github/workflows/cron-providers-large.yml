@@ -15,11 +15,11 @@ jobs:
     steps:
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Fly machines run --process providers-large
+      - name: Fly machines run (providers-large)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           flyctl machines run --rm \
             -a todoleilao-soleon \
-            --process providers-large \
-            registry.fly.io/todoleilao-soleon:latest
+            registry.fly.io/todoleilao-soleon:latest \
+            bash /app/scripts/run_batch_providers_large.sh

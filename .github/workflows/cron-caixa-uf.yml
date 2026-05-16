@@ -34,12 +34,12 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Fly machines run --process caixa-uf-day
+      - name: Fly machines run (caixa-uf-day)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_CAIXA }}
         run: |
           flyctl machines run --rm \
             -a todoleilao-caixa \
-            --process caixa-uf-day \
             -e CAIXA_UF=${{ steps.uf.outputs.uf }} \
-            registry.fly.io/todoleilao-caixa:latest
+            registry.fly.io/todoleilao-caixa:latest \
+            sh -c 'cd /app/scrapy_project && scrapy crawl caixa -a estados=${CAIXA_UF} -a auto_cidades=true -s CLOSESPIDER_TIMEOUT=36000'
