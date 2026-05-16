@@ -18,6 +18,7 @@ import re
 from leilao_scraper.spiders.proprio_html import ProprioHtmlSpider
 from leilao_scraper.spiders.proprio_html_specific._common import (
     _RE_LANCE_PRACA_1,
+    _uf_from_url_slug,
     collect_bg_images_shorthand,
     extract_cidade_uf,
     extract_lance_min_with_dash,
@@ -69,6 +70,13 @@ class AraujoLeiloesSpider(ProprioHtmlSpider):
             if cuf:
                 addr["municipality_name"] = cuf[0]
                 addr["uf"] = cuf[1]
+                item["address"] = addr
+
+        # Fallback: extrai UF do slug da URL quando o texto não contém Cidade/UF
+        if not addr.get("uf"):
+            uf = _uf_from_url_slug(response.url)
+            if uf:
+                addr["uf"] = uf
                 item["address"] = addr
 
         # imagens via background:url() shorthand
