@@ -25,6 +25,7 @@ from typing import Iterable
 import scrapy
 
 from leilao_scraper.spiders.base import BaseAuctionSpider
+from leilao_scraper.spiders.proprio_html_specific._common import _uf_from_url_slug
 from leilao_scraper.spiders.soleon import (
     _brl_to_decimal,
     _normalize_text,
@@ -300,6 +301,12 @@ class AtlanticoLeiloesSpider(BaseAuctionSpider):
             loader.add_value("payment_options", payments)
         if encumbrances:
             loader.add_value("encumbrances", encumbrances)
+
+        # Endereço — Atlântico não emite campo de endereço estruturado.
+        # Extrai UF a partir do slug da URL (ex.: /lote/24/terreno-em-patos-pb).
+        uf_slug = _uf_from_url_slug(response.url)
+        if uf_slug:
+            loader.add_value("address", {"uf": uf_slug, "raw_text": response.url})
 
         loader.add_value("scraped_at", self.now_iso())
 
