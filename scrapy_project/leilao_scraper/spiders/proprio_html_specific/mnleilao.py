@@ -20,6 +20,7 @@ from typing import Iterable
 import scrapy
 
 from leilao_scraper.spiders.base import BaseAuctionSpider
+from leilao_scraper.spiders.proprio_html_specific._common import extract_cidade_uf
 from leilao_scraper.spiders.soleon import (
     _brl_to_decimal,
     _normalize_text,
@@ -307,6 +308,21 @@ class MnLeilaoSpider(BaseAuctionSpider):
             desc = _normalize_text(raw)
             if len(desc) > 20:
                 loader.add_value("description", desc[:10000])
+
+        # Endereço — MN não tem campo estruturado de endereço.
+        # Extrai cidade/UF da descrição detalhada via padrão "Cidade/UF".
+        # O texto dos editais frequentemente contém "em Campina Grande/PB" ou
+        # "situado na Rua X, bairro Y, Natal/RN".
+        addr: dict = {}
+        search_text = title_clean + " " + (
+            " ".join(response.css("div.conteudo-interno *::text").getall())
+        )
+        cuf = extract_cidade_uf(search_text[:3000])
+        if cuf:
+            addr = {"municipality_name": cuf[0], "uf": cuf[1],
+                    "raw_text": cuf[0] + "/" + cuf[1]}
+        if addr:
+            loader.add_value("address", addr)
 
         # Imagens (carousel fotorama)
         imgs = re.findall(
