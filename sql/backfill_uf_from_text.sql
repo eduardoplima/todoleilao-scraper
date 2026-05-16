@@ -63,15 +63,38 @@ BEGIN
   LIMIT 1;
   IF v_uf IS NOT NULL THEN RETURN v_uf; END IF;
 
-  -- Padrão 3: "UF" precedido por espaço ou "|" e seguido de fim/pontuação
-  -- Ex: "Brasília DF | Matrícula"
+  -- Padrão 3: URL slug "--UF--" ou "-UF/" ou "-UF-preposicao-"
+  SELECT upper(trim(m2[1])) INTO v_uf
+  FROM (
+    SELECT m2, position(m2[1] in p_text) as pos
+    FROM regexp_matches(p_text, '--([a-z]{2})--', 'g') m2
+    WHERE upper(trim(m2[1])) = ANY(v_uf_set)
+    UNION ALL
+    SELECT m2, position(m2[1] in p_text) as pos
+    FROM regexp_matches(p_text, '-([a-z]{2})(?:-/|/$|$)', 'g') m2
+    WHERE upper(trim(m2[1])) = ANY(v_uf_set)
+    UNION ALL
+    SELECT m2, position(m2[1] in p_text) as pos
+    FROM regexp_matches(p_text, '-([a-z]{2})-(?:na|no|em|de|do|da)-', 'g') m2
+    WHERE upper(trim(m2[1])) = ANY(v_uf_set)
+  ) slug_matches
+  ORDER BY pos DESC
+  LIMIT 1;
+  IF v_uf IS NOT NULL THEN RETURN v_uf; END IF;
+
+  -- Padrão 4: "ESTADO: UF" ou "ESTADO UF"
+  SELECT upper(trim(m2[1])) INTO v_uf
+  FROM regexp_matches(p_text, 'ESTADO\s*:?\s*([A-Z]{2})', 'g') m2
+  WHERE upper(trim(m2[1])) = ANY(v_uf_set)
+  LIMIT 1;
+  IF v_uf IS NOT NULL THEN RETURN v_uf; END IF;
+
+  -- Padrão 5: ", UF," ou ", UF, CEP" (endereco CSV)
   SELECT upper(trim(m2[1])) INTO v_uf
   FROM regexp_matches(p_text,
-    '(?:^|\s|\|)\s*([A-Z]{2})\s*(?:\s|\||$|\.|\,)',
+    ',\s*([A-Z]{2})\s*(?:,\s*CEP|$|\s*\||\s*\.)',
     'g') m2
   WHERE upper(trim(m2[1])) = ANY(v_uf_set)
-    -- Filtrar falsos positivos comuns (siglas de órgãos, etc.)
-    AND upper(trim(m2[1])) NOT IN ('DE','DA','DO','EM','NO','NA','AS','OS','UF','BR')
   LIMIT 1;
   IF v_uf IS NOT NULL THEN RETURN v_uf; END IF;
 
