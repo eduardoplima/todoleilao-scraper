@@ -241,6 +241,10 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
         # Endereço
         cidade = lote.get("nm_cidade")
         uf = lote.get("nm_estado")
+        # leiloesjudiciaismg.com.br: UF=MG por definição do host quando a API
+        # não retorna nm_estado (alguns lotes legados trazem nm_estado=None).
+        if not uf and "leiloesjudiciaismg" in host:
+            uf = "MG"
         if cidade or uf:
             addr = {"municipality_name": cidade, "uf": uf}
             addr["raw_text"] = f"{cidade or ''} / {uf or ''}".strip(" /")
