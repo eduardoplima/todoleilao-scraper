@@ -234,7 +234,8 @@ data/raw/*
 !data/raw/.gitkeep
 data/intermediate/*
 !data/intermediate/.gitkeep
-!data/intermediate/site_providers.csvdata/processed/*
+!data/intermediate/site_providers.csv
+data/processed/*
 !data/processed/.gitkeep
 
 # Reports gerados automaticamente (mantenha relatórios manuais commitados explicitamente)

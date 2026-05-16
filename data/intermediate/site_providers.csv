@@ -1,0 +1,605 @@
+slug,nome,final_url,provider,confianca,sinal,cache_used
+gelson-bourschiet,Gelson Bourschiet,https://shopleiloes.leilao.br/,leilao_br,high,host=shopleiloes.leilao.br,static
+,Guilherme Lopes de Souza,https://www.leilominas.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,GIULIANO FERRONATO,https://www.ferronato.leilao.br/,leilao_br,high,host=www.ferronato.leilao.br,static
+,Luiz Balbino Da Silva Junior,https://balbinoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,SILVIO LUCIAN,https://www.lucianleiloes.com.br/,lucian_leiloes,high,spider-específico:lucian_leiloes,static
+,Alex Vieira Passos,https://portalax.com.br/,portalax,high,spider-específico:portalax,static
+,Marcos Garcia Almeida,https://www.3torresleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Sérgio Sousa Rodrigues,https://bhleiloaria.com.br/,bomvalor,high,bomvalor.com.br,static
+,Ruam Carlos Chaves Gotardo,https://www.leiloesnovaserrana.com.br/,leiloes_nova_serrana,high,spider-específico:leiloes_nova_serrana,static
+,Luiz Washington Campolina Santos,https://luizcampolina.com.br/,wordpress,medium,stack=WordPress,static
+,Flares Aguiar da Silva,https://faleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Daiane Fucks Pelentir,https://www.agilileiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,JIMMY ASAMI,https://www.asamileiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Matheus Werneck de Oliveira Santos,https://www.leiloarialoucoporleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,SÉRGIO ROBERTO PIMENTEL SCHOLANTE,https://www.scholanteleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,SÉRGIO RICARDO DE BRITO BORGES,https://www.gestorleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Luiz Felipe Perpétuo Lobato,https://www.luizlobatoleiloeiro.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Marcos Paulo Branco de Morais,https://www.saladeleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,POLIANA MIKEJEVS CALÇA,https://www.superbid.net/,s4b_digital,high,s4bdigital.net,static
+,Lilian Dutra Portugal,https://www.lilianportugal.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Wellington Martins Araújo,https://araujoleiloes.com.br/,araujo_leiloes,high,spider-específico:araujo_leiloes,static
+,Sarita Ana Giacomazzi Araujo,https://www.pandacolecoes.com.br/,leiloesbr,high,link:leiloesbr.com.br,static
+,Luiz Ubiratã de Carvalho,https://www.luizleiloes.com.br/,softgt,high,link:softgt.com.br,static
+,Luci Vera Primaz Dos Reis,https://www.luciverareisleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,SÉRGIO LIPINSKI BRANDÃO JUNIOR,https://www.lipinskileiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Antonio Jose da Silva Filho,https://www.ajleiloes.com.br/,proprio_html,low,stack=angular; bootstrap,static
+,SÉRGIO AUGUSTO DOS SANTOS,https://www.nsleiloes.leilao.br/,leilao_br,high,host=www.nsleiloes.leilao.br,static
+,Lorrana Ramos Mendes Gotardo,https://www.lorranaleiloes.com.br/,lorrana_leiloes,high,spider-específico:lorrana_leiloes,static
+,José Arquimedes Câmara,https://www.arquimedesleiloes.com.br/,wix,high,wix/parastorage,static
+,José Antônio Rodovalho Junior,https://www.joserodovalholeiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Marco Antônio Barbosa de Oliveira Junior,https://www.marcoantonioleiloeiro.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Jorge Vinicius De Moura Correa,https://www.renovarleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Aridina Maria Do Amaral,https://www.formulaleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Lincoln de Azevedo Fernandes,https://www.lincolnleiloes.com.br/?searchType=all&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,ROGÉRIO BRONZATTO,https://www.bronzattoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Isaías Rosa Ramos Júnior,https://www.isaiasleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,SANDRA REGINA WONTROBA,https://www.swleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Leonardo Veiga de Jesus Chaves,https://www.leonardoveigaleiloes.com.br/,leonardo_veiga,high,spider-específico:leonardo_veiga,static
+,VICENTE DE PAULO ALBUQUERQUE COSTA FILHO,https://www.vipleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Gustavo Costa Aguiar Oliveira,https://www.gpleiloes.com.br/#/,desconhecido,n/a,no rule matched,static
+,Suelem Regina Bocasanta,https://www.sb.leilao.br/,leilao_br,high,host=www.sb.leilao.br,static
+,Marco Aurélio Périco Góes,https://www.marcoleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Italo Trindade Moura Filho,https://www.italoleiloes.com/,soleon,high,meta_author=SOLEON,static
+,Kananda Sofia Silva Macedo,https://www.kanandaleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,RODRIGO ZAGO SZORTYKA,https://www.szortykaleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,RENI JOSÉ BONFANDINI,https://leiloesbonfadini.com.br/,wordpress,medium,stack=WordPress,static
+,Glener Brasil Cassiano,https://leiloesbrasilcassiano.com.br/,proprio_html,low,stack=jquery,static
+,Magnun Luiz Serpa,https://www.serpaleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,CONCEIÇÃO MARIA FIXER,https://www.mariafixerleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,José Luiz Pereira Vizeu,https://www.flexleiloes.com.br/,softgt,high,meta_author=SoftGT,static
+,RANGEL MACHADO,https://www.rangelleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Ives Harrison Nasar dos Santos,https://www.nasarleiloes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,GIORDANO BRUNO COAN AMADOR,https://www.giordanoleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,PEDRO DO PRADO UTZIG,https://www.utzigleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Gilson Aparecido Mariano,https://www.marianoleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,DENYS PYERRE DE OLIVEIRA,https://www.leje.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Ricardo Bampi,https://www.bampileiloes.com.br/,leiloesweb,high,link:leiloesweb.com.br,static
+,Humberto Amaro Batista Filho,https://www.lilianportugal.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Jorge José João Filho,https://www.tradicaoleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Diórgenes Valério Jorge,https://www.djleilao.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Francisco das Chagas Pereira Júnior,https://www.pereiraleiloesce.com.br/,soleon,high,meta_author=SOLEON,static
+,PAULO RENATO HUMOR,https://www.prhleiloes.com.br/,leiloesbr,high,link:leiloesbr.com.br,static
+,Rosa Lúcia Lopes Carstens,https://www.leiloeiro.online/,soleon,high,meta_author=SOLEON,static
+,Francisco David Batista de Souza,https://franciscodavidleiloeiro.com.br/,bomvalor,high,bomvalor.com.br,static
+,Horany Wermelinger Costa do Nascimento,https://www.wermelingerleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,João Lopes Cavalcante,https://www.lopesleiloes.net.br/,soleon,high,meta_author=SOLEON,static
+,Flávio Duarte Ceruli,https://www.leiloesceruli.com.br/,soleon,high,meta_author=SOLEON,static
+,Flávia Figueira Messias,https://www.messiasleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,ODILSON FUMAGALLI AVILA,https://www.fumagallileiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Fernando Chui,https://www.chuileiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Fernando Montenegro Castelo,https://montenegroleiloes.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,Tatiane Dos Santos Duarte,https://www.dloficiais.com.br/,wix,high,wix/parastorage,static
+,Jean Fernando Ribeiro Pavesi,https://www.brasilsulleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Fábio Manoel Guimarães,https://www.fabioleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Neila Rosane Ribeiro Dos Santos,https://www.nsleiloes.leilao.br/,leilao_br,high,host=www.nsleiloes.leilao.br,static
+,Fábio Guimarães de Carvalho,http://www.fabioguimaraesleiloes.com.br/portal/category/leiloes/,wordpress,medium,stack=WordPress,static
+,Francisco Portela Aguiar,https://www.portelaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Emidio José Correia de Medeiros,http://ww17.emidiomedeirosleiloes.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,MOYSES PEDROSO DE MORAES,https://www.moraesleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Carla Karine Santos Agostinho,https://www.purcenaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Valério César de Azevedo Déda,https://www.lancese.com.br/,soleon,high,meta_author=SOLEON,static
+,NAIO DE FREITAS RAUPP,https://www.rauppleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Davison Mauro Moreira,https://www.davisonmoreira.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Quênia De Luca Martins,https://www.leiloes-sc.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Moreno César Oliveira Farias,https://www.brfleiloes.com.br/,bomvalor,high,bomvalor.com.br,static
+,Carlos Gustavo Santos Fiel,https://www.lancese.com.br/,soleon,high,meta_author=SOLEON,static
+,Giovanni Silva Wersdoefer,https://www.hastapublica.lel.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Bruno Lopes Pereira dos Reis,https://www.iarremate.com/bruno-reis-arte/061,proprio_html,low,stack=jquery,static
+,MAURO PEREIRA DE OLIVEIRA,https://www.mpleilao.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,MAURÍCIO RODRIGO BACK,https://www.backleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Ângela Assis Oliveira Bechara,https://www.angelabecharaleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Carlos Vinicius de Carvalho Mascarenhas,https://www.rjleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Moreno Augusto Magalhães da Anunciação,https://www.bmleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Paulo Castelan Minatto,https://www.casadoleilao.com/externo/,casa_do_leilao,high,spider-específico:casa_do_leilao,static
+,Enéas Carrilho De Vasconcelos Neto,https://vasconcelosleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,Adriana Pires Amancio,https://www.apabrfleiloes.com.br/proximos_leiloes/1/1/,bomvalor,high,bomvalor.com.br,static
+,Jose Ivan de Souza Rabelo,https://www.realizaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Felipe Gonzaga Daux,https://www.daux.com.br/,proprio_html,low,stack=jquery,static
+,André Fonseca Dias,https://www.maraurzedoleilao.com.br/,soleon,high,meta_author=SOLEON,static
+,CARLO FERRARI,https://www.carloferrarileiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,MÁRIO LESSA FREITAS FILHO,https://www.lessaleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,MARCIANO BARBIERI,https://www.leiloeirobarbieri.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Alexsander Pretti Domingos,https://www.universodosleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Leonardo Coelho Avelar,https://arrematabem.com.br/,leilotech,high,leilotech.com.br,static
+,Dora Plat,https://www.portalzuk.com.br/,portalzuk,high,spider-específico:portalzuk,static
+,ARNOLD STRASS,https://www.savoyleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Paulo Mario Lopes Machado,https://www.leiloeiro.online/,soleon,high,meta_author=SOLEON,static
+,Wendel Machado Garcia,https://www.wendelgarcia.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Alexandra Benedita de Sousa Casado,https://www.ecoleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,ANDRE MARIO ARAUJO,https://andrearaujoleiloes.com.br/,araujo_leiloes,high,spider-específico:araujo_leiloes,static
+,Álvaro Sérgio Fuzo,https://alvaroleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,MARCELO TREVISAN,https://www.trevisanleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,LUIZ DE CHIRICO JUNIOR,https://www.leiloesdonorte.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,João Paulo Ferreira,https://montenegroleiloes.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,MARCELO HENRIQUE PERRARO,https://www.leiloeirojudicial.lel.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,MAURICIO SAMBUGARI APPOLINARIO,https://www.selectleiloes.com.br/,leiloesweb,high,link:leiloesweb.com.br,static
+,Danyllo de Oliveira Maia,https://dmleiloesjudiciais.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,FELIPE GUIMARÃES CARRIJO,https://leilo.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,MARCELO SOUZA SCHONARDIE,https://www.marceloleiloeiro.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Maria Conceição Maria Fixer,https://www.mariafixerleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Jorge Francisco,http://ww17.jfleiloes.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,Milena Rosa Di Giacomo Adri,https://www.megaleiloes.com.br/ms,mega_leiloes,high,host=www.megaleiloes.com.br,static
+,Rubens Henrique De Castro,https://www.usadaomaquinas.com.br/,desconhecido,n/a,no rule matched,static
+,ALESSANDRA CAVALCANTI ANTUNES,https://www.kwara.com.br/,desconhecido,n/a,no rule matched,static
+,GUSTAVO CORREA PEREIRA DA SILVA,https://www.leiloesonlinems.com.br/,leiloes_online_ms,high,spider-específico:leiloes_online_ms,static
+,IAN GALVÃO FROTA,https://www.amazonasleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,André Luiz Wuitschik,https://www.andreluizleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,MARCELO VALLAND,https://www.valland.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,MARCELLO PEREIRA DE OLIVEIRA,https://www.mpleilao.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,LUIZ CARLOS DALE NOGARI DOS SANTOS,https://www.leilaosantos.com.br/,soleon,high,meta_author=SOLEON,static
+,Marcelo Carneiro Bernardelli,https://www.marcaleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,WESLEY SILVA RAMOS,https://www.wrleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Cirlei Freitas Balbino Da Silva,https://balbinoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,MANOEL LUIZ NEVES VELHO,https://www.leilaobutia.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,NATÁLIA NARITA NUNES DE FREITAS,https://www.natalialeiloes.com.br/,soleon,high,meta_author=SOLEON,static
+rodrigo-schmitz,Rodrigo Schmitz,https://www.hammer.lel.br/,soleon,high,meta_author=SOLEON,static
+,FERNANDO JOSE CERELLO GONCALVES PEREIRA,https://www.megaleiloes.com.br/,mega_leiloes,high,host=www.megaleiloes.com.br,static
+,João Luiz de França Neto,https://www.ccjleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,LUCAS FERREIRA,https://www.leiloeirodian.com.br/,desconhecido,n/a,no rule matched,static
+,LUCIANO SCHEID,https://scheidleiloes.com.br/,leilao_pro,high,link:leilao.pro,static
+,EDER JORDAN DE SOUZA,https://oreidosleiloes.com.br/,bomvalor,high,bomvalor.com.br,static
+,ANTONIO CARLOS PERES BERNARDINI,http://ww17.bernardinileiloes.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+marco-tulio-montenegro-cavalcanti-dias,Marco Túlio Montenegro Cavalcanti Dias,https://www.marcotulioleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,LUANA VIDAL INEU,https://www.ineuleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,UNO DUARTE ARAÚJO DOS SANTOS,https://www.leiloes61.com.br/externo/,plataforma_leiloar,high,meta_author=Plataforma Leiloar,static
+,DEONIZIA KIRATCH,https://www.deonizialeiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,ODARLI CANEZIN,https://www.odarlicanezinleiloes.com.br/,desconhecido,n/a,no rule matched,static
+tiago-tessler-blecher,Tiago Tessler Blecher,https://dearaujoleiloes.com.br/externo/,proprio_html,low,stack=jquery; bootstrap,static
+,JEAN CARLO ROSA,https://www.prosperarleiloes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,UNO HENRIQUE LOPES,https://www.brunoleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Sergio Fleury Batista,https://leilo.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+anderson-douglas-gali-falleiros,Anderson Douglas Gali Falleiros,https://www.falleirosleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,NICOLAS TADASHI MATSUNE,https://www.tadashileiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,IONEIDE MARIA FERNANDES SAMPAIO,https://www.almoedaleiloes.com.br/externo/,proprio_html,low,stack=jquery; bootstrap,static
+,LEILA NANCI KARASIAKI,https://www.lkleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Gutemberg da Silva Araújo,https://www.gutembergaraujoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,LEONICE FIXER,http://www.capitalvalorleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,LEOMAR KIRINUS,https://www.leomarkirinusleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,JOSÉ PAULO PEREIRA CARVALHO BONATTO,https://leiloeirobonatto.com/,wordpress,medium,stack=WordPress,static
+,LUCIENE MARQUES DE SOUSA BARRETO,https://www.marquesbarretoleiloes.com.br/externo/,marques_barreto,high,spider-específico:marques_barreto,static
+,ÁULIO FERREIRA NETO,https://braunaleiloes.blogspot.com/,proprio_html,low,stack=bootstrap,static
+,João Paulo Mineiro Bezerra,https://www.bezerraleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,JOSEANE DE AVILA SCOTTO,https://www.scottoleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,OZIAS TAVARES PEREIRA,https://www.parquedosleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,JOÍO VITOR MARTINS FERREIRA,https://www.jmfleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,VILTON PEREIRA DA SILVA,https://www.innovaleiloes.com.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,Ivana Montenegro Castelo Branco Rocha,https://www.patiorochaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,JOÍO LUIZ DE OLIVEIRA,https://www.joaoluizleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Thiago Barros Cardoso,https://www.tbaracajuleiloes.com.br/,leiloesbr,high,link:leiloesbr.com.br,static
+,JOSÉ FERNANDO DE QUINA,https://www.qleilao.lel.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Arnaldo Emílio Colombarolli,https://arnaldoleiloes.com.br/home/,proprio_html,low,stack=jquery,static
+,Kátia Cerqueira da Silva Casaes,https://www.kcleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,JEREMY WU SANTIAGO DA COSTA E SILVA,https://www.jeremyleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Alex Willian Hope,https://www.hoppeleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Ronald de Freitas Moreira,https://www.rofremleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,JOSÉ LUIS PARDO SANTAYANA CARDOSO,https://www.santayanaleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,VIRIATO DOMINGUES CRAVO,https://www.cravoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Cristiane de Almeida Rabelo Góis,https://www.realizaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,JOSÉ ALMIRO CHAGAS DE ALENCASTRO,https://www.alencastroleiloes.com.br/,wordpress,medium,stack=WordPress,static
+,SANDRA DE FATIMA SANTOS,https://www.sandrasantosleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Tábata Mineiro Bezerra,https://www.bezerraleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,JOSÉ CLÓVIS VAZ DE SOUZA,https://www.clovisleiloeiro.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,FLAVIA KLOCKNER RODRIGUES,http://www.fkleiloes.com.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,JORGE SIDIRLEI DE GODOY BRASIL,https://www.jorgebrasil.lel.br/index.htm,desconhecido,n/a,no rule matched,static
+,KAIO ALBUQUERQUE ROSA BOTELHO,https://www.duxleiloes.com.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,GALVÍO ADENYR LOPES JUNIOR,https://lancejusto.com.br/,leilotech,high,leilotech.com.br,static
+,Clauberto Fernandes Nascimento Júnior,https://www.hatoryleiloes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,Hidirlene Duszeiko,https://www.hdleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Rodrigo Collyer Santos de Oliveira,https://www.rodrigoleiloeiro.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Mauro Colodete,https://colodeteleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Péricles Luciano Santos de Jesus,https://www.centraldosleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,EDUARDO JESUS BORDIGNON,https://www.leilopar.com.br/,soleon,high,meta_author=SOLEON,static
+,Renata Murta Moreira,https://www.gpleiloes.com.br/#/,desconhecido,n/a,no rule matched,static
+,FERNANDA RIBEIRO,https://ferleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,JORGE ERLI RITTA,https://www.jritta.lel.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,JOHN LEVY ZAGO AMARAL,https://www.zagoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Orlando Lopes Fernandes,https://www.leilobras.lel.br/,wordpress,medium,stack=WordPress,static
+,Maurício Paes Inácio,https://www.hastaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,CONRADO AUGUSTO CARVALHO DE MAGALHÍES,http://www.magalhaesleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,JOÃO HONOR COIROLLO DE SOUZA,https://www.jgcargneluttileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Alexandre Buaiz Neto,https://www.buaizleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Pedro Miranda Jinkings,https://www.milhaoleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,CAROLINE FERREIRA BARBOZA,https://www.bzleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Luciana Londina da Silva,http://ww17.londinaleiloes.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,Antônio Romero Ferreira da Silva,https://www.ccjleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,JOÃO GUILHERME CARGNELUTTI,https://www.jgcargneluttileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,WERNO KLÖCKNER JÚNIOR,https://www.kleiloes.com.br/#,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+rudival-almeida-gomes-junior,Rudival Almeida Gomes Junior,https://www.rjleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ARTUR NOGARI DOS SANTOS,https://www.nogarileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,João Simões de Almeida Júnior,https://www.simoesleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,JOÃO ANTÔNIO CARGNELUTTI,https://www.cargneluttileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ALEXANDRE AUGUSTO DOS SANTOS SABBAG,https://www.sabbagleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Horany Costa do Nascimento,https://www.wermelingerleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,JEFFERSON HORTA BARBOSA RIBEIRO MENDES,https://www.mendesleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Arthur Ferreira Nunes,https://leiloes.arthurnunes.leilao.br/,leilao_br,high,host=leiloes.arthurnunes.leilao.br,static
+,Eustácio Medeiros Neves,https://eustacio.com.br/,wordpress,medium,stack=WordPress,static
+,EDUARDO HENRIQUE FIRMINO:,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Fábio Maciel Amarante,https://nortedeminasleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,SPENCER D’AVILA FOGAGNOLI,https://spencerleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,JEFÉRSON BENEDETTO,https://www.benedettoleiloes.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,RAIMUNDO MAGALHAES DE MORAES,https://www.rmmleiloes.com.br/,softgt,high,meta_author=SoftGT,static
+,Oscar de Menezes Palmeira,https://www.oscar.leilao.br/,leilao_br,high,host=www.oscar.leilao.br,static
+,SERGIO LUIZ CRUVINEL,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Érica Cristina Alves,https://www.alvesleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,SIDNEY BELARMINO FERREIRA JUNIOR,https://www.sfleiloes.com.br/,softgt,medium,footer:SoftGT,static
+,JAIME LUIZ NULMAN,https://www.bidgo.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,RAFAEL DANIELEWICZ,https://rdleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,PABLINE GOMES LIMA,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Tânia Maria de Abreu,https://leiloestaniaabreu.wixsite.com/leiloes/home,wix,high,wix/parastorage,static
+,PLINIO BARROSO DE CASTRO FILHO,https://www.pbcastro.com.br/,softgt,high,meta_author=SoftGT,static
+,Paulo Cézar Rocha Teixeira,https://www.leiloesjudiciaisbahia.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Dênis de Oliveira Fernandes,https://leiloeirodenis.com.br/,bomvalor,high,bomvalor.com.br,static
+,VICTOR RENNO POLLATO VIZEU-,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Loemí Gonçalves Santana,https://globoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,PEDRO LERNER KRONBERG,https://www.kronberg.lel.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Hilda Emília de Souza Costa Lima,https://www.hastaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,JACQUES JOCHIMS FERNANDES,https://www.grandesleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,ITALO AUGUSTO SANTOS,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Katiuscia Martins Araujo,https://araujoleiloes.com.br/,araujo_leiloes,high,spider-específico:araujo_leiloes,static
+,PAULO ROBERTO NAKAKOGUE,https://www.vardanaleiloes.com.br/vardana/,proprio_html,low,stack=jquery; bootstrap,static
+,Osman Sobral e Silva,https://www.leiloesfreire.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,IVAN LEOCI BARTMANN,https://www.bartmannleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,FERNANDO DA SILVA COSTA,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Alglécio Bueno da Silva,https://www.buenoleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,GUILHERME DA COSTA,https://www.ckleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,PAULO ROBERTO LEAL VARDANA,https://www.vardanaleiloes.com.br/vardana/,proprio_html,low,stack=jquery; bootstrap,static
+,Alex Willian Hoppe,https://www.hoppeleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,URIANGELA BORGES VIEIRA,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Franciele Aparecida da Silva,https://www.dasilvaleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,HENRIQUE ARNOLDO JUNIOR,https://www.arnoldoleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Júlio Ramos Luz,https://www.portaldoleiloeiro.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,AHARO ESPIRITO SANTO AQUINO,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Alan Carlos dos Santos,https://www.matogrossoleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,GILMAR THUME,https://www.gtleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,NEWTON JORGE GONÇALVES DE OLIVEIRA,https://newtonleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,DAVI BORGES DE AQUINO,https://www.alfaleiloes.com/,alfa_leiloes,high,spider-específico:alfa_leiloes,static
+,FABIO ROBERTO SCHAFFEL TORRES,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Raphael Perini de Souza,https://www.pantanalleiloesjudiciais.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,GILMAR SANTOS DOS SANTOS,https://www.santoseborinleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,MARIA CLARICE DE OLIVEIRA,https://mariaclariceleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,HUGHEVA CARVALHO SANTOS,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Valdeir Aparecido Pereira,https://www.valdeirpereiraleiloeiro.com.br/,soleon,high,meta_author=SOLEON,static
+,GIBRALTAR PEDRO CIPRIANO VIDAL,https://www.vidalleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Marcos Antonio Tulio,https://tulioleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,LUIZ RAFAEL LEMUCHI DE LIMA,http://ww17.leiloeslr.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,WELLINGTON LUIS DOS SANTOS JUNIOR,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,MARCOS ROBERTO TORRES,https://www.3torresleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Silvio Luiz Silva de Moura Leite,https://www.mlleiloes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,LUIZ ODAIR FAVARETO,https://www.favaretoleiloes.com.br/,proprio_html,low,stack=jquery,static
+,GERSON ANOR BORIN DA SILVA NETO,https://www.santoseborinleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,RAUL HENRIQUE GALASSI PADOVAN,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,ALEX WILLIAM HOPPE,https://www.hoppeleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,FRANCISCO HILLESHEIM,https://www.alemaoleiloeiro.com.br/,soleon,high,meta_author=SOLEON,static
+,LUIZ FERNANDO FAVARETO,https://www.favaretoleiloes.com.br/,proprio_html,low,stack=jquery,static
+,CLAUDIO SOUSA DOS SANTOS,https://www.allianceleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,GABRIEL SILVA DA ROSA,https://www.gabrielleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+rogerio-damasio-de-oliveira,ROGERIO DAMASIO DE OLIVEIRA,https://www.damasioleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,GRAZIELLA TASSI SANTOS,https://www.gfleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,VANESSA GOELZER DE ARAÚJO VARGAS E PINTO,https://www.vargasepintoleiloes.com.br/externo/,plataforma_leiloar,high,meta_author=Plataforma Leiloar,static
+,LUIZ BARBOSA DE LIMA JUNIOR,https://www.lbleiloes.com.br/,softgt,medium,footer:SoftGT,static
+,CARLOS CAMPANHÃ,https://www.projudleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,FLÁVIO BITTENCOURT GARCIA,http://www.flaviogarcia.lel.br/,proprio_html,low,stack=jquery; bootstrap,static
+,VALENTINA BORGES DE PAULA,https://www.gfleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,LUIZ CARLOS DALL’AGNOL,https://www.dallagnolleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,LUCAS EDUARDO DALCANALE,https://dalcanaleleiloes.com.br/,softgt,medium,footer:SoftGT,static
+,ALBERTO JOSE MARCHI MACEDO,https://www.albertomacedoleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,ADRIANO DE JESUS SILVA,https://www.gfleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,JOSE LUIZ MARCHIOTTO JUNIOR,http://ww17.zemarchiottoleiloes.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,LEVY DOS SANTOS MORAES FILHO,https://leiloessantosmoraes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,Marco Antônio Ferreira de Menezes,https://www.maraurzedoleilao.com.br/,soleon,high,meta_author=SOLEON,static
+,ADOLPHO AGOSTINHO MENDES QUARESMA,https://www.gfleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,JOÃO VITOR MARTINS FERREIRA,https://www.jmfleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,FERNANDA VON ZUCCALMAGLIO,https://www.zuccalmaglioleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Jorge Marco Aurélio Biavati,https://www.jorgemarcoleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,FELIPE ROTTA,https://www.feliperottaleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,FERNANDA TERRES DE PAULA,https://www.fernandaleiloes.lel.br/,leilao_pro,high,meta_author=Leilão Pro,static
+carla-sobreira-umino,CARLA SOBREIRA UMINO,https://www.lancenoleilao.com.br/,sishp,high,path=/sishp/,static
+,LEONARDO NUNES LOBO,https://leilo.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,JAQUELINE SPERANÇA,https://www.sperancaleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Rogério Menezes Nunes,https://www.rogeriomenezes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,JORGE FERLIN DALE NOGARI DOS SANTOS,https://www.nogarileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,RODRIGO PAES CAMAPUM BRINGEL,https://leilo.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,FABIO SAMIR MACHADO,https://www.machadoleiloesrs.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,JONEY MARCELO LOPES FERREIRA,https://www.jmleiloes.leilao.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,leilao_br,high,host=www.jmleiloes.leilao.br,static
+,ISABELLA KATARINA SCHACKER PERACCHI,https://peracchileiloes.com.br/,desconhecido,n/a,no rule matched,static
+,PAULO DE OLIVEIRA AZEVEDO,https://www.lkleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,FABIO GOMES PIETOSO,https://www.pietosoleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,HELTON ROGÉRIO VERRI VENTRILHO,https://www.verrileiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,EVA DELMINDA STANGHERLIN,https://www.evaleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,RAFAELA MELO FERREIRA MARZANO,https://www.palaciodosleiloes.com.br/site/,palacio_dos_leiloes,high,host=www.palaciodosleiloes.com.br,static
+,JOACIR MONZON POUEY,https://www.monzonleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,DANIELLE JOY KARASIAKI CARVALHO,https://www.lkleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ERNI CARLOS ORO,https://www.oroleiloes.lel.br/,soleon,high,meta_author=SOLEON,static
+,LUIZ EGIDIO CRUZ MEDEIROS,https://www.medeirosleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,CASSIA NEGRETE NUNES BALBINO,https://globoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,JULIANA CRISTINA CARREIRA GOLFETO,https://www.alfaleiloes.com/,alfa_leiloes,high,spider-específico:alfa_leiloes,static
+,GALVÃO ADENYR LOPES JUNIOR,https://lancejusto.com.br/,leilotech,high,leilotech.com.br,static
+,GABRIEL BARON JUNIOR,http://ww17.baronleiloes.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,JEFFERSON ADRIANO DA COSTA,https://www.jacleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,ERICK SOARES HAMMOUD TELES,https://www.teza.com.br/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,BRUNA HELENA VIEIRA,https://www.alfaleiloes.com/,alfa_leiloes,high,spider-específico:alfa_leiloes,static
+,BEATRIZ SILVA CARVALHO,https://www.grupocarvalholeiloes.com.br/,desconhecido,n/a,no rule matched,static
+,DENILSON KIEL,https://www.kielleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,EDUARDO VIVIAN,https://www.eduardovivian.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,IZABELLA MELO FERREIRA PRAES,https://www.palaciodosleiloes.com.br/site/,palacio_dos_leiloes,high,host=www.palaciodosleiloes.com.br,static
+,JAIR VICENTE MARTINS,https://vmleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,BRIAN GALVÍO FROTA,https://www.amazonasleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Borges Guedes Neto,https://www.mgrleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,GUILHERME DE ARAÚJO DOMINGOS,https://www.gdleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+cristiano-gomes-ferreira,CRISTIANO GOMES FERREIRA,https://www.palaciodosleiloes.com.br/site/,palacio_dos_leiloes,high,host=www.palaciodosleiloes.com.br,static
+,FELIPE GUIMARÍES CARRIJO,https://leilo.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,GUILHERME EDUARDO STUTZ TOPOROSKI,https://topoleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,DEDIANA FARIAS,https://www.fariasleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,RUBEM RODRIGUES GARCIA,https://www.amtleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+angelica-mieko-inoue-dantas,ANGELICA MIEKO INOUE DANTAS,https://www.lancetotal.com.br/,sishp,high,path=/sishp/,static
+,DÉBORA REGINA BARZ,https://www.deborabarzleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,FERNANDO DE OLIVEIRA KUSS,https://ksleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,DARCI MULLER,https://www.mullerleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ELTON LUIZ SIMON,https://www.simonleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,VICENTE DE PAULO A. COTA FILHO,https://www.vipleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,ROBERTA POSSANI ZAGO,https://www.rz.leilao.br/,leilao_br,high,host=www.rz.leilao.br,static
+,HELIANA MARIA OLIVEIRA MELO FERREIRA,https://www.palaciodosleiloes.com.br/site/,palacio_dos_leiloes,high,host=www.palaciodosleiloes.com.br,static
+,MICHELLI FELINI GAL LOPES,https://www.michellileiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,EDUARDO ABREU ALVES BARBOSA,https://www.bestleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,SÉRGIO LIPINSKI BRANDÍO JUNIOR,https://www.lipinskileiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,DANIEL LAZOWNIK DUARTE,https://www.dldleiloeiro.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,EDUARDO DOS REIS,https://www.casareisleiloes.com.br/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,JOSÉ LÁZARO RIBEIRO MENEZES,https://mercadoleiloes.com.br/,leilao_br,medium,tech_signals+html=leilao.br,static
+,CRISTIANO BRANCHIERI ESCOLA,https://www.cristianoescolaleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Diego Wolf De Oliveira,https://www.diegoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Ulisses Donizete Ramos,https://donizetteleiloes.leilao.br/,leilao_br,high,host=donizetteleiloes.leilao.br,static
+,ROBERTO DOS REIS JUNIOR,https://www.casareisleiloes.com.br/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,MATIAS SCHEID,https://scheidleiloes.com.br/,leilao_pro,high,link:leilao.pro,static
+,JOÍO HONOR COIROLLO DE SOUZA,https://www.jhcleiloeirooficial.lel.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,MARCELLO SILVA DE OLIVEIRA,https://www.mpleilao.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,CLEVER ELMES MILANI,https://www.milanileiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Regina Aude Leite De Araujo Silva,https://www.reginaaudeleiloes.com.br/,regina_aude,high,spider-específico:regina_aude,static
+,CLADEMIR DOS SANTOS FLORES,https://www.clademirleiloeiro.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+angela-eiko-inoque-dos-santos,Angela Eiko Inoque dos Santos,https://www.lancetotal.com.br/,sishp,high,path=/sishp/,static
+,JOÍO GUILHERME CARGNELUTTI,https://www.jgcargneluttileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,CLAUDIO CESAR KUSS,https://www.claudiokussleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,LUIZ FERNANDO MORAES DA CRUZ,https://www.santamarialeiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+mouzar-baston-filho,Mouzar Baston Filho,https://bastonleiloes.leilao.br/,leilao_br,high,host=bastonleiloes.leilao.br,static
+,EVANIO ALVES PEREIRA,https://www.evanioalvesleiloeiro.com.br/,leiloesbr,high,link:leiloesbr.com.br,static
+,CAROLINA TREIN SILVEIRA,https://www.leffaleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,JOÍO ANTÔNIO CARGNELUTTI,https://www.cargneluttileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,LUIS FILIPE GEYER FLORES,https://www.jritta.lel.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,APARECIDA MARIA FIXER,https://www.cidafixerleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,LISIANE ZEIFERT,https://www.bronzattoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,VALÉRIA PONTES BRAGA KAHN,https://mvleiloes.com.br/,wordpress,medium,stack=WordPress,static
+daniel-elias-garcia,Daniel Elias Garcia,https://www.danielgarcialeiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,CAMILA LAIS CARGNELUTTI,https://www.cargneluttileiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,CARMEN GOMES PIETOSO,https://www.pietosoleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,ANTONIO MAGNO JACOB DA ROCHA,https://rochaleiloes.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+marcelo-soares-de-oliveira,MARCELO SOARES DE OLIVEIRA,https://oleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,LEONARDO OLIVEIRA SALGUEIRO,http://www.salgueiroleiloes.com.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,ROGÉRIO MENEZES NUNES,https://www.rogeriomenezes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,ARGEMIRO LUIZ FINATTO,https://www.finattoleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Francisco Jonnathan Santos Freitas - (Cancelado a pedido),https://franciscofreitasleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+jorge-vitorio-espolador,JORGE VITORIO ESPOLADOR,https://www.jeleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,DÉBORA JANAÍNA MÜLLER CORTES,https://www.deboramullerleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Preposto: Yasmin Mikejevs Lorga,https://faleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ANDRÉ ANTONIO FAUTH,https://fauthleiloes.com.br/,wordpress,medium,stack=WordPress,static
+,LEONARDO LOPES TIRLONI,https://www.tirlonileiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,ANTÔNIO RICARDO SILVA DE LARA,https://www.leiloeslaraforster.com.br/,leiloesweb,high,link:leiloesweb.com.br,static
+,AFONSO MARANGONI,https://www.marangonileiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,CLEBER CARDOSO PEREIRA,https://www.clebercardosoleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,ALEX SANDRO VIEIRA FELIX,https://alleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,GILBERTO RUIZ GUILHEN,http://www.ggleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,BRÁULIO FERREIRA NETO,http://braunaleiloes.blogspot.com/,proprio_html,low,stack=bootstrap,static
+,JUCENARA DE MELLO VIEIRA BORDIGNON,https://www.juleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,JOSIANE NUNES SCHWEC PINOTTI,https://www.npleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,Sued Peter Bastos Dyna,https://www.suedpeterleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,ANTÔNIO PEDRO PACHECO LOPES,https://www.superleiloes.net/,leilao_pro,high,meta_author=Leilão Pro,static
+,ADRIANO MELNISKI,https://amleiloeiro.com.br/,leilotech,high,leilotech.com.br,static
+,EDUARDO SCHMITZ,https://www.clicleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,TATIANA PAULA ZANI DE SOUZA,https://www.liderleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,MARIA APARECIDA DE FREITAS FUZO,https://www.leiloescentrooeste.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,ANTÔNIO CARLOS FAUTH,https://fauthleiloes.com.br/,wordpress,medium,stack=WordPress,static
+,CAROLINE DE SOUSA RIBAS,https://www.liderleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Irani Flores,https://www.leilaobrasil.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,BRUNO DUARTE ARAÚJO DOS SANTOS,https://www.oaleiloes.com.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,ANTONIO ALEXANDRE RAOTA,https://www.raotaleiloes.com.br/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,RENNAN DE SOUZA MENEGON,https://www.melhorleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,TATIANA PAULA ZANI DE SOUSA,https://www.liderleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Murilo Paes Lopes Lourenço,https://www.leilaobrasil.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,JEAN MIGUEL CORRÊA,https://www.casaforteleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,MARIA APARECIDA DE FREITAR FUZO,https://www.leiloescentrooeste.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,RODRIGO APARECIDO RIGOLON DA SILVA,https://www.rigolonleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,JOSE LAZARO RIBEIRO MENEZES JUNIOR,https://www.santamarialeiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Rogério Lopes Ferreira,https://www.palaciodosleiloes.com.br/site/,palacio_dos_leiloes,high,host=www.palaciodosleiloes.com.br,static
+,DORA PLAT,https://www.portalzuk.com.br/,portalzuk,high,spider-específico:portalzuk,static
+,BRUNO HENRIQUE LOPES,https://www.brunoleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,GUSTAVO TURANI,https://www.turanileiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,DANIEL OLIVEIRA JUNIOR,https://doleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+andderson-lopes-de-paula,ANDERSON LOPES DE PAULA,https://www.e-leiloeiro.leilao.br/,leilao_br,high,host=www.e-leiloeiro.leilao.br,static
+,ANDRESSA SEDREZ TERRES TONIAL FERREIRA,https://www.tonialleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Victor Oliveira Dorta,https://www.victordortaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,FÁBIO MANOEL GUIMARÍES,https://www.fabioleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,DANIEL COSTA MÜLLER,https://www.mullerleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,EDUARDO SCHMITZ,https://www.clicleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+Leiloeira_marilaine,MARILAINE BORGES DE PAULA,https://www.confiancaleiloes.leilao.br/,leilao_br,high,host=www.confiancaleiloes.leilao.br,static
+,ANDRÉ BAZACAS VELHO,https://www.leilaobutia.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,LUCIANO GONÇALVES BORBA ASSUNÇÍO,https://www.leiloeirosdebrasilia.com.br/,soleon,high,meta_author=SOLEON,static
+,CLECI AMABILE LEVY ZAGO,https://www.zagoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ALEXSANDRO PEREIRA,https://www.alexsandroleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,DIOGO MATTOS DIAS MARTINS,https://www.inovaleilao.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,ORLANDO ARAÚJO DOS SANTOS,https://www.oaleiloes.com.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,ÁLVARO MARQUES TEIXEIRA,https://www.amtleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,LUIZ UBIRATÍ DE CARVALHO,https://www.luizleiloes.com.br/,softgt,high,link:softgt.com.br,static
+,CELSO LUIS KOCH LAZZARI,http://www.agenciadeleiloes.lel.br/,s4b_digital,high,s4bdigital.net,static
+,Lucas Kury Dias Martins,https://www.inovaleilao.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,ALEXANDRE RECH,https://www.rechleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ADRIANO CARLOS OLIVEIRA SILVA,https://www.adringleiloes.com.br/externo/,adring_leiloes,high,spider-específico:adring_leiloes,static
+,Renan Souza Silva,https://www.silvaleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+vicente-alves-pereira-neto,VICENTE ALVES PEREIRA NETO,https://www.agencialeilao.com.br/,soleon,high,meta_author=SOLEON,static
+,Anderson Luchtenberg,https://www.goldenbrazilleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,SILVIA HELENA BALBINO BARROS PALMA,https://leilo.com.br/,proprio_html,low,stack=vue; jquery; bootstrap,static
+,ANTONIO HISSAO SATO JUNIOR,https://satoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+joao-rodrigues-de-camargo-junior,João Rodrigues de Camargo Junior,https://www.camargoleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Antônio Carlos Celso Santos Frazão,https://www.sfrazao.com.br/,sishp,high,path=/sishp/,static
+,OZIAS PEREIRA TAVARES,https://www.parquedosleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,ANA MARIA DAL'AQUA PAZ,http://www.dalaqualeiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Luciano Resende Rodrigues,https://www.lancecertoleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,ALESSANDRO FAHRION PINTO,https://www.regionalleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,ENO LOUREIRO DE MENEZES,https://www.blm.leilao.br/,leilao_br,high,host=www.blm.leilao.br,static
+,FERNANDO PELLONI BARROS DA SILVEINA,https://www.casaamarelaleiloes.net.br/,leiloesbr,high,link:leiloesbr.com.br,static
+,Bruno Pimentel Rosa,https://lancevip.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,ALEXANDRE WEYH,https://www.awleiloes.com.br/,leiloesbr,high,link:leiloesbr.com.br,static
+,Cassiano Ricardo Dall Ago e Silva,https://www.cassianoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,SEBASTIÍO FELIX DA COSTA NETO,https://costanetoleiloeiro.com.br/,bomvalor,high,bomvalor.com.br,static
+,EUCÉLIA MADALENA DE SOUZA,https://www.upleiloes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,ADEMIR MIGUEL CORRÊA,http://ww17.correleiloes.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,Guilherme Caixeta Borges,https://www.milhaoleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Victor Alberto Severino Frazão,https://www.sfrazao.com.br/,sishp,high,path=/sishp/,static
+,ANA LÚCIA BORBA ASSUNÇÍO,https://www.leiloeirosdebrasilia.com.br/,soleon,high,meta_author=SOLEON,static
+,Icaro Alexandre Felfili Jardim,https://globoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,CARLOS AUGUSTO RIBEIRO LIMA,https://www.infinityleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+patricia-pimentel-grocoski-costa,Patricia Pimentel Grocoski Costa,https://www.pimentelleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,LUIZ EDUARDO GOMES:,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,UNO PIMENTEL ROSA,https://lancevip.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,PAULO ALEXANDRE HEISLER,https://www.bidgo.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,LUCIANO GONÇALVES BORBA ASSUNÇÃO,https://www.leiloeirosdebrasilia.com.br/,soleon,high,meta_author=SOLEON,static
+rafael-brambila-peixoto,RAFAEL BRAMBILA PEIXOTO,https://www.peixotoleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Lucas Andreatta de Oliveir,https://leiloariasmart.com.br/,desconhecido,n/a,no rule matched,static
+,JORGE VINÍCIUS DE MOURA CORRÊA:,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Luiz Balbino da Silva,https://balbinoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,Guilherme E. Stutz Toporoski,https://topoleiloes.com.br/,leilotech,high,leilotech.com.br,static
+,MOACIRA TEGONI GOEDERT,https://www.moacira.lel.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,MAURÍCIO GEHM,https://www.mgleiloes-rs.com.br/,soleon,high,meta_author=SOLEON,static
+,FERNANDO RODRIGUES BENVENHO:,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Mariana Gouvêa Lessa&nbsp;,https://www.vipleiloes.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,Guilherme A. Scarpari De Lucca,https://www.deluccaleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Ely Da Luz Ramos,https://www.elydaluzramos.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,WILLIAM MENDES KIRINUS,https://www.leomarkirinusleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,JUSSIARA SANTOS ERMANO SUKIENNIK,https://www.jussiaraleiloes.com/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+fabio-marlon-machado,Fábio Marlon Machado,https://www.machadoleiloeiro.com.br/,soleon,high,meta_author=SOLEON,static
+,FABIO PRANDO FAGUNDES GOES,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Ricardo Ferreira Gomes,https://www.ricardogomesleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,VALDOMIRO BIS,https://www.bisleiloeiro.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,César Luis Moresco,https://www.morescoleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Vinícius Vidal Lacerda,https://www.vlleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,GIAN ROBERTO CAGNI BRAGGIO,https://www.parquedosleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,IRANI FLORES,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+luiz-tenorio-de-paula,Luiz Tenório De Paula,https://www.depaulaonline.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Marciano Mauro Pagliarini,https://www.eckertleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,ADRIANO DE SOUZA CARDOSO,https://www.capitalleiloes.com.br/,proprio_html,low,stack=jquery,static
+,Tarcílio Leite,https://www.casadeleiloes.com.br/,casa_de_leiloes,high,spider-específico:casa_de_leiloes,static
+,RODRIGO APARECIDO RIGOLON DA SILVA,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,BRUNO FERNANDO MEIRELES CARDOSO,https://www.meirelesleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,BRUNO HENRIQUE DOS SANTOS,https://www.nsleiloes.leilao.br/,leilao_br,high,host=www.nsleiloes.leilao.br,static
+,Jamile Santana Cerqueira,https://www.ccjleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,José Gonçalves Abrantes Filho,https://abrantesleiloes.com/,leilotech,high,leilotech.com.br,static
+,Renato Guedes Rocha,https://www.rioleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Teófilo Santos de Jesus,https://www.centraldosleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Gabriel Fardin Pereira,https://www.vixleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,EDUARDO SCHMITZ,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,PAULO HENRIQUE DE ALMEIDA TOLENTINO,https://paulotolentino.com.br/,bomvalor,high,bomvalor.com.br,static
+,ANDRE GUSTAVO BOUÇAS IGNÁCIO,https://www.brasilialeiloes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,William Wellington Pimenta,https://www.williamleiloeiro.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,ARTHUR FERREIRA DE OLIVEIRA,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,DENISE ARAÚJO DOS SANTOS,https://dearaujoleiloes.com.br/externo/,proprio_html,low,stack=jquery; bootstrap,static
+,OTAVIO LAURO SODRE SANTORO,https://www.sodresantoro.com.br/,sodre_santoro,high,sodresantoro,static
+,Wellington de Matos Silva,https://www.pwleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,BRENO LOUREIRO DE MENEZES,https://www.blm.leilao.br/,leilao_br,high,host=www.blm.leilao.br,static
+,FERNANDO CÉZAR TOBIAS DA SILVA,https://www.dfleiloes.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+kleiber-leite-pereira-junior,Kleiber Leite Pereira Junior,https://www.kleiberjrleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,ANDERSON LOPES DE PAULA,https://www.e-leiloeiro.leilao.br/,leilao_br,high,host=www.e-leiloeiro.leilao.br,static
+,Giovana Norma Bólico ( MATRÍCULA SUPLEMENTAR),https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,SAMI RAICHER,https://www.raicherleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Viviane Garzon Corrêa,https://www.bolsadeleiloes.com.br/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,ALEX FONSECA LOTTERMANN,https://www.lottermannleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+luzinete-mussa-de-moraes-pereira,Luzinete Mussa de Moraes Pereira,https://www.lumussaleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,MARCO TULIO MONTENEGRO CAVALCANTI DIAS,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,Paulo Cezar Rocha Texeira,https://www.leiloesjudiciaisbahia.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Vítor Calab Nunes,https://www.vitorcalableiloeiro.com.br/,desconhecido,n/a,no rule matched,static
+,EDMAR OLIVEIRA ANDRADE NETO,https://www.agleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,MARCO GEOVANNE TOBIAS DA SILVA,https://www.bsbleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,FERNANDO GONÇALVES COSTA,https://multleiloes.com/,bomvalor,high,bomvalor.com.br,static
+,WESLEY OLIVEIRA ASCANIO,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+alvaro-antonio-mussa-pereira,Álvaro Antonio Mussa Pereira,https://www.alvaroantonioleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,FERNANDO GUSTAVO ALENCAR DE ALBUQUERQUE LINS,http://www.albuquerquelins.com.br/,proprio_html,low,stack=jquery; bootstrap,static
+,DAGMAR CONCEICAO DE SOUZA FLORES,https://www.leilaobrasil.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,THAIS SILVA MOREIRA DE SOUSA,https://www.tmleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,ANTONIO CARLOS CELSO SANTOS FRAZAO,https://www.sfrazao.com.br/,sishp,high,path=/sishp/,static
+kleiber-leite-pereira,Kleiber Leite Pereira,https://www.kleiberleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,ROBERTA CRISTINA REZENDE DE ALBUQUERQUE,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,SEBASTIÃO FELIX DA COSTA NETO,https://costanetoleiloeiro.com.br/,bomvalor,high,bomvalor.com.br,static
+,GUSTAVO BOLZAN,https://www.gbleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,ANA LÚCIA BORBA ASSUNÇÃO,https://www.leiloeirosdebrasilia.com.br/,soleon,high,meta_author=SOLEON,static
+vera-maria-aguiar-de-sousa,Vera Maria Aguiar de Sousa,https://www.leiloesaguiar.com.br/,soleon,high,meta_author=SOLEON,static
+,Thaís Costa Bastos Teixeira,https://www.leiloesjudiciaismg.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,MAYSALA SOARES DE SOUZA PEIXOTO,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,ENNO DE FIGUEIREDO PORTO,https://www.portoleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Rodrigo de Oliveira Lopes,https://www.leiloesuberlandia.com.br/externo/,plataforma_leiloar,high,plataformaleiloar.com.br,static
+,Bruno Barreto Sanches,https://www.barretoleiloes.com.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+,VILMAR BERTONCELLO,https://www.agenciadeleiloes.lel.br/?searchType=opened&preOrderBy=orderByFirstOpenedOffers&pageNumber=1&pageSize=30&orderBy=endDate:asc,s4b_digital,high,s4bdigital.net,static
+adilson-bento-de-araujo,Adilson Bento de Araújo,https://www.abaleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,dynamic
+,ULISSES DONIZETE RAMOS,https://www.casamartillo.com.br/,soleon,high,meta_author=SOLEON,static
+,AYRTON DE SOUZA PORTO FILHO,https://www.emleilao.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Rafael Araújo Gomes,https://www.rafaelleiloeiro.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Vinicius Santos Ciriaco,https://www.vincileiloes.com.br/externo/,proprio_html,low,stack=jquery; bootstrap,static
+,VOLNEI ZACCARIAS,https://www.zaccariasleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+vera-lucia-aguiar-de-sousa,Vera Lúcia Aguiar de Sousa,https://www.leiloesaguiar.com.br/,soleon,high,meta_author=SOLEON,static
+,SÉRGIO DE PAULA PEREIRA,https://www.esleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,VERÔNICA TELLES ARAÚJO SILVA SOARES,https://www.veronicaleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Priscilla Lopes Ribeiro Ferreira,https://www.ferreiraleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,João Gabriel da Silva e Oliveira,https://www.marcaleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,FLAVIO DUARTE CERULI,https://www.gfleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+josecelli-kildare-fraga-gomes,Josecelli Kildare Fraga Gomes,https://www.kildareleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,DORA PLAT,https://www.gfleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,DJANIR DA RÓS,https://www.darosleiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Carlos Henrique Barbosa,https://www.chbarbosaleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Paulo César Agostinho,https://www.agostinholeiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,TIAGO BRUNELLI DE MORAES,https://www.moraesleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,DIEGO WOLF DE OLIVEIRA,https://www.gfleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Vanderlia de Assis Carvalho Freitas,https://globoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,VALDINEI GENEROSO SILVEIRA,https://www.vsleiloes.com/,leilao_pro,high,meta_author=Leilão Pro,static
+,Patricia Graciele de Andrade Sousa,https://www.pwleiloes.com.br/proximos_leiloes/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Joabe Balbino da Silva,https://balbinoleiloes.com.br/,desconhecido,n/a,no rule matched,static
+,TELMO ARMANDO MORALES NETO,https://www.lucianleiloes.com.br/,lucian_leiloes,high,spider-específico:lucian_leiloes,static
+,EDUARDO CONSENTINO,https://www.biasileiloes.com.br/,biasi_leiloes,high,spider-específico:biasi_leiloes,static
+,Thiago Luis Stefanelli Campos,https://www.stefanellileiloes.com.br/,suporte_leiloes,medium,link:suporteleiloes.com.br,static
+,Giovano Ávila Alves,https://www.soleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,ERICK SOARES TELES,https://www.teza.com.br/1/1/,degrau_publicidade,medium,link:degraupublicidade.com.br,static
+,Mozar Miranda Almeida,http://ww17.mozarleiloeseimoveis.com.br/,parked_ww17,medium,host=ww17.* + html<5KB,static
+,Rafael Ceretta Alegranzzi,https://www.renovarleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Caixa Econômica Federal,https://venda-imoveis.caixa.gov.br/sistema/busca-imovel.asp,caixa,high,official_portal,static
+,Banco do Brasil,https://www.seuimovelbb.com.br/,banco_brasil,high,official_portal,static
+,Bradesco,https://vitrinebradesco.com.br/,bradesco,high,official_portal,static
+,Santander,https://www.santanderimoveis.com.br/,santander,high,official_portal,static
+,Stella Araújo Zanatta,https://www.leiloesrn.com.br/,soleon,high,meta_author=SOLEON,static
+,LUCIANO GONÇALVES BORBA ASSUNÇÃO,https://leiloeirosdebrasilia.com.br/,soleon,high,meta_author=SOLEON,static
+,PAULO DE OLIVEIRA AZEVEDO,https://lkleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Maurício Paes Inácio,https://hastaleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,JULIO ABDO COSTA CALIL,https://calilleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,WILKERSON MACHADO DOS SANTOS,https://machadoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,JOÃO EMILIO DE OLIVEIRA FILHO,https://joaoemilio.com.br/,soleon,high,meta_author=SOLEON,static
+,Cristiane de Almeida Rabelo Gói,https://argleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,José Sergio Della Giustina,https://macedoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,CARLOS PINNA DA CONCEIÇÃO,https://cpkleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,MANOEL LUIZ NEVES VELHO,https://leilaobutia.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Marinilce Viana Quadrado,https://quadradoleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,Danyele Lima Cavalcanti Lira,https://danyliraleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,GEORGE HENRIQUE RIBEIRO BENOZZ,https://benozzati.com.br/,soleon,high,meta_author=SOLEON,static
+,Maria Isabel Brito Mendes Palmeira,https://isabelleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,SILVIO CESAR DE JESUS SANTOS,https://editalleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,MIYUKI NAKAGUCHI,https://arenaleilao.com.br/,soleon,high,meta_author=SOLEON,static
+,MAURICIO GOMES LEITEIRO,https://glleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,LUIS ALEXANDRE ANDRADE,https://andradeleiloes.com.br/,soleon,high,meta_author=SOLEON,static
+,LIGIA SEIXAS,https://bidmax.com.br/,soleon,high,meta_author=SOLEON,static
+,EDERSON HARRIS,https://simleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Susan Andrielli Da Silva,https://superaleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,GILSON KENITI INUMARU,https://gilsonleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Aécio Reis Pedrosa,https://alessandroteixeiraleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,THAÍS COSTA BASTOS TEIXEIRA,https://thaisteixeiraleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Everton Dias Medeiros,https://diasleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
+,Cecilia Delzeir Sobrinho,https://ceciliadelzeirleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,RAFAEL RAMOS COUTINHO,https://rafaelcoutinho.lel.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,SOLANGE FIORAVANTE COSTA,https://costasalmanleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,LUAN DE LIMA BIANCHI,https://bianchileiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,EDUARDO FRONZA DE FARIAS,https://elevaleiloes.com.br/,leilao_pro,high,meta_author=Leilão Pro,static
+,Victor Hugo Pires Melo,https://leiloespb.com.br/,suporte_leiloes,high,link:suporteleiloes.com.br,static
+,Edeylson Peixoto Fidelis,https://www.fidelisleiloes.com.br/,leiloes_judiciais_br,high,leiloesjudiciaisbrasil/cesvibrasil,static
