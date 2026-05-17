@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link href="/modulos/icones/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<title>Schulmann Leilões</title>
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='stylesheet' id='ssbaFont-css'  href='//fonts.googleapis.com/css?family=Indie+Flower&#038;ver=4.9.26' type='text/css' media='all' />
+<link rel='stylesheet' id='clean-journal-fonts-css'  href='//fonts.googleapis.com/css?family=Open+Sans%3A300%2C400%2C700%2C300italic%2C400italic%2C700italic%7CDroid+Sans%3A400%2C700&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+<link rel='stylesheet' id='clean-journal-style-css'  href='/css/style.css?ver=4.9.26' type='text/css' media='all' />
+<link rel='stylesheet' id='genericons-css'  href='/css/genericons.css?ver=3.4.1' type='text/css' media='all' />
+<link rel='stylesheet' id='sidr-css'  href='/css/jquery.sidr.light.min.css?ver=2.1.0' type='text/css' media='all' />
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sidr@2.2.1/dist/jquery.sidr.min.js"></script>
+<script type='text/javascript' src='https://schulmannleiloes.com.br/js/clean-journal/clean-journal-custom-scripts.min.js'></script>
+<script type='text/javascript' src='/js/wp-funcoes.js'></script>
+
+<!-- CSS do jQuery UI -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+
+<!-- JS do jQuery UI -->
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+
+<link rel="shortcut icon" href="./imagens/favicon.png">
+</head>
+
+<body class="home blog custom-background wp-custom-logo two-columns content-left excerpt-image-left mobile-menu-one">
+<div id="mascara"></div>
+<div id="box_info">
+<p style="margin-top:10px" align="center">Informe seu e-mail e senha:</p>
+<div id="box_login">
+    <div class="form-group">
+        <div class="col-sm-1"></div>
+        <label for="" class="col-sm-2 control-label">E-mail:</label>
+        <div class="col-sm-7"><input type="text" name="login_email" id="login_email" class="form-control"></div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-1"></div>
+        <label for="" class="col-sm-2 control-label">Senha:</label>
+        <div class="col-sm-7"><input type="password" name="login_senha" id="login_senha" class="form-control"></div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-1"></div>
+        <label for="" class="col-sm-2 control-label"></label>
+        <div class="col-sm-7"><a href="javascript:void(esqueci_senha())">esqueci senha</a></div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4 col-xs-6">
+            <button class="botao_leilao fechar_pop_login" onClick="void(fechaMobile())">Fechar</button>
+        </div>
+        <div class="col-sm-4 col-xs-6">
+            <button onClick="void(login_topo())" class="botao_leilao">Entrar</button>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+	<nav class="nav-primary search-enabled" role="navigation">
+        <div class="wrapper" style="width:1200px;">
+            <h1 class="assistive-text">Menu principal</h1>
+            <div class="screen-reader-text skip-link"><a href="#content" title="Pular para o conteúdo">Pular para o conteúdo</a></div>
+            <ul id="menu-principal" class="menu clean-journal-nav-menu">
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-judiciais">Leilões Judiciais</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-extrajudiciais">Leilões Extrajudiciais</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-online">Leilões Online</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=alienacao-fiduciaria">Alienação Fiduciária</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-de-veiculos">Veículos</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=diversos-leiloes">Diversos Leilões</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=venda-direta">Venda Direta</a></li>
+    <li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="javascript:void(chama_exibe_login())" rel="modal">Login</a></li>
+    <li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="cadastro.php">Cadastro</a></li>
+
+</ul>                <div id="search-toggle" class="genericon">
+                    <a class="screen-reader-text" href="#search-container">Buscar</a>
+                </div>
+
+                <div id="search-container" class="displaynone">
+                    
+<form role="search" method="post" class="search-form" action="thumbs.php">
+	<label>
+		<span class="screen-reader-text">Pesquisar por:</span>
+		<input type="search" class="search-field" placeholder="Pesquisar..." value="" name="termo" title="Pesquisar por:">
+	</label>
+	<input type="submit" class="search-submit" value="Pesquisar">
+</form>                </div>
+    	</div><!-- .wrapper -->
+    </nav><!-- .nav-primary -->
+    <!-- Disable Header Image -->        <div id="page" class="hfeed site">
+                        <div id="header-top" class="header-top-bar">
+                    <div class="wrapper">
+                        <div class="header-top-left full-width">
+                            <section id="widget-default-text" class="widget widget_text header_top_widget_area">
+                                <div class="widget-wrap">
+                                    <div class="textwidget">
+                                        <p><i class="fa fa-phone" style="color:#FFFFFF"></i> 21 2532-1705 / 2532-1739 &nbsp;&nbsp;<b>|</b>&nbsp;&nbsp; <i class="fa fa-envelope" style="color:#FFFFFF"></i> schulmann@schulmann.com.br &nbsp;&nbsp;<b>|</b>&nbsp;&nbsp; <i class="fa fa-user" style="color:#FFFFFF"></i> <a href="cadastro.php">Cadastre-se</a> &nbsp;&nbsp;<b>|</b>&nbsp;&nbsp; 
+    <i class="fa fa-gavel" style="color:#FFFFFF"></i> <a rel="modal" href="javascript:void(chama_exibe_login())">Login</a>
+</p>
+                                    </div>
+                                </div><!-- .widget-wrap -->
+                            </section><!-- #widget-default-text -->
+                        </div><!-- .header-top-left -->
+                    </div><!-- .wrapper -->
+                </div><!-- #header-top -->
+                    <header id="masthead" role="banner">
+            <div class="wrapper">
+            
+    <div id="mobile-header-left-menu" class="mobile-menu-anchor primary-menu">
+        <a href="#mobile-header-left-nav" id="header-left-menu" class="genericon genericon-menu">
+            <span class="mobile-menu-text">Menu</span>
+        </a>
+    </div><!-- #mobile-header-menu -->
+    <div id="site-branding" class="logo-left">
+				<div id="site-logo"><a href="/" class="custom-logo-link" rel="home" itemprop="url"><img width="490" height="60" src="/imagens/cropped-logo2.png" class="custom-logo" alt="" itemprop="logo" srcset="/imagens/cropped-logo2.png 490w, /imagens/cropped-logo2-300x37.png 300w" sizes="(max-width: 490px) 100vw, 490px" /></a></div><!-- #site-logo -->
+		<div id="site-header">
+			<h1 class="site-title"><a href="/"></a></h1>
+			<h2 class="site-description"></h2>
+		</div><!-- #site-header --></div><!-- #site-branding-->    <aside class="sidebar sidebar-header-right widget-area">
+        <section class="widget widget_search" id="header-right-search">
+            <div class="widget-wrap">
+                
+<form role="search" method="post" class="search-form" action="/leilao/busca-de-leiloes/">
+	<label>
+		<span class="screen-reader-text">Pesquisar por:</span>
+		<input type="search" class="search-field" placeholder="Pesquisar..." value="" name="termo" title="Pesquisar por:">
+	</label>
+	<input type="submit" class="search-submit" value="Pesquisar">
+</form>            </div>
+        </section>
+    </aside><!-- .sidebar .header-sidebar .widget-area -->
+            </div><!-- .wrapper -->
+        </header><!-- #masthead -->
+<style>
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover
+{
+    border: 1px solid #cccccc;
+    background: #939393;
+    font-weight: normal;
+    color: #000;
+}
+
+.btn_padrao {
+    background-color: #ff9933; /* laranja sólida */
+    padding-right: 7px;
+    padding-left: 7px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1.2em;
+    color: #FFF;
+    background-image: none;
+    box-shadow: none !important;
+    border: none;
+    font-weight: normal!important;
+    text-shadow: none;
+}
+
+#box_oferta {
+    position: absolute;
+    top: 200px;
+    display: none;
+    width: 800px;
+    height: 400px;
+    left: 50%;
+    margin-left: -400px;
+    z-index: 9900;
+    border-radius: 5px;
+    border: 5px solid #2c2c54;
+    background-color:#FF0000;
+    color:#FFFFFF!important;
+    font-size:15px;
+}
+</style>
+
+
+<!-- Add mousewheel plugin (this is optional) -->
+<script type="text/javascript" src="/js/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+<!-- Add fancyBox main JS and CSS files -->
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.5"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+<!-- Add Button helper (this is optional) -->
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" />
+<script type="text/javascript" src="/js/fancybox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+
+<!-- Add Thumbnail helper (this is optional) -->
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" />
+<script type="text/javascript" src="/js/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+
+<!-- Add Media helper (this is optional) -->
+<script type="text/javascript" src="/js/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
+
+<link href="/js/prettyphoto/css/prettyPhoto.css" rel="stylesheet" type="text/css" />
+<script src="/js/prettyphoto/js/jquery.prettyPhoto.js" type="text/javascript"></script>
+
+<script>
+jQuery(function () {
+                
+    jQuery("a[rel^='prettyPhoto']").prettyPhoto({deeplinking: false, social_tools:""});
+});
+
+
+jQuery(document).ready(function() {
+
+    jQuery('.fancybox-buttons').fancybox({
+        openEffect  : 'elastic',
+        openSpeed  : 50,
+
+        closeEffect : 'elastic',
+        closeSpeed  : 50,
+
+        prevEffect : 'fade',
+        nextEffect : 'fade',
+
+        closeBtn  : true,
+
+        helpers : {
+            title : {
+                type : 'inside',
+                position: 'top'
+            },
+            buttons : {}
+        },
+
+        afterLoad : function() {
+            this.title = 'Image ' + (this.index + 1) + ' of ' + this.group.length + (this.title ? ' - ' + this.title : '');
+        }
+    });
+
+    });
+
+function chama_exibe_login() {
+    jQuery('html,body').stop().animate({scrollTop: jQuery('#masthead').offset().top}, 2000);    
+    exibe_login();
+}
+
+function inscricao_leilao_online(cd_leilao) {
+
+    var xmlHttp;
+
+    try {  // Firefox, Opera 8.0+, Safari
+        xmlHttp = new XMLHttpRequest();
+    }
+    catch (e) {  // Internet Explorer
+        try {
+            xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        catch (e) {
+            try {
+                xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            catch (e) {
+                alert("Your browser does not support AJAX!");
+                return false;
+            }
+        }
+    }
+
+    xmlHttp.onreadystatechange=function()
+    {
+        if(xmlHttp.readyState==4) {
+            alert(xmlHttp.responseText);
+            location.reload();
+        }
+    }
+
+    xmlHttp.open("GET","/ajax-inscricao-leilao-online.php?id=" + cd_leilao,true);
+    xmlHttp.send(null);
+}
+
+function trataProcessando() {
+    jQuery('#btn_lance').prop('disabled', false);
+    jQuery('#btn_lance').html('Dar lance');
+}
+
+function executa_lance() {    
+    jQuery('#btn_lance').prop('disabled', true);
+    jQuery('#btn_lance').html('Processando');
+
+    var lance = jQuery('#lance').val();
+    
+    if (!lance) {
+        trataProcessando();
+        alert('Por favor, informe seu lance.');
+        return false;
+    }
+
+    let url = '';
+
+        jQuery.get("/wp-ajax-lance-leilao-online.php?cd_leilao=5804&valor_lance=" + lance + url,function(data,status){
+
+        if (data.substring(0,4) == 'Erro') {
+            trataProcessando();
+            alert(data);
+            return;wp-ajax-lance-leilao-online.php
+        } else {
+            trataProcessando();
+            jQuery('#box_lances').html(data);
+            location.reload()
+            // const url = new URL(window.location.href);
+            // url.searchParams.set('nocache', Date.now());
+            // window.location.href = url.toString();
+        }
+        
+        jQuery('#lance').val('');
+    });    
+}
+
+function atualiza_tabela_leilao_online(cd_leilao) {
+    
+    // jQuery.get("/leilao/wp-ajax-atualiza-leilao-online.php?cd_leilao=5804",function(data,status){
+        
+    //     if (data.substring(0,4) == 'Erro') {
+    //         alert(data);
+    //         return;
+    //     } else {
+    //         jQuery('#box_lances').html(data);
+    //         setTimeout("atualiza_tabela_leilao_online(5804)",10000 );
+            setTimeout("location.reload()", 30000);
+    //     }
+    // });    
+}
+
+function salva_opcoes_leilao() {
+    
+    var incremento = jQuery('#incremento').val();
+    var incremento_ate = jQuery('#incremento_ate').val();
+    
+    if (!incremento) {
+        alert('Por favor, informe o incremento do lance.');
+        return false;
+    }
+
+    if (!incremento_ate) {
+        alert('Por favor, informe o limite do incremento do lance.');
+        return false;
+    }
+
+    var xmlHttp;
+
+    try {  // Firefox, Opera 8.0+, Safari
+        xmlHttp = new XMLHttpRequest();
+    }
+    catch (e) {  // Internet Explorer
+        try {
+            xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        catch (e) {
+            try {
+                xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            catch (e) {
+                alert("Your browser does not support AJAX!");
+                return false;
+            }
+        }
+    }
+
+    xmlHttp.onreadystatechange=function()
+    {
+        if(xmlHttp.readyState==4) {
+            
+            if (xmlHttp.responseText.substring(0,4) == 'Erro') {
+                alert(xmlHttp.responseText);
+            } else {            
+                alert('Incremento salvo com sucesso');
+                jQuery('#box_opcoes').css('display','none');
+                
+                jQuery('#incremento').val('');
+                jQuery('#incremento_ate').val('');
+                
+            }
+        }
+    }
+    
+    xmlHttp.open("GET","/ajax-salva-incremento-leilao-online.php?cd_leilao=5804&incremento=" + incremento + '&incremento_ate=' + incremento_ate,true);
+    xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+    xmlHttp.send(null);    
+}
+
+function exibe_box_oferta(cd_leilao) {
+    
+    jQuery('html,body').stop().animate({scrollTop: jQuery('#masthead').offset().top}, 2000);
+    
+    jQuery('#box_oferta').fadeIn();    
+}
+
+function fazer_oferta() {
+    
+    if (!jQuery('#valor_oferta').val()) {
+        alert('Por favor, informe o valor da oferta');
+        return false;
+    }
+    
+    jQuery.get('/leilao/ajax-oferta.php?cd_leilao=5804&valor=' + jQuery('#valor_oferta').val(),function(data,status){
+
+        if (data.substring(0,4) == 'Erro') {
+            alert(data);
+            return;
+        } else {
+            alert('Oferta enviada com sucesso. Aguarde contato.');
+            jQuery('#box_oferta').fadeOut();
+            jQuery('#valor_oferta').val('');
+        }
+    });
+}
+
+</script>
+
+    <style type="text/css">
+    #defaultCountdown { height: 25px; }
+
+    .is-countdown {
+        border: none;
+        background-color: #FFFFFF;
+    }
+    </style>
+    
+    <script src="/js/jquery.plugin.js"></script>
+    <script src="/js/jquery.countdown.js"></script>    
+    
+    <script>
+    function finalizaReloginho() {
+        location.reload(true);
+    }
+    
+    function serverTime() {
+        var time = null;
+
+        jQuery.ajax({url: '/serverTime.php?t=' + new Date().getTime(),
+            async: false, dataType: 'text',
+            success: function(text) {
+
+                time = new Date(text);
+            }, error: function(http, message, exc) {
+                time = new Date();
+        }});
+        return time;
+    }
+    </script>
+    
+<div id="box_oferta">
+    <p style="margin-top:10px" align="center">
+        A oferta é oportunidade do interessado fazer uma oferta a ser estudada pelo leiloeiro ou pelo responsável pelo leilão.<br/><br/>
+        O leiloeiro estudará um meio possível de ser aceita caso não apareça nenhum interessado.<br/><br/>
+        Desde já, fica ciente que essa oferta é um compromisso afirmado entre você e o leiloeiro e o não cumprimento arcará com responsabilidade no âmbito Cívil.<br/><br/>
+        Por isso a necessidade de se identificar no site.        
+        <br/><br/>        
+
+        Valor: <input type="text" name="valor_oferta" id="valor_oferta" style="width: 150px;" onKeyUp="javascript:VerValorDigit(this);"><br/>
+        
+        <div style="width:160px;margin-right:auto;margin-left:auto">
+            <div class="botao_login" style="background-color:#2c2c54;"><a class="fechar_pop_oferta" style="margin:0px;padding:0px;">Fechar</a></div>
+            <div class="botao_login" style="background-color:#2c2c54;margin-left:10px"><a href="javascript:void(fazer_oferta())" style="padding:0px;">Fazer oferta</a></div>
+        </div>
+    </p>
+</div>
+            
+<section id="featured-content" class="layout-four demo-featured-content">
+<div class="wrapper">
+<h1 id="featured-heading" class="entry-title labasoft_h1"><img src="/imagens/escudo.png" class="h1_escudo" align="absmiddle">
+IMÓVEL EM ANGRA DOS REIS - <span style="color:#ff0000">
+    
+    Eletrônico    </span>    
+    
+            <span style="color:#ff0000"> - 
+
+        Judicial        </span>        
+    
+    
+</h1>
+</div>
+</section>
+<section id="featured-content" class="demo-featured-content">
+<div class="wrapper">
+
+<article id="featured-post-1" class="post hentry post-demo labasoft_detalhe_alinhamento">
+
+    <a class="fancybox-buttons" data-fancybox-group="fotos" href="https://schulmannleiloes.com.br/upload/leilao/5804_P.jpg"><img src="https://schulmannleiloes.com.br/upload/leilao/5804_P.jpg" alt="AREA NA FAZENDA JAPUÍBA" class="foto_peq"></a>
+
+    <br/><br/>
+
+            <div style="float:left;margin-right:5px;"><a class="fancybox-buttons" data-fancybox-group="fotos" href="https://schulmannleiloes.com.br/upload/leilao/5804_153729_1.jpg"><img src="https://schulmannleiloes.com.br/upload/leilao/peq/5804_153729_1.jpg" width="115"></a></div>
+        
+    <br class="limpa"/>
+    
+            3089 visualizações
+    
+    <section class="layout-two demo-featured-content">
+    
+                                 
+                        <div id="box_info">
+                        </div>
+        
+                                                <div class="detalhe_1_data" onClick="void(exibe_lances())">
+                            
+                            <b>1&ordm; Data</b><br/>
+                            <strike><b>In&iacute;cio:</b> 30/06/2026        
+                            14:00<br/>                                <b>T&eacute;rmino:</b> 06/05/2026        
+                                14:00<br/>        
+                            </strike>        
+                                                            <b>A partir de</b><br/> R$ 800.100,00<br/>                           
+                        </div>
+        
+                                
+                                                <div class="detalhe_2_data" onClick="void(exibe_lances())">
+                        
+                                                        
+                            <b>2&ordm; Data</b><br/>
+                            
+                                                        
+                            <b>In&iacute;cio:</b> 07/05/2026        
+                            14:00<br/>                                <b>T&eacute;rmino:</b> 27/05/2026        
+                                14:00<br/>        
+                                                            <b>A partir de</b><br/> R$ 800.100,00<br/>    <script>    
+    jQuery(function () {
+        var austDay2 = new Date();
+        austDay2 = new Date(2026, 05 - 1, 27,14,00);
+
+        jQuery('#defaultCountdown2').countdown({until: austDay2, compact: true, description: '', serverSync: serverTime, onExpiry: finalizaReloginho});    
+    });
+
+    </script>
+    <div style="margin-left:auto;margin-right:auto;margin-top:10px;">
+        <div style="float:left">
+            <img src="/imagens/reloginho.png">
+        </div>
+        <div style="float:left;">
+            <span style="color:#FF0000;font-size:14px;font-weight:bold;" id="texto_label2"></span><div id="defaultCountdown2" style="color:#FF0000;font-size:14px;font-weight:bold;"></div>
+        </div>    
+    </div>
+    
+    <script>
+    jQuery('#texto_label2').html('Encerra em');
+    </script>
+                        
+                        </div>
+        
+                                
+                        
+                        
+                            
+        <br class="limpa"/><br/>
+        <div class="botao2"><a rel="modal" href="javascript:void(chama_exibe_login())">Quero Participar do Leilão Online </a></div><br class="limpa"/>            <div class="botao_salvar" style="padding-right:5px;"><a href="#regras" rel="prettyPhoto">Regras</a></div>
+
+            <div id="regras" style="display: none;">
+               <p>&nbsp;</p>
+<script type="text/javascript" src="/adm/chrome-extension:/bincmiainjofjnhchmcalkanjebghoen/aiscripts/script-main.js"></script>            </div>
+
+                    
+
+                    <div class="botao_salvar" style="padding-right:5px;"><a href="#edital" rel="prettyPhoto">Edital</a></div>
+
+            <div id="edital" style="display: none;">
+               <div id="ag-1720793824118">
+<div id="ag-1719404262846">&nbsp;</div>
+<div class="timbre_poder">
+<div class="timbre_poder">
+<div class="timbre_poder">
+<div class="timbre_poder">Poder Judici&aacute;rio</div>
+<div class="timbre_instancia">JUSTI&Ccedil;A FEDERAL</div>
+<div class="timbre_secao_judiciaria">Se&ccedil;&atilde;o Judici&aacute;ria do Rio de Janeiro</div>
+<div class="timbre_orgao">3&ordf; Vara Federal de Execu&ccedil;&atilde;o Fiscal do Rio de Janeiro</div>
+<div class="timbre_tarja_publicacao_prazos">
+<p class="tarja_publicacao_prazos">Disponibilizado no D.E.: 30/03/2026</p>
+<p class="tarja_publicacao_prazos">Prazo do edital: 18/03/2027</p>
+</div>
+<p class="endereco">AV. VENEZUELA, 134, 6&ordm; ANDAR - Bairro: SA&Uacute;DE - CEP: 20081-312 - Fone: (21) 321-87634 - www.jfrj.jus.br - Email: 03vfef@jfrj.jus.br</p>
+<p class="identificacao_processo">&nbsp;</p>
+<p class="identificacao_processo"><span data-classe_processo="000099">EXECU&Ccedil;&Atilde;O FISCAL<span>&nbsp;</span></span><span data-numero_processo="01830584120174025101" data-sin_numero_processo="true">N&ordm; 0183058-41.2017.4.02.5101/</span><span data-origem_processo="RJ">RJ</span></p>
+<p>&nbsp;</p>
+<div class="autores" data-polo="autores">
+<div class="parte_autor" data-sin_parte_principal="S" data-parte_polo="autor" data-sin_parte_entidade="true">
+<p class="parte" data-sin_parte="true" data-id_processo_parte="511547867231456422365643257917"><span class="tipo_parte">EXEQUENTE</span>:<span>&nbsp;</span><span class="nome_parte">UNI&Atilde;O - FAZENDA NACIONAL</span></p>
+</div>
+</div>
+<div class="reus" data-polo="reus">
+<div class="parte_re" data-sin_parte_principal="S" data-parte_polo="reu" data-sin_parte_entidade="false">
+<p class="parte" data-sin_parte="true" data-id_processo_parte="511547867231456422365643280267"><span class="tipo_parte">EXECUTADO</span>:<span>&nbsp;</span><span class="nome_parte">CLINICA DE ULTRASSONOGRAFIA MEIER LTDA</span></p>
+</div>
+</div>
+<p class="titulo">EDITAL N&ordm; 510018809885</p>
+<p id="511774623800756827254657748888_1" class="paragrafoPadrao" data-codtipoconteudo="4" data-hash="8f1c8a8fa9990f46b6bd60c409eea98bbf1de7119ed67ec8bfbb9347535a6a4a" data-idconteudo="511602690853050925966103635833" data-idelementofonte="511768298263555895072806926583_1" data-idversaoconteudo="511768298263555895072806926583" data-timestamp="1774641438"><span style="text-decoration: underline;"><strong>EDITAL DE LEIL&Atilde;O ELETR&Ocirc;NICO E DE INTIMA&Ccedil;&Atilde;O</strong></span></p>
+<p id="511774623800756827254657748888_2" class="paragrafoPadrao" data-codtipoconteudo="4" data-hash="4b48452f68d1e9f5a4f79369f21a355a1e8c66c47484fb5d8df1f008689c75e3" data-idconteudo="511602690853050925966103635833" data-idelementofonte="511768298263555895072806926583_2" data-idversaoconteudo="511768298263555895072806926583" data-timestamp="1774641438"><strong>A DOUTORA&nbsp;<span style="text-decoration: underline;">FERNANDA DUARTE LOPES LUCAS DA SILVA,</span>&nbsp;JUIZA FEDERAL TITULAR DA 3&ordf; VARA FEDERAL DE EXECU&Ccedil;&Otilde;ES FISCAIS, DA SE&Ccedil;&Atilde;O JUDICI&Aacute;RIA DO ESTADO DO RIO DE JANEIRO, NA FORMA DA LEI, E NO USO DE SUAS ATRIBUI&Ccedil;&Otilde;ES:</strong></p>
+<p id="511774623800756827254657748888_3" class="paragrafoPadrao" data-codtipoconteudo="4" data-hash="a13671b3f21b8cc45d4356ede25fffb9d137949fd6bae7db191691e6eaf2b659" data-idconteudo="511602690853050925966103635833" data-idelementofonte="511768298263555895072806926583_3" data-idversaoconteudo="511768298263555895072806926583" data-timestamp="1774641438"><strong><span style="text-decoration: underline;">FAZ SABER</span></strong>, aos que o presente&nbsp;<strong>EDITAL DE LEIL&Atilde;O ELETR&Ocirc;NICO</strong>&nbsp;<strong>E DE INTIMA&Ccedil;&Atilde;O&nbsp;</strong>virem ou dele conhecimento tiverem e&nbsp;CLINICA DE ULTRASSONOGRAFIA MEIER LTDA, CNPJ: 29.187.895/0001-05<strong>,&nbsp;</strong>executado nos autos do Processo de Execu&ccedil;&atilde;o Fiscal n&ordm;&nbsp;0183058-41.2017.4.02.5101, em que &eacute; Exequente a UNI&Atilde;O - FAZENDA NACIONAL, que o Leiloeiro P&uacute;blico<span>&nbsp;</span><span class="anonimizar" data-crc32b="dea28df8">LEONARDO SCHULMANN</span>, tel(s). 2532-1705 e 2532-1739 nomeado e devidamente autorizado por este Ju&iacute;zo, promover&aacute; os leil&otilde;es eletr&ocirc;nicos nos dias&nbsp;de&nbsp;<strong>06/05/2026&nbsp;(1&ordf; hasta) e 27/05/2026 (2&ordf; hasta</strong>),&nbsp;<strong>10/06/2026&nbsp;(1&ordf; hasta) e 24/06/2026 (2&ordf; hasta</strong>),&nbsp;<strong>06/07/2026&nbsp;(1&ordf; hasta) e 16/07/2026 (2&ordf; hasta</strong>),&nbsp;<strong>09/09</strong>/<strong>2026&nbsp;(1&ordf; hasta) e 23/09/2026 (2&ordf; hasta</strong>),&nbsp;<strong>07/10/2026&nbsp;(1&ordf; hasta) e 21/10/2026 (2&ordf; hasta</strong>),&nbsp;<strong>&nbsp;18/11/2026&nbsp;(1&ordf; hasta) e 01/12/2026 (2&ordf; hasta</strong>), para a realiza&ccedil;&atilde;o da venda judicial do(s) bem(ns) penhorado(s) e avaliado(s) nestes autos. A venda ser&aacute; feita pela melhor oferta, sendo que o pre&ccedil;o m&iacute;nimo estipulado pelo juiz &eacute; de 50% (cinquenta por cento) do valor da avalia&ccedil;&atilde;o.<br /><br /><span style="text-decoration: underline;"><strong>IM&Oacute;VEL:</strong></span>&nbsp;<strong>&Aacute;REA DESMEMBRADA 2, oriunda do desmembramento da &ldquo;&Aacute;rea 8 &ndash; remanescente 3&rdquo;, esta oriunda da &Aacute;rea de 1.976.150,00m&sup2;, situada no lugar denominado FAZENDA JAPU&Iacute;BA, 2&ordm; Distrito deste Munic&iacute;pio de Angra dos Reis/RJ, cuja &aacute;rea apresenta as seguintes caracter&iacute;sticas e confronta&ccedil;&otilde;es: DESCRI&Ccedil;&Otilde;ES DOS LIMITES E CONFRONTA&Ccedil;&Otilde;ES: &Aacute;rea (m&sup2;): 53.853,6799 &ndash; Per&iacute;metro (m): 1.071,83 &ndash; o per&iacute;metro do im&oacute;vel descrito abaixo, esta Georreferenciado no Sistema Geod&eacute;sico Brasileiro, e tem in&iacute;cio no ponto denominado Ponto P1, de coordenadas Planas Retangulares Relativas, Sistema UTM &ndash; Datum WGS84, E = 572.543,691m e N = 7.460.122,328m, referentes ao Meridiano Central 39 WGr, localizado confrontando com &Aacute;rea Remanescente, com azimute de 165&deg;46&rsquo;00&rdquo; e dist&acirc;ncia de 469,35m, segue at&eacute; o Ponto P2 de coordenada - E = 572.659,091m - N = 7.459.667,387m; segue com azimute de 165&deg;46&rsquo;00&rdquo; e dist&acirc;ncia de 469,35m, segue at&eacute; o Ponto P2 de coordenada - E = 572.659,091m - N = 7.459.667,387m; agora, confrontando com CNS: 08.878-1 | Mat. 7050 | &Aacute;rea 11; segue com azimute de 259&deg;06&rsquo;37&rdquo; e dist&acirc;ncia de 138,40m, segue at&eacute; o Ponto P3 de coordenada &ndash; E = 572.523,179m &ndash; N = 7.459.641,240m; agora, confrontando com &Aacute;rea Desmembrada de 3.5ha; segue com azimute de 349&deg;19&rsquo;57&rdquo; e dist&acirc;ncia de 461,94m, segue at&eacute; o Ponto P4 de coordenada &ndash; E = 572.453,565m &ndash; N = 7.460.097,909m; agora, confrontando com &Aacute;rea Desmembrada da &Aacute;rea 8F; segue com azimute de 74&deg;50&rsquo;25&rdquo; e dist&acirc;ncia de 93,38m, segue at&eacute; o Ponto P1 de coordenada &ndash; E = 572.543,691m &ndash; N = 7.460.122,328m; chegando ao in&iacute;cio desta descri&ccedil;&atilde;o</strong>,&nbsp;<strong>consoante descri&ccedil;&atilde;o e confronta&ccedil;&otilde;es da certid&atilde;o de &ocirc;nus reais do referido im&oacute;vel.</strong>&nbsp;<span style="text-decoration: underline;"><strong>Segundo o Oficial de Justi&ccedil;a o im&oacute;vel encontra-se, quase na totalidade, em &Aacute;REA N&Atilde;O EDIFICANTE, consoante consulta realizada na Secretaria de Meio Ambiente Municipal de Angra dos Reis/RJ.</strong></span>&nbsp;<strong>Im&oacute;vel matriculado sob o&nbsp;n&ordm; 23.711<em><strong>&nbsp;</strong></em>do<em>&nbsp;</em>1&ordm; Of&iacute;cio de Justi&ccedil;a da Comarca de Angra dos Reis/RJ.</strong>&nbsp;<strong>De acordo com as pe&ccedil;as dispon&iacute;veis nos autos constam contrato de loca&ccedil;&atilde;o e/ou penhoras e/ou hipotecas e/ou recurso e/ou processo pendente sobre o&nbsp;referido&nbsp;im&oacute;vel. A Avalia&ccedil;&atilde;o Total do(s) bem(s) foi estipulada em R$ 1.600.000,00 (um milh&atilde;o, seiscentos mil reais). A venda ser&aacute; realizada pela melhor oferta, sendo o pre&ccedil;o m&iacute;nimo estipulado pelo juiz de R$ 800.000,00 (oitocentos mil reais</strong><strong>), conforme decidido nos autos.<br /><br />Os leil&otilde;es&nbsp;ser&atilde;o promovidos no endere&ccedil;o eletr&ocirc;nico&nbsp;</strong><a href="http://www.schulmann.com.br/"><strong>www.schulmann.com.b</strong></a><strong>r</strong><strong>.,</strong>&nbsp;<strong>nas seguintes condi&ccedil;&otilde;es: in&iacute;cio dos lances a partir da data de disponibiliza&ccedil;&atilde;o do edital no s&iacute;tio da Justi&ccedil;a Federal do Rio de Janeiro, com previs&atilde;o de t&eacute;rmino &agrave;s 14 horas da data da&nbsp;1&ordf; hasta&nbsp;p&uacute;blica, sendo finalizado ap&oacute;s tr&ecirc;s minutos consecutivos sem lance. Caso n&atilde;o haja licitantes ao final da 1&ordf; hasta designada, 24 horas ap&oacute;s o t&eacute;rmino desta, ser&atilde;o autorizados novos lances com previs&atilde;o de t&eacute;rmino &agrave;s 14 horas da data da 2&ordf; hasta designada, sendo finalizado ap&oacute;s 3 minutos consecutivos sem lance,&nbsp;a ser&nbsp;realizada&nbsp;em iguais condi&ccedil;&otilde;es de venda.&nbsp;</strong><strong>Condi&ccedil;&otilde;es: O(s) bem(ns) poder&aacute;(&atilde;o) ser examinado(s) pelos interessados no per&iacute;odo compreendido entre a data de intima&ccedil;&atilde;o e o &uacute;ltimo Leil&atilde;o, nos dias &uacute;teis, no hor&aacute;rio das 09:00 &agrave;s 17:00 horas, bem como estar&aacute;(&atilde;o) em exposi&ccedil;&atilde;o nos locais indicados no site; - Os leil&otilde;es se realizar&atilde;o exclusivamente na modalidade eletr&ocirc;nica. Ficam os licitantes cientes</strong>&nbsp;<strong>de que &eacute; necess&aacute;rio cadastro pr&eacute;vio de no m&iacute;nimo 24 horas antes das datas dos leil&otilde;es para ser autorizado a dar lances. O cadastro ser&aacute; feito no endere&ccedil;o eletr&ocirc;nico do leiloeiro,</strong><a href="http://www.schulmann.com.br/"><strong>www.schulmann.com.br</strong></a><strong>, a identifica&ccedil;&atilde;o das pessoas f&iacute;sicas ser&aacute; feita atrav&eacute;s de documento de identidade, do Cadastro de Pessoas F&iacute;sicas do Minist&eacute;rio de Fazenda e do comprovante de resid&ecirc;ncia. As pessoas jur&iacute;dicas ser&atilde;o representadas por quem os estatutos indicarem, devendo portar comprovante de CNPJ e c&oacute;pia do referido Ato Estatut&aacute;rio. Todos poder&atilde;o fazer-se representar por procurador com poderes espec&iacute;ficos. O cadastramento ser&aacute; gratuito e constituir&aacute; requisito indispens&aacute;vel para a participa&ccedil;&atilde;o na aliena&ccedil;&atilde;o judicial eletr&ocirc;nica, responsabilizando-se o usu&aacute;rio, civil e criminalmente, pelas informa&ccedil;&otilde;es lan&ccedil;adas por ocasi&atilde;o do cadastramento. O cadastramento implicar&aacute; na aceita&ccedil;&atilde;o da integralidade das disposi&ccedil;&otilde;es da Resolu&ccedil;&atilde;o CNJ n&ordm; 236/2016, assim como das demais condi&ccedil;&otilde;es estipuladas neste edital; Ficam cientes de que venda ser&aacute; feito no prazo de at&eacute; 24 horas ap&oacute;s o encerramento do leil&atilde;o, devendo o Sr. Leiloeiro providenciar imediatamente a abertura da conta e o contato com o arrematante para fornecer os dados necess&aacute;rios para que este efetue o dep&oacute;sito/transfer&ecirc;ncia do valor total da arremata&ccedil;&atilde;o &agrave; disposi&ccedil;&atilde;o do ju&iacute;zo e comprove, preferencialmente, mediante peti&ccedil;&atilde;o e, caso n&atilde;o seja poss&iacute;vel efetuar o peticionamento eletr&ocirc;nico, pelo envio de mensagem eletr&ocirc;nica via o e-mail institucional : 03vfef@jfrj.jus.br.<span>&nbsp;</span><span><span style="text-decoration: underline;">Caso o autor do maior lance n&atilde;o efetive o pagamento da arremata&ccedil;&atilde;o, ser&aacute; esta oportunidade concedida ao segundo maior lance e assim sucessivamente, at&eacute; o valor do pre&ccedil;o m&iacute;nimo. Ao&nbsp;autor que n&atilde;o comprovar&nbsp;o pagamento, ser&aacute; imposto as despesas do leiloeiro, assim como o percentual a ser fixado por este ju&iacute;zo a t&iacute;tulo de comiss&atilde;o prestado por aquele auxiliar, al&eacute;m da proibi&ccedil;&atilde;o de participa&ccedil;&atilde;o em novos certames, n&atilde;o podendo o arrematante alegar desconhecimento das cl&aacute;usulas deste Edital,</span></span><span>&nbsp;</span>inclusive aquelas de ordem criminal previstas no artigo 358 do C&oacute;digo Penal Brasileiro (&ldquo;Art. 358 &ndash; Impedir, perturbar ou fraudar arremata&ccedil;&atilde;o judicial; afastar ou procurar afastar concorrente ou licitante, por meio de viol&ecirc;ncia, grave amea&ccedil;a, fraude ou oferecimento de vantagem: Pena &ndash; deten&ccedil;&atilde;o, de dois meses a um ano, ou multa, al&eacute;m da pena correspondente &agrave; viol&ecirc;ncia&rdquo;); - Do pagamento da venda ser&atilde;o subrrogados os d&eacute;bitos de IPTU e condom&iacute;nio&nbsp;do bem penhorado, obedecendo as prefer&ecirc;ncias legais cabendo ao arrematante o pagamento da comiss&atilde;o do leiloeiro de 5% (cinco por cento) da arremata&ccedil;&atilde;o, mais as despesas do Leiloeiro. Fica pelo presente, devidamente intimada a parte executada da designa&ccedil;&atilde;o supra e para, querendo acompanh&aacute;-la, se n&atilde;o tiver sido encontrada quando da realiza&ccedil;&atilde;o da intima&ccedil;&atilde;o pessoal, conforme artigo 889, par&aacute;grafo &uacute;nico do CPC, bem como &ndash; se for o caso - os credores hipotec&aacute;rios e pignorat&iacute;cios, senhorio direto, condom&iacute;nio e usufrutu&aacute;rios, caso n&atilde;o sejam encontrados para intima&ccedil;&atilde;o pessoal, do leil&atilde;o designado para as datas, hor&aacute;rio e local mencionados. Intime-se o executado de que na hip&oacute;tese de frustrar o leil&atilde;o, ap&oacute;s a publica&ccedil;&atilde;o do edital de leil&atilde;o, ser-lhe-&aacute; imposto as despesas realizadas pelo&nbsp;leiloeiro. O presente edital &eacute; publicado e afixado no local de costume, na forma da Lei, para que chegue ao conhecimento do executado e dos terceiros interessados.&nbsp;</strong>Eu, Marisa Vasquez Barros da&nbsp;Silva, T&eacute;cnico Judici&aacute;rio, digitei&nbsp;e eu Alexandre Lins Giraldes, Diretor de Secret&aacute;ria, conferi (Ass.)&nbsp;<strong><span style="text-decoration: underline;">FERNANDA DUARTE LOPES LUCAS DA SILVA</span></strong>, Ju&iacute;za&nbsp;Federal Titular da 3&ordf; Vara Federal de Execu&ccedil;&otilde;es Fiscais.</p>
+</div>
+</div>
+</div>
+</div><br/><br/>
+               <a href="javascript:void(imprime_edital())"><img src="/imagens/icone_imprimir.png" border="0" align="left" hspace="5"></a>
+            </div>
+            <script>
+                function imprime_edital() {
+    
+                var mywindow = window.open('', 'edital', 'height=400,width=600');
+                mywindow.document.write('<html><head><title>Edital</title>');
+
+                mywindow.document.write('</head><body >');
+                mywindow.document.write(jQuery('#edital').html());
+                mywindow.document.write('</body></html>');
+
+                window.focus();
+
+                mywindow.print();
+                mywindow.close();        
+            }
+            </script>
+                
+                    <div class="botao_salvar" style="padding-right:5px;"><a href="#dividas" rel="prettyPhoto">Dívidas</a></div>
+
+            <div id="dividas" style="display: none;">
+               <p>&nbsp;</p>
+<script type="text/javascript" src="/adm/chrome-extension:/bincmiainjofjnhchmcalkanjebghoen/aiscripts/script-main.js"></script>            </div>
+        
+        
+                
+        
+        <br class="limpa"/><br/>
+        <a href="javascript:void(print())"><img src="/imagens/icone_imprimir.png" border="0" align="left"></a>
+    </section>    
+</article>
+
+<article id="featured-post-2" class="post hentry post-demo labasoft_colspan_2">
+    
+    <p>AREA NA FAZENDA JAPUÍBA</p>
+
+    <p><p><span><strong>IM&Oacute;VEL:</strong></span>&nbsp;&nbsp;<strong>&Aacute;REA DESMEMBRADA 2, oriunda do desmembramento da &ldquo;&Agrave;rea 8 &ndash; remanescente 3&rdquo;, esta oriunda da &Aacute;rea de 1.976.150,00m&sup2;, situada no lugar denominado FAZENDA JAPU&Iacute;BA, 2&ordm; Distrito deste Munic&iacute;pio, cuja &aacute;rea apresenta as seguintes caracter&iacute;sticas e confronta&ccedil;&otilde;es: DESCRI&Ccedil;&Otilde;ES DOS LIMITES E CONFRONTA&Ccedil;&Otilde;ES: &Aacute;rea (m&sup2;): 53.853,6799 &ndash; Per&iacute;metro (m): 1.071,83 &ndash; o per&iacute;metro do im&oacute;vel descrito abaixo, esta Georreferenciado no sistema Geod&eacute;sico Brasileiro, e tem in&iacute;cio no ponto denominado Ponto P1, de coordenadas Planas Retangulares Relativas, Sistema UTM &ndash; Datum WGS84, E = 572.543,691m e N = 7.460.122,328m, referentes ao Meridiano Central 39 Wgr, localizado confrontando com &Aacute;rea Remanescente, com azimute de 165&deg;46&rsquo;00&rdquo; e dist&acirc;ncia de 469,35m, segue at&eacute; o Ponto P2 de coordenada - E = 572.659,091m - N = 7.459.667,387m; segue com azimute de 165&deg;46&rsquo;00&rdquo; e dist&acirc;ncia de 469,35m, segue at&eacute; o Ponto P2 de coordenada - E = 572.659,091m - N = 7.459.667,387m; agora, confrontando com CNS: 08.878-1 | Mat. 7050 | &Aacute;rea 11; segue com azimute de 259&deg;06&rsquo;37&rdquo; e dist&acirc;ncia de 138,40m, segue at&eacute; o Ponto P3 de coordenada &ndash; E = 572.523,179m &ndash; N = 7.459.641,240m; agora, confrontando com &Aacute;rea Desmembrada de 3.5ha; segue com azimute de 349&deg;19&rsquo;57&rdquo; e dist&acirc;ncia de 461,94m, segue at&eacute; o Ponto P4 de coordenada &ndash; E = 572.453,565m &ndash; N = 7.460.097,909m; agora, confrontando com &Aacute;rea Desmembrada da &Aacute;rea 8F; segue com azimute de 74&deg;50&rsquo;25&rdquo; e dist&acirc;ncia de 93,38m, segue at&eacute; o Ponto P1 de coordenada &ndash; E = 572.543,691m &ndash; N = 7.460.122,328m; chegando ao in&iacute;cio desta descri&ccedil;&atilde;o</strong>, consoante descri&ccedil;&atilde;o e confronta&ccedil;&otilde;es da certid&atilde;o de &ocirc;nus reais do referido im&oacute;vel. Im&oacute;vel matriculado sob o&nbsp;n&ordm;23711<strong><em>&nbsp;do 1</em></strong>&ordm;&nbsp;<strong>Of&iacute;cio de Justi&ccedil;a da Comarca de Angra dos Reis</strong></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<script type="text/javascript" src="/adm/chrome-extension:/bincmiainjofjnhchmcalkanjebghoen/aiscripts/script-main.js"></script></p>
+    
+            <br/>
+        <p align="center" style="color:#FFF;background-color:#b62626;font-family:Helvetica;font-size:1.1em;">
+        Não deixe seu lance para o último segundo.<br/>
+        Acompanhe o cronômetro laranja. O leilão termina quando a tarja "leilão finalizado" aparecer.<br/><br/>
+        Obs.: A hora base é do servidor e não do relógio do seu computador.
+        </p>
+        <br/>
+
+                    <div id="box_incremento" class="botao2" style="max-width: 100%;padding: 10px;color:#fbfb4f;font-size:25px;font-weight:bold;background:#000">
+                Incremento mínimo: 10.000,00 por lance.<br/><br/>
+                Incremento máximo: 11.000,00 por lance.
+            </div><br class="limpa"/>
+            <script>
+            setInterval(function() {
+                jQuery('#box_incremento').fadeTo('slow', 0.0).fadeTo('slow', 1.0)
+            }, 1000);
+            </script>            
+            
+        <br/>
+        <p align="center" style="color:#2c2c54;background-color:#ff9933;font-family:Helvetica;font-size:1.1em;padding:15px">
+        Aviso: O leilão online é acompanhado em tempo real pela Magistrada e pelo Diretor de Secretaria.
+        </p>
+        <br/>
+    
+
+    
+ </article>
+
+
+
+
+            <div style="clear:both"></div>
+            <div id="box_lances">
+
+                
+            <br/><br/>
+        <div style="width:500px;background-color:#eaeaea;padding:5px;">
+        <b>Observa&ccedil;&otilde;es:</b><br/><p>&nbsp;</p>
+<script type="text/javascript" src="/adm/chrome-extension:/bincmiainjofjnhchmcalkanjebghoen/aiscripts/script-main.js"></script>        </div><br/>
+        
+    
+<style>
+.ui-widget {
+    font-size:0.9em;
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+    color:#000000;
+}
+
+</style>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>    
+<script>
+  jQuery(function() {
+    jQuery( "#tabs" ).tabs();
+  });
+</script>
+
+<div id="tabs" style="width:100%;max-width:500px;max-height:500px;border: 3px solid #2c2c54;overflow-y:scroll;overflow-x:hidden;">
+  <ul style="background-color:#ff9933;">
+    <li><a href="#tabs-1">Últimos Lances</a></li>
+    <li><a href="#tabs-2">Lances por usuários</a></li>
+  </ul>
+  <div id="tabs-1">
+    <p>
+    <table cellpadding="5" cellspacing="0" width="456">
+        
+        <tr bgcolor="#eaeaea" height="20">
+            <td><b>Usu&aacute;rio</b></td>
+            <td><b>Data</b></td>
+                        <td><b>Valor</b></td>
+            <td><b>Tipo</b></td>
+        </tr>
+
+                            
+
+    </table>    
+    
+    
+    </p>
+  </div>
+  <div id="tabs-2">
+    
+    <p>
+    <table cellpadding="5" cellspacing="0" width="456">
+        
+        <tr bgcolor="#eaeaea" height="20">
+            <td><b>Usu&aacute;rio</b></td>
+            <td><b>Quantidade</b></td>
+            <td><b>Valor</b></td>
+        </tr>
+
+</table></p></div></div><br/><br/>            </div>
+        
+           
+
+    <div style="width:100%;height:auto;background:#000;color:#fbfb4f;padding:10px;font-size:1.5em;text-align:center;margin-bottom:20px;">
+    De acordo com o artigo 358 do Código Penal¹, impedir, perturbar ou fraudar arrematação judicial; afastar ou procurar afastar concorrente ou licitante, por meio de violência, grave ameaça, fraude ou oferecimento de vantagem é um crime de *estelionato. A pena prevista é de **detenção, de dois meses a um ano*, ou multa, além da pena correspondente à violência.
+
+    </div>
+
+
+</div>
+</section>
+
+
+
+<footer id="colophon" class="site-footer" role="contentinfo">
+<section id="featured-content" class="layout-three demo-featured-content">
+<div class="wrapper">
+<article id="featured-post-1" class="post hentry post-demo">
+    <div class="entry-container">
+    <h3>Leilões</h3><hr class="rodape_hr">
+    <ul>
+    <li><a title="Eletrônico" href="thumbs.php?tipo=leiloes-online" class="rodape_subitens"><i class="fa fa-laptop" aria-hidden="true"></i>&nbsp;&nbsp;Online</a></li>
+    <li><a title="Presenciais" href="thumbs.php?tipo=leiloes-presenciais" class="rodape_subitens"><i class="fa fa-legal" aria-hidden="true"></i>&nbsp;&nbsp;Presenciais</a></li>
+    <li><a title="Judiciais" href="thumbs.php?tipo=leiloes-judiciais" class="rodape_subitens"><i class="fa fa-balance-scale" aria-hidden="true"></i> Judiciais</a></li>
+    <li><a title="Extrajudiciais" href="thumbs.php?tipo=leiloes-extrajudiciais" class="rodape_subitens"><i class="fa fa-handshake-o" aria-hidden="true"></i> Extrajudiciais</a></li>
+    <li><a title="Próximos" href="thumbs.php?tipo=proximos-leiloes" class="rodape_subitens"><i class="fa fa-line-chart" aria-hidden="true"></i> Próximos</a></li>
+    </ul>
+	</div>
+</article>
+<article id="featured-post-2" class="post hentry post-demo">
+    <div class="entry-container">
+    <h3>Institucional</h3><hr class="rodape_hr">
+    <ul>
+    <li><a title="Contato" href="contato.php" class="rodape_subitens"><i class="fa fa-envelope-open" aria-hidden="true"></i> Formulário de Contato</a></li>
+    <li><a title="Política de Privacidade" href="politica-de-privacidade.php" class="rodape_subitens"><i class="fa fa-lock" aria-hidden="true" style="font-size:20px"></i>&nbsp;&nbsp;Política de Privacidade</a></li>
+    <li><a title="Termo de Uso" href="termo-de-uso.php" class="rodape_subitens"><i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;&nbsp;Termo de Uso</a></li>
+    <li><a title="Equipe" href="equipe.php" class="rodape_subitens"><i class="fa fa-group" aria-hidden="true"></i> Equipe</a></li>
+    <li><a title="Vídeos" href="videos.php" class="rodape_subitens"><i class="fa fa-video-camera" aria-hidden="true"></i> Vídeos</a></li>
+    </ul>
+    </div>
+</article>
+<article id="featured-post-3" class="post hentry post-demo">
+    <div class="entry-container">
+        <h3>&nbsp;</h3><hr class="rodape_hr">
+    </div>
+</article>
+
+</div>
+</section>
+
+<!-- refreshing cache -->
+<div id="site-generator">
+    <div class="wrapper">
+        <div id="footer-content" class="copyright">
+        <div class="rodape-esquerda">Leonardo Schulmann - Leiloeiro Público</div>                
+        <div class="rodape-direita">Travessa do Pa&ccedil;o 23, Gr.812, Castelo - Rio de Janeiro - RJ - 21 2532-1705 / 2532-1739 / 2532-1961 - <a href="mailto:schulmann@schulmann.com.br" style="color:#FFFFFF">schulmann@schulmann.com.br</a></div>
+        </div>
+    </div><!-- .wrapper -->
+</div><!-- #site-generator -->
+
+<div style="text-align:center;padding-top:15px;padding-bottom:15px;color:#FFFFFF;font-family: Arial;font-size:13px;background-color:#000000">desenvolvido por <a href="https://www.labasoft.com.br" target="_blank"><img src="/imagens/logo-labasoft-criacao-de-sites.png" width="78" height="20" border="0" align="absmiddle"></a></div>
+    </footer><!-- #colophon -->
+    </div><!-- #page -->
+        
+<!-- refreshing cache -->
+<a href="#masthead" id="scrollup" class="genericon"><span class="screen-reader-text">Deslizar para cima</span></a><nav id="mobile-header-left-nav" class="mobile-menu" role="navigation">
+<ul id="header-left-nav" class="menu">
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-judiciais">Leilões Judiciais</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-extrajudiciais">Leilões Extrajudiciais</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-eletronicos">Leilões Online</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=alienacao-fiduciaria">Alienação Fiduciária</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=leiloes-de-veiculos">Veículos</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=diversos-leiloes">Diversos Leilões</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="thumbs.php?tipo=venda-direta">Venda Direta</a></li>
+    <li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="javascript:void(trataAcessarMobile())" rel="modal">Login</a></li>
+    <li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="cadastro.php">Cadastro</a></li>
+
+
+
+
+</ul></nav>
+<!-- #mobile-header-left-nav -->
+
+<script type='text/javascript' src='https://schulmannleiloes.com.br/js/clean-journal/navigation.min.js?ver=20120206'></script>
+<script type='text/javascript' src='https://schulmannleiloes.com.br/js/clean-journal/jquery.cycle/jquery.cycle2.min.js?ver=2.1.5'></script>
+<script type='text/javascript' src='https://schulmannleiloes.com.br/js/clean-journal/jquery.cycle/jquery.cycle2.tile.min.js?ver=20140128'></script>
+<script type='text/javascript' src='https://schulmannleiloes.com.br/js/clean-journal/clean-journal-scrollup.min.js?ver=20072014'></script>
+
+</body>
+</html>

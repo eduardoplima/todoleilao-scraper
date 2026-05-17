@@ -1,0 +1,20 @@
+# Contrato declarativo (placeholder) para schulmann_leiloes.
+# Spider específico herda de ProprioHtmlSpider — override de
+# `parse_property` em scrapy_project/leilao_scraper/
+# spiders/proprio_html_specific/schulmann_leiloes.py para fixar:
+#   - Título: pega h1#featured-heading em vez do h1.assistive-text
+#   - is_imovel scope: usa body_text inteiro (default cap de 3000
+#     ficava antes da seção "IMÓVEL" do edital)
+
+auctioneer_slug: "schulmann_leiloes"
+platform_hint: "schulmann_leiloes"
+
+listing_active:
+  url_pattern: ""
+  card_selector: "a"
+  card_kind: css
+
+detail:
+  fields:
+    title: "h1#featured-heading::text"
+    description: "div.entry-content *::text"

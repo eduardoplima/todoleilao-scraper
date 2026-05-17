@@ -1,0 +1,76 @@
+# Provider: inertia_laravel_leiloes
+#
+# Plataforma multi-tenant Laravel 11 + Inertia.js (React) + Vite. ~7 hosts
+# do INNLEI usam esta stack (balbinoleiloes, globoleiloes, satoleiloes,
+# peracchileiloes etc.). Identificável via:
+#   - <title inertia>...</title>
+#   - <div id="app" data-page="{...component:Home/Index...}"/>
+#   - Bundles em /build/assets/{app,inertia-vendor,react-vendor}-*.js
+#
+# Tenant escolhido para o piloto: balbinoleiloes.com.br (Joabe Balbino da
+# Silva, MT) — endpoints /api/lots e /api/lots/{id} retornaram payloads
+# completos sem CF challenge. Globoleiloes age como portal-agregador
+# (api.lots[*].url aponta pra outros tenants).
+#
+# Selectors CSS abaixo são apenas documentais: o spider consome
+# DIRETAMENTE /api/lots?page=N (paginação Laravel) e /api/lots/{id} via
+# REST anônimo. O SPA front-end também usa esses mesmos endpoints
+# (registrados na Ziggy router inline como `api.lots.index/show`).
+#
+# Limitações:
+#   - Cloudflare bloqueia /busca direto mas libera /api/lots em todos os
+#     tenants testados.
+#   - bids[] no API é admin-only (mantido vazio para anônimos).
+#   - Edital fica em auction.notices (filename UUID.pdf); CDN path varia
+#     entre tenants.
+
+auctioneer_slug: "inertia_laravel_leiloes"
+platform_hint: "laravel_inertia_vite"
+
+listing_active:
+  url_pattern: "https://{tenant}/api/lots?page={page}"
+  # Sem DOM — listing vem do JSON. Selector documenta o ancorar
+  # equivalente no HTML server-rendered se o SPA hidratasse:
+  # <article class="card-property"> com <a href="/leiloes/{slug}/{id}">.
+  card_selector: "article.card-property a[href*='/leiloes/']"
+  card_kind: css
+  pagination:
+    kind: querystring
+    template: "?page={page}"
+
+listing_closed: null
+
+detail:
+  url_pattern: "https://{tenant}/api/lots/{lot_id}"
+  field_selectors:
+    title:
+      # JSON: $.title (e/ou $.full_title que inclui localização).
+      # No HTML server-rendered: h1.property-header__title.
+      selector: "h1.property-header__title, meta[property='og:title']"
+      kind: css
+    price_minimum:
+      # JSON: $.values[*].price (BRL string "1.234.567,89"). Praça
+      # ativa é status=0; quando ausente, última praça.
+      selector: "div.property-price.lance-atual, div.property-price-value"
+      kind: css
+    price_market:
+      # JSON: $.avaliation
+      selector: "div.property-price-old, div.property-avaliation"
+      kind: css
+    address_block:
+      # JSON: $.street + $.number + $.neighborhood + $.city + $.uf + $.zip_code
+      selector: "div.property-address, address.card-property-address"
+      kind: css
+    images:
+      # JSON: $.images[*].name → CDN /storage/lots/{id}/images/{name}
+      selector: "img[src*='/storage/lots/'][src*='/images/']"
+      kind: css
+    documents:
+      # JSON: $.files[*].file + auction.notices (edital). CDN
+      # /storage/lots/{id}/files/{file}.pdf.
+      selector: "a[href*='/storage/'][href$='.pdf']"
+      kind: css
+    bids:
+      # JSON: $.bids[*] — vazio para anônimos na maioria dos tenants.
+      selector: "div.lances-list div.lance-item"
+      kind: css

@@ -1,12 +1,80 @@
-# Placeholder — spider usa heurísticas universais (ver proprio_html.py).
+# Provider: leiloesbr
+#
+# Plataforma "LeilõesBR" (https://www.leiloesbr.com.br) — back-end ASP
+# clássico (peca.asp, catalogo.asp, leilao.asp) compartilhado entre ~17
+# tenants do INNLEI (FCE Leilões, Levy Leiloeiro, Evânio Alves, AW Leilões,
+# Casa Amarela, PRH, TB Aracaju, Bastos, João de Franco, Martha Padilha
+# etc.). NÃO confundir com `leilao.br` (provider distinto, plataforma
+# diferente).
+#
+# Identificável via:
+#   - Rodapé "Powered by LeilõesBR"
+#   - Asset CDN https://du2us4f94qfno.cloudfront.net/
+#   - Rotas /catalogo.asp?Num=N, /peca.asp?Id=N
+#
+# Templates conhecidos:
+#   1. Mustache+loadData (FCE/numismata) — `var loadData = {data: [{...}]};`
+#      inline com PECA, TITULO, MINI_DESCRICAO, VALOR_CONTRATADO, etc.
+#   2. Server-side render (Levy/Evânio/PRH/AW) — `<p class="search-login">`
+#      cards no listing + bloco "Valor Inicial: R$ N" no detail.
+#
+# Selectors abaixo são do template 2 (mais comum nos tenants de imóveis).
+# O spider implementa fallback para o template 1.
+
 auctioneer_slug: "leiloesbr"
-platform_hint: "leiloesbr"
+platform_hint: "leiloesbr_asp"
 
 listing_active:
-  url_pattern: ""
-  card_selector: "a"
+  # Home do tenant lista os catálogos abertos + peças destacadas.
+  # /catalogo.asp?Num=N retorna lista paginada das peças do leilão N.
+  url_pattern: "https://{tenant}/catalogo.asp?Num={leilao_id}"
+  card_selector: "a[href*='/peca.asp?Id=']"
   card_kind: css
+  pagination:
+    kind: querystring
+    template: "&p={page}"
+
+listing_closed: null
 
 detail:
-  fields:
-    title: "h1::text"
+  # peca.asp é o lot detail. ID é GLOBAL — cross-tenant: o mesmo Id pode
+  # ser linkado em catálogos de leiloeiros diferentes (mesmo CDN compartilhado).
+  url_pattern: "https://{tenant}/peca.asp?Id={peca_id}"
+  field_selectors:
+    title:
+      # Template 2: dentro de section "Peça" → div.lote-desc.text-list p
+      # Template 1: data[0].TITULO no loadData
+      selector: "div.lote-desc.text-list p, meta[property='og:title']"
+      kind: css
+    price_minimum:
+      # Template 2: <span class="is-rs">R$</span> <span class="is-valor">N</span>
+      # com label "Valor Inicial:" ou "Lance Mínimo:". O hidden input
+      # name="ValorMinimo" também guarda o valor.
+      selector: "input[name='ValorMinimo'], span.is-valor"
+      kind: css
+    price_market:
+      # Template 2: "Valor de Avaliação" raramente exposto — provider
+      # tipicamente declara apenas Valor Inicial / Lance Mínimo.
+      # Template 1: data[0].VALOR_CONTRATADO (avaliação) / VALOR_VENDA.
+      selector: "[data-label='avaliacao'], .valor-avaliacao"
+      kind: css
+    address_block:
+      # Template 2: "Local:" label com link a.reveal-modal "Cidade - UF".
+      # Endereço completo do imóvel só está na descrição (texto livre).
+      selector: "a[data-reveal-id='local-modal']"
+      kind: css
+    images:
+      # CDN cloudfront /imagens/img_m/{leilao_id}/{peca_id}.jpg.
+      # Template 2: links também aparecem em <img class="lote-img"> dentro
+      # do carrossel.
+      selector: "img[src*='cloudfront.net/imagens/'], img.lote-img"
+      kind: css
+    documents:
+      # PDFs do edital às vezes em /edital/, mais comum em CDN compartilhada.
+      selector: "a[href$='.pdf']"
+      kind: css
+    bids:
+      # Histórico de lances no template 2 fica em ul.list-lances; geralmente
+      # vazio para anônimos ("0 lance(s)"). Template 1 expõe ATIVAR_VALOR.
+      selector: "ul.list-lances li, .historico-lances li"
+      kind: css

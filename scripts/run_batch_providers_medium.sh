@@ -16,6 +16,10 @@ SPIDERS=(
     "mega_leiloes:-a sites=all"
     "plataforma_leiloar:-a sites=all"
     "dg_platform:"
+    "degrau_publicidade:-a sites=all"
+    "inertia_laravel_leiloes:-a sites=all"
+    "portal_zuk:-a sites=1"
+    "leiloesbr:-a sites=all"
 )
 TIMEOUT_PER_SPIDER=$((45 * 60))
 TOTAL_NEW=0

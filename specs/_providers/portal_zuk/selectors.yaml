@@ -1,0 +1,70 @@
+# Provider: portal_zuk
+#
+# Plataforma single-tenant (Zukerman/Dora Plat) — vários leiloeiros do
+# INNLEI (DORA PLAT, Fabio Zukerman, Cezar A. Badolato Silva etc.) que
+# redirecionam para www.portalzuk.com.br. ~7 hosts mapeados; o conteúdo
+# é único pois todos compartilham o mesmo back-end Laravel + jQuery SPA.
+#
+# Stack: Laravel + jQuery + Cloudflare. Listing /leilao-de-imoveis traz
+# 30 cards SSR (server-side render) na primeira carga; "Carregar mais"
+# faz POST /lista/carrega-mais com CSRF (rota nominada "carrega.mais",
+# resolvida via Ziggy-style route() helper carregado em
+# cdn.portalzuk.com.br/js/lista.*.js).
+#
+# Estratégia v1: Playwright para clicar "Carregar mais" até esgotar.
+# Quando produção precisar de paginação completa, alternativa é POST
+# direto com token CSRF capturado da home — não implementado em v1.
+
+auctioneer_slug: "portal_zuk"
+platform_hint: "portalzuk_laravel_jquery"
+
+listing_active:
+  url_pattern: "https://www.portalzuk.com.br/leilao-de-imoveis"
+  card_selector: "div.card_lotes_div a[href*='/imovel/']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+listing_closed:
+  # /tl/encerrados expõe os já finalizados; mesmo schema, menos relevante
+  # para v1 (foco em open).
+  url_pattern: "https://www.portalzuk.com.br/leilao-de-imoveis/tl/encerrados"
+  card_selector: "div.card_lotes_div a[href*='/imovel/']"
+  card_kind: css
+  pagination:
+    kind: none
+    template: null
+
+detail:
+  url_pattern: "https://www.portalzuk.com.br/imovel/{uf}/{cidade}/{bairro}/{rua}/{id1}-{id2}"
+  field_selectors:
+    title:
+      # h1.title dentro de .property-area
+      selector: "div.property-main-content h1.title, div.property-area h1.title"
+      kind: css
+    price_minimum:
+      # 2ª praça (label "2º Leilão") tem o lance mínimo final.
+      # Estrutura: div.card-action-item com .card-action-item-text + .card-action-item-value
+      selector: "div.property-main-content div.card-action-item"
+      kind: css
+    price_market:
+      # 1ª praça (label "1º Leilão") tipicamente = valor de avaliação total.
+      selector: "div.property-main-content div.card-action-item"
+      kind: css
+    address_block:
+      selector: "div.property-main-content p.property-address"
+      kind: css
+    images:
+      selector: "figure.property-gallery-image img"
+      kind: css
+    documents:
+      # Edital e laudo em /edital/...pdf. robots.txt bloqueia /edital — só
+      # nos linkamos a partir do detail page; não fazemos crawl recursivo
+      # da pasta /edital/.
+      selector: "a[href*='/edital/'][href$='.pdf'], a.property-edital, a[href$='.pdf']"
+      kind: css
+    bids:
+      # Histórico de lances exige login; container está vazio publicamente.
+      selector: "#maior-lance-login, div.property-bids-list"
+      kind: css

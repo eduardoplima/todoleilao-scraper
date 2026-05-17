@@ -154,12 +154,6 @@ def rule_softgt(html, final_url, dom, signals, stack, meta_gen):
     return None
 
 
-def rule_leiloesbr(html, final_url, dom, signals, stack, meta_gen):
-    if "leiloesbr.com.br" in html:
-        return Detection("leiloesbr", "high", "link:leiloesbr.com.br")
-    return None
-
-
 def rule_leiloesweb(html, final_url, dom, signals, stack, meta_gen):
     if "leiloesweb.com.br" in html:
         return Detection("leiloesweb", "high", "link:leiloesweb.com.br")
@@ -178,6 +172,51 @@ def rule_degrau_publicidade(html, final_url, dom, signals, stack, meta_gen):
     # estrutura — vale agrupar.
     if "degraupublicidade.com.br" in html:
         return Detection("degrau_publicidade", "medium", "link:degraupublicidade.com.br")
+    # Asset path próprio do template Degrau (ApiEngine + jQuery SPA);
+    # presente mesmo em deploys que não anunciam a agência no footer.
+    if "/dg-temas/" in html or "ApiEngine/GetBusca" in html or "jsLoteImgItem" in html:
+        return Detection("degrau_publicidade", "high", "asset:/dg-temas/ ou ApiEngine")
+    return None
+
+
+def rule_inertia_laravel_leiloes(html, final_url, dom, signals, stack, meta_gen):
+    # Plataforma Laravel 11 + Inertia.js (React) + Vite. Sinal canônico:
+    # <title inertia>...</title> + <div id="app" data-page="{...component...}">
+    # + bundle paths /build/assets/inertia-vendor-*.js. Tenant compartilha
+    # API REST anônima /api/lots; provider único para o spider.
+    if "<title inertia" in html and 'data-page="{&quot;component&quot;' in html:
+        if "/build/assets/" in html or "inertia-vendor" in html:
+            return Detection(
+                "inertia_laravel_leiloes",
+                "high",
+                "<title inertia>+data-page=component+vite/build",
+            )
+    return None
+
+
+def rule_portal_zuk(html, final_url, dom, signals, stack, meta_gen):
+    # Plataforma single-tenant da Zukerman/Dora Plat. Vários leiloeiros
+    # diferentes (Cezar Badolato Silva, Fabio Zukerman etc.) compartilham
+    # o mesmo back-end e redirecionam para www.portalzuk.com.br.
+    host = (urlparse(final_url).hostname or "").lower()
+    if host.endswith("portalzuk.com.br") or host == "portalzuk.com.br":
+        return Detection("portal_zuk", "high", f"host={host}")
+    if "portalzuk.com.br" in html or "card-property" in html and "property-prices" in html:
+        return Detection("portal_zuk", "medium", "asset/class portalzuk")
+    return None
+
+
+def rule_leiloesbr(html, final_url, dom, signals, stack, meta_gen):
+    # Plataforma "LeilõesBR" (https://www.leiloesbr.com.br) — back-end ASP
+    # clássico (peca.asp, catalogo.asp) com JSON `var loadData = {...};`
+    # inline no detail. ~17 tenants do INNLEI usam o mesmo template.
+    # Não confundir com "leilao.br" (provider distinto).
+    if "leiloesbr.com.br" in html and ("peca.asp" in html or "catalogo.asp" in html):
+        return Detection("leiloesbr", "high", "leiloesbr.com.br + ASP routes")
+    if "Powered by LeilõesBR" in html or "powered by leilõesbr" in html:
+        return Detection("leiloesbr", "high", "footer:Powered by LeilõesBR")
+    if "leiloesbr.com.br" in html:
+        return Detection("leiloesbr", "medium", "link:leiloesbr.com.br")
     return None
 
 
@@ -278,6 +317,11 @@ RULES = [
     rule_s4b_digital,
     rule_parked_ww17,
     rule_softgt,
+    # inertia_laravel_leiloes ANTES de wordpress/proprio_html para capturar
+    # tenants Laravel SPA que de outra forma cairiam em "proprio_html (jquery)".
+    rule_inertia_laravel_leiloes,
+    # portal_zuk antes de superbid pra não conflitar com host detection.
+    rule_portal_zuk,
     rule_leiloesbr,
     rule_leiloesweb,
     rule_wix,

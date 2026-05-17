@@ -48,10 +48,9 @@ class WixSpider(ProprioHtmlSpider):
     auctioneer_slug = "wix"
 
 
-class LeiloesbrSpider(ProprioHtmlSpider):
-    name = "leiloesbr"
-    provider_slug = "leiloesbr"
-    auctioneer_slug = "leiloesbr"
+# LeiloesbrSpider movido para leilao_scraper.spiders.leiloesbr (2026-05-17).
+# Parser dedicado lida com peca.asp / catalogo.asp e ambos templates
+# (Mustache+loadData inline e server-side HTML).
 
 
 class SodreSantoroSpider(ProprioHtmlSpider):
