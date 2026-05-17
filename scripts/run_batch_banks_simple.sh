@@ -19,21 +19,13 @@ for spider in "${SPIDERS[@]}"; do
     echo "[$(date -u +%FT%TZ)] STARTING $spider (timeout ${TIMEOUT_PER_SPIDER}s)"
     BEFORE=$(python /app/scripts/spider_run_health.py --since-minutes 1 --host "${spider}.com.br" 2>/dev/null || echo 0)
 
-    nohup uv run scrapy crawl "$spider" -a incremental_only=true \
+    # Foreground via `timeout` (vide comentário em run_batch_providers_large.sh).
+    timeout --foreground --kill-after=300s "$TIMEOUT_PER_SPIDER" \
+        uv run scrapy crawl "$spider" -a incremental_only=true \
         -s LOG_LEVEL=INFO \
-        -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
-        > "$LOG_DIR/batch_${spider}.log" 2>&1 &
-    PID=$!
-
-    HARD=$(( $(date +%s) + TIMEOUT_PER_SPIDER + 300 ))
-    while kill -0 "$PID" 2>/dev/null; do
-        if [ "$(date +%s)" -ge "$HARD" ]; then
-            kill "$PID" 2>/dev/null; sleep 10; kill -9 "$PID" 2>/dev/null
-            echo "  $spider HARD-KILLED"
-            break
-        fi
-        sleep 60
-    done
+        -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" 2>&1 \
+      | tee "$LOG_DIR/batch_${spider}.log" \
+      | grep -E '^\d{4}-\d{2}-\d{2}.*\b(INFO|WARNING|ERROR)\b' || true
 
     AFTER_INTERVAL=$((TIMEOUT_PER_SPIDER / 60 + 5))
     NEW=$(python /app/scripts/spider_run_health.py --since-minutes "$AFTER_INTERVAL" 2>/dev/null | awk -v sp="$spider" '$1 ~ sp {sum+=$2} END {print sum+0}')

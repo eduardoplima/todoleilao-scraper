@@ -30,21 +30,13 @@ for entry in "${SPIDERS[@]}"; do
 
     echo "[$(date -u +%FT%TZ)] STARTING $spider ($args; timeout ${TIMEOUT_PER_SPIDER}s)"
 
-    nohup uv run scrapy crawl "$spider" $args -a incremental_only=true \
+    # Foreground via `timeout` (vide comentário em run_batch_providers_large.sh).
+    timeout --foreground --kill-after=180s "$TIMEOUT_PER_SPIDER" \
+        uv run scrapy crawl "$spider" $args -a incremental_only=true \
         -s LOG_LEVEL=INFO \
-        -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
-        > "$LOG_DIR/batch_${spider}.log" 2>&1 &
-    PID=$!
-
-    HARD=$(( $(date +%s) + TIMEOUT_PER_SPIDER + 180 ))
-    while kill -0 "$PID" 2>/dev/null; do
-        if [ "$(date +%s)" -ge "$HARD" ]; then
-            kill "$PID" 2>/dev/null; sleep 5; kill -9 "$PID" 2>/dev/null
-            echo "  $spider HARD-KILLED"
-            break
-        fi
-        sleep 30
-    done
+        -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" 2>&1 \
+      | tee "$LOG_DIR/batch_${spider}.log" \
+      | grep -E '^\d{4}-\d{2}-\d{2}.*\b(INFO|WARNING|ERROR)\b' || true
 
     echo "  $spider DONE"
     TOTAL_NEW=$((TOTAL_NEW + 1))
