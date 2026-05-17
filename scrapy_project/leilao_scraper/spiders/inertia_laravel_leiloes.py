@@ -1,4 +1,4 @@
-"""Spider para tenants do provider Inertia Laravel Leilões.
+r"""Spider para tenants do provider Inertia Laravel Leilões.
 
 Plataforma multi-tenant Laravel 11 + Inertia.js (React) + Vite. ~7 tenants
 identificados no INNLEI (Globo Leilões, Balbino Leilões, Sato Leilões,
@@ -46,13 +46,10 @@ import scrapy
 from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
 from leilao_scraper.spiders._provider_base import ProviderSpider
 from leilao_scraper.spiders.soleon import (
-    _brl_to_decimal,
-    _dedup_clauses,
     _detail_is_imovel,
     _normalize_text,
     _parse_auction_clauses,
 )
-
 
 _BRL_DECIMAL_RE = re.compile(r"([\d.,]+)")
 

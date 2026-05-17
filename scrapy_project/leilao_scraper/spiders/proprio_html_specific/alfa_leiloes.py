@@ -19,14 +19,12 @@ from __future__ import annotations
 
 import re
 from decimal import Decimal
-from typing import Any
 
 from leilao_scraper.spiders.proprio_html import ProprioHtmlSpider
 from leilao_scraper.spiders.proprio_html_specific._common import (
     collect_pdfs_with_query,
 )
 from leilao_scraper.spiders.soleon import _brl_to_decimal
-
 
 _PRICE_AVALIACAO_SCOPED = re.compile(
     r"(?:Valor\s+da\s+)?Avalia[çc][ãa]o[^\d]*R\$\s*([\d.,]+)", re.I,

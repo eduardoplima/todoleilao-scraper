@@ -32,7 +32,7 @@ Uso:
 from __future__ import annotations
 
 import re
-from decimal import Decimal, InvalidOperation
+from decimal import InvalidOperation
 from typing import Any, Iterable
 
 import scrapy
@@ -42,12 +42,10 @@ from leilao_scraper.spiders._provider_base import ProviderSpider
 from leilao_scraper.spiders.soleon import (
     _BRL_RE,
     _brl_to_decimal,
-    _dedup_clauses,
     _detail_is_imovel,
     _normalize_text,
     _parse_auction_clauses,
 )
-
 
 # Regex pra extrair (id_partner, id_imovel) do path "/imovel/<UF>/.../<id1>-<id2>"
 _IMOVEL_PATH_RE = re.compile(r"/imovel/[a-z]{2}/[^/]+/[^/]+/[^/]+/(\d+)-(\d+)/?")

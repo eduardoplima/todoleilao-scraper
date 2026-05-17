@@ -37,7 +37,7 @@ def spider():
 
 def _first_item(spider, response):
     items = [it for it in spider.parse_property(response)
-             if isinstance(it, dict) or hasattr(it, "get") and it.get("url")]
+             if isinstance(it, dict) or (hasattr(it, "get") and it.get("url"))]
     assert items, "parse_property não emitiu item"
     return items[0]
 

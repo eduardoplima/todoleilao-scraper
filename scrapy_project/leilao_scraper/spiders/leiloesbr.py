@@ -50,12 +50,10 @@ from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
 from leilao_scraper.spiders._provider_base import ProviderSpider
 from leilao_scraper.spiders.soleon import (
     _BRL_RE,
-    _brl_to_decimal,
     _detail_is_imovel,
     _normalize_text,
     _parse_auction_clauses,
 )
-
 
 # Regex para extrair Id da peça do path
 _PECA_ID_RE = re.compile(r"/peca\.asp\?Id=(\d+)", re.I)

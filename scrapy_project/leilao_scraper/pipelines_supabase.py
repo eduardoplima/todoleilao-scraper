@@ -24,6 +24,8 @@ from __future__ import annotations
 
 import logging
 import os
+import re
+import unicodedata
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
@@ -31,10 +33,6 @@ from typing import Any
 from urllib.parse import urlparse
 
 from itemadapter import ItemAdapter
-
-import hashlib
-import re
-import unicodedata
 
 logger = logging.getLogger(__name__)
 
@@ -270,7 +268,7 @@ class SupabasePipeline:
             with self._txn() as cur:
                 self._persist(cur, item, spider)
             self.persisted += 1
-        except Exception as exc:  # noqa: BLE001 — pipeline não pode quebrar batch
+        except Exception as exc:
             self.failed += 1
             spider.logger.warning(
                 "SupabasePipeline: falha em %s: %s",

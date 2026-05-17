@@ -16,7 +16,7 @@ import sys
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable, NamedTuple
+from typing import NamedTuple
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -201,7 +201,7 @@ def rule_portal_zuk(html, final_url, dom, signals, stack, meta_gen):
     host = (urlparse(final_url).hostname or "").lower()
     if host.endswith("portalzuk.com.br") or host == "portalzuk.com.br":
         return Detection("portal_zuk", "high", f"host={host}")
-    if "portalzuk.com.br" in html or "card-property" in html and "property-prices" in html:
+    if "portalzuk.com.br" in html or ("card-property" in html and "property-prices" in html):
         return Detection("portal_zuk", "medium", "asset/class portalzuk")
     return None
 
