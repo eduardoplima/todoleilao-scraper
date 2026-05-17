@@ -42,6 +42,13 @@ class SoleonSpider(ProviderSpider):
     LEILAO_LOTES_HREF_RE = re.compile(r"/leilao/\d+/lotes/?(?:\?|$)")
     ITEM_DETALHES_HREF_RE = re.compile(r"/item/\d+/detalhes/?(?:\?|$)")
 
+    def start_requests(self) -> Iterable[scrapy.Request]:
+        self._open_incremental_db()
+        yield from super().start_requests()
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     # ------------------------------------------------------------------
     # Nível 1: home → /leilao/{id}/lotes
     # ------------------------------------------------------------------
@@ -94,6 +101,7 @@ class SoleonSpider(ProviderSpider):
             second=second_dt,
         )
 
+        host = self.host_of(response.url)
         seen: set[str] = set()
         kept = 0
         dropped_non_imovel = 0
@@ -113,6 +121,19 @@ class SoleonSpider(ProviderSpider):
             if verdict is None:
                 ambiguous += 1
             kept += 1
+            # Incremental: extrai lot_id do path /item/{id}/detalhes
+            m_lot = re.search(r"/item/(\d+)/detalhes", absolute)
+            lot_id = m_lot.group(1) if m_lot else None
+            if lot_id and self.lot_exists(host, lot_id):
+                # Extrai status do card para listing-only update
+                label_classes = card.css("div.label_lote::attr(class)").get() or ""
+                yield self.make_listing_only_item(
+                    url=absolute,
+                    source_lot_code=lot_id,
+                    status=_map_status(label_classes),
+                    auctioneer=f"soleon::{host}",
+                )
+                continue
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,

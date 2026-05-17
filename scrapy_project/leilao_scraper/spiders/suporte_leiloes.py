@@ -62,6 +62,13 @@ class SuporteLeiloesSpider(ProviderSpider):
     EVENTO_CLASS_RE = re.compile(r"evento-index-(\d+)")
     LOT_HREF_RE = re.compile(r"/lote/(\d+)/")
 
+    def start_requests(self) -> Iterable[scrapy.Request]:
+        self._open_incremental_db()
+        yield from super().start_requests()
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     # ------------------------------------------------------------------
     # Nível 1: home → cards de leilão
     # ------------------------------------------------------------------
@@ -142,6 +149,7 @@ class SuporteLeiloesSpider(ProviderSpider):
             yield from self.parse_property(response)
             return
         # Multi-lot: lista de lotes do leilão
+        host = self.host_of(response.url)
         seen: set[str] = set()
         for href in response.css("a[href*='/lote/']::attr(href)").getall():
             if not self.LOT_HREF_RE.search(href):
@@ -150,6 +158,16 @@ class SuporteLeiloesSpider(ProviderSpider):
             if absolute in seen:
                 continue
             seen.add(absolute)
+            m_lot = self.LOT_HREF_RE.search(absolute)
+            lot_id = m_lot.group(1) if m_lot else None
+            if lot_id and self.lot_exists(host, lot_id):
+                yield self.make_listing_only_item(
+                    url=absolute,
+                    source_lot_code=lot_id,
+                    status=response.meta.get("evento_status"),
+                    auctioneer=f"suporte_leiloes::{host}",
+                )
+                continue
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,

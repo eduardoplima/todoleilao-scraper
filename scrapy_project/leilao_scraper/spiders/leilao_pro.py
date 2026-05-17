@@ -61,6 +61,13 @@ class LeilaoProSpider(ProviderSpider):
         # cards já vistos por host — usado pra detectar fallback page=1 em loop
         self._host_seen: dict[str, set[str]] = {}
 
+    def start_requests(self) -> Iterable[scrapy.Request]:
+        self._open_incremental_db()
+        yield from super().start_requests()
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     # ------------------------------------------------------------------
     # Nível 1: home → segue para /leilao/lotes/imoveis (categoria imóveis)
     # ------------------------------------------------------------------
@@ -113,6 +120,17 @@ class LeilaoProSpider(ProviderSpider):
             if verdict is None:
                 ambiguous += 1
             kept += 1
+            m_lot = self.LOT_HREF_RE.search(absolute)
+            lot_id = m_lot.group(1) if m_lot else None
+            if lot_id and self.lot_exists(host, lot_id):
+                badge_text = _normalize_text(" ".join(card.css(".badges-inline ::text").getall()))
+                yield self.make_listing_only_item(
+                    url=absolute,
+                    source_lot_code=lot_id,
+                    status=_map_status_text(badge_text),
+                    auctioneer=f"leilao_pro::{host}",
+                )
+                continue
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,
