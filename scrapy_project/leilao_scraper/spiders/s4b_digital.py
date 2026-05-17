@@ -90,6 +90,13 @@ class S4BDigitalSpider(ProviderSpider):
         # host → {storeId, portalId}; preenchido via response handler
         self._store_map: dict[str, dict] = {}
 
+    def start_requests(self) -> Iterable[Any]:
+        self._open_incremental_db()
+        yield from super().start_requests()
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     # ------------------------------------------------------------------
     # Nível 1: home do tenant via Playwright (intercepta siteconfigprod)
     # ------------------------------------------------------------------
@@ -229,6 +236,26 @@ class S4BDigitalSpider(ProviderSpider):
         )
 
         for offer in offers:
+            offer_id = offer.get("id")
+            if offer_id and self.lot_exists(host, str(offer_id)):
+                product = offer.get("product") or {}
+                short_desc = product.get("shortDesc") or ""
+                slug_part = _slugify(short_desc)
+                detail_url = f"https://{host}/oferta/{slug_part}-{offer_id}"
+                status_val = None
+                if offer.get("closed") or offer.get("sold"):
+                    status_val = "arrematado" if (offer.get("winnerBid") or {}).get("currentWinner") else "desconhecido"
+                elif (offer.get("auction") or {}).get("allOffersOfThisAuctionIsClosed"):
+                    status_val = "desconhecido"
+                else:
+                    status_val = "aberto"
+                yield self.make_listing_only_item(
+                    url=detail_url,
+                    source_lot_code=str(offer_id),
+                    status=status_val,
+                    auctioneer=f"s4b_digital::{host}",
+                )
+                continue
             yield from self._emit_item(offer, host)
 
         if offers and len(offers) == self.PAGE_SIZE and page < self.MAX_PAGES_PER_STORE:

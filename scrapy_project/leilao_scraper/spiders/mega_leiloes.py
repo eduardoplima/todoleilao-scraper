@@ -107,6 +107,13 @@ class MegaLeiloesSpider(ProviderSpider):
         super().__init__(*args, **kwargs)
         self._host_seen: dict[str, set[str]] = {}
 
+    def start_requests(self) -> Iterable[scrapy.Request]:
+        self._open_incremental_db()
+        yield from super().start_requests()
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     def parse(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
         host = self.host_of(response.url)
         # Dispatcha listing por categoria
@@ -133,6 +140,15 @@ class MegaLeiloesSpider(ProviderSpider):
                 continue
             seen.add(absolute)
             kept += 1
+            m_code = _LOT_URL_RE.search(absolute)
+            lot_code = m_code.group(1).upper() if m_code else None
+            if lot_code and self.lot_exists(host, lot_code):
+                yield self.make_listing_only_item(
+                    url=absolute,
+                    source_lot_code=lot_code,
+                    auctioneer=f"mega_leiloes::{host}",
+                )
+                continue
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,

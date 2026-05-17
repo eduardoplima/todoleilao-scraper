@@ -213,6 +213,13 @@ class LeilaoBrSpider(ProviderSpider):
         super().__init__(*args, **kwargs)
         self._seen_lots: set[str] = set()
 
+    def start_requests(self):
+        self._open_incremental_db()
+        yield from super().start_requests()
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     # ----- Nível 1: home → /leilao/imoveis ----------------------------------
 
     def parse(self, response: scrapy.http.Response) -> Iterable[scrapy.Request]:
@@ -256,6 +263,13 @@ class LeilaoBrSpider(ProviderSpider):
                 continue
             self._seen_lots.add(lot_id)
             kept += 1
+            if self.lot_exists(broker_host, lot_id):
+                yield self.make_listing_only_item(
+                    url=absolute,
+                    source_lot_code=lot_id,
+                    auctioneer=f"leilao_br::{broker_host}",
+                )
+                continue
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,
