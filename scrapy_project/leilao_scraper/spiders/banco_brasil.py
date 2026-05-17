@@ -64,6 +64,13 @@ class BancoBrasilSpider(ProviderSpider):
         self._yielded = 0
         self._seen: set[str] = set()
 
+    def start_requests(self):
+        self._open_incremental_db()
+        yield from super().start_requests()
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     # ------------------------------------------------------------------
     # Nível 1: home / catalogo → lista de /imovel/id/N
     # ------------------------------------------------------------------
@@ -83,6 +90,15 @@ class BancoBrasilSpider(ProviderSpider):
                 break
             self._yielded += 1
             kept += 1
+            m_path_id = re.search(r"/imovel/id/(\d+)", absolute)
+            lot_id = f"bb-{m_path_id.group(1)}" if m_path_id else None
+            if lot_id and self.lot_exists(host, lot_id):
+                yield self.make_listing_only_item(
+                    url=absolute,
+                    source_lot_code=lot_id,
+                    auctioneer="banco_brasil",
+                )
+                continue
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,

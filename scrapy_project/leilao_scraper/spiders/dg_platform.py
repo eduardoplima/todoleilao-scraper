@@ -107,6 +107,11 @@ class DgPlatformSpider(DegrauPublicidadeSpider):
         # CSV resolve; chama o BaseAuctionSpider.__init__ direto via grandparent.
         scrapy.Spider.__init__(self, *args, **kwargs)
 
+        # IncrementalCrawlMixin.__init__ não é chamado pelo Spider.__init__
+        # acima (bypass do MRO normal). Inicializa manualmente o estado do mixin.
+        from leilao_scraper.spiders._provider_base import IncrementalCrawlMixin
+        IncrementalCrawlMixin.__init__(self, *args, **kwargs)
+
         # Carrega selectors.yaml do provider degrau (não usamos no parser,
         # mas mantém compatibilidade com helpers do ProviderSpider).
         from leilao_scraper.spiders._provider_base import ProviderSpider
@@ -136,5 +141,9 @@ class DgPlatformSpider(DegrauPublicidadeSpider):
         )
 
     def start_requests(self) -> Iterable[Any]:
+        self._open_incremental_db()
         for url in self.start_urls:
             yield self.make_request(url, callback=self.parse)
+
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()

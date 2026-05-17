@@ -70,6 +70,9 @@ class BradescoSpider(ProviderSpider):
         self._yielded = 0
         self._seen: set[str] = set()
 
+    def closed(self, reason: str) -> None:
+        self.close_incremental_db()
+
     # ------------------------------------------------------------------
     # Nível 1: home/listagem via Playwright; aguarda hidratação
     # ------------------------------------------------------------------
@@ -97,6 +100,16 @@ class BradescoSpider(ProviderSpider):
                 break
             self._yielded += 1
             kept += 1
+            # Incremental: extrai lot_id do path (-{id} ou /{id})
+            m_id = re.search(r"-(\d{3,})/?$", path) or re.search(r"/(\d+)/?$", path)
+            lot_id = f"brad-{m_id.group(1)}" if m_id else None
+            if lot_id and self.lot_exists(host, lot_id):
+                yield self.make_listing_only_item(
+                    url=absolute,
+                    source_lot_code=lot_id,
+                    auctioneer="bradesco",
+                )
+                continue
             yield self.make_request(
                 absolute,
                 callback=self.parse_property,
@@ -116,6 +129,7 @@ class BradescoSpider(ProviderSpider):
         )
 
     def start_requests(self) -> Iterable[Any]:
+        self._open_incremental_db()
         # Override pra: (1) substituir URLs `/imoveis` ou similares pelo
         # filtro real do app `/auctions?type=realstate`; (2) aguardar o
         # JS render hidratar os <a href="/auctions/...">.

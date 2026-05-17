@@ -131,7 +131,25 @@ class DegrauPublicidadeSpider(ProviderSpider):
             if not _detail_is_imovel(name, description + " " + name):
                 skipped_terms += 1
                 continue
-            data["lot_id"] = m.group(1)
+            lot_id = m.group(1)
+            data["lot_id"] = lot_id
+            if self.lot_exists(host, lot_id):
+                # Tenta extrair status do sitemap via SubStatus numérico
+                sm_status: str | None = None
+                sm_substatus = data.get("substatus")
+                if sm_substatus is not None:
+                    try:
+                        sm_status = _SUBSTATUS_TO_LOT_STATUS.get(int(sm_substatus))
+                    except (ValueError, TypeError):
+                        pass
+                yield self.make_listing_only_item(
+                    url=url,
+                    source_lot_code=lot_id,
+                    status=sm_status,
+                    auctioneer=f"degrau_publicidade::{host}",
+                )
+                kept += 1
+                continue
             yield self.make_request(
                 url,
                 callback=self.parse_property,
