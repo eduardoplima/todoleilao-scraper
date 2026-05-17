@@ -32,7 +32,7 @@ for entry in "${SPIDERS[@]}"; do
 
     # Foreground via `timeout` (vide comentário em run_batch_providers_large.sh).
     timeout --foreground --kill-after=180s "$TIMEOUT_PER_SPIDER" \
-        uv run scrapy crawl "$spider" $args -a incremental_only=true \
+        scrapy crawl "$spider" $args -a incremental_only=true \
         -s LOG_LEVEL=INFO \
         -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" 2>&1 \
       | tee "$LOG_DIR/batch_${spider}.log" \
