@@ -42,4 +42,4 @@ jobs:
             -a todoleilao-caixa \
             -e CAIXA_UF=${{ steps.uf.outputs.uf }} \
             registry.fly.io/todoleilao-caixa:latest \
-            sh -c 'cd /app/scrapy_project && scrapy crawl caixa -a estados=${CAIXA_UF} -a auto_cidades=true -s CLOSESPIDER_TIMEOUT=36000'
+            sh -c 'cd /app/scrapy_project && scrapy crawl caixa -a estados=${CAIXA_UF} -a auto_cidades=true -a incremental_only=true -s CLOSESPIDER_TIMEOUT=36000'

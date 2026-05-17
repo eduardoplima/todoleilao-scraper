@@ -18,6 +18,8 @@ Uso:
 from __future__ import annotations
 
 import re
+
+from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
 from typing import Any, Iterable
 
 import scrapy
@@ -51,11 +53,8 @@ class BancoBrasilSpider(ProviderSpider):
     custom_settings = {
         "CONCURRENT_REQUESTS_PER_DOMAIN": 2,
         "DOWNLOAD_DELAY": 1.0,
-        "USER_AGENT": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36 TodoLeilaoBot/1.0"
-        ),
+        # UA Chrome puro — suffix "TodoLeilaoBot/1.0" antigo delatava bot.
+        "USER_AGENT": BROWSER_USER_AGENT,
     }
 
     MAX_LOTS_PER_RUN = 200

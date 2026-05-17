@@ -148,11 +148,8 @@ _NOME_TO_UF: dict[str, str] = {
 
 # UA realista — Chromium do scrapy-playwright e Radware esperam mesmo
 # UA do navegador automatizado, senão fingerprint diverge dos cookies.
-_BROWSER_UA = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/146.0.0.0 Safari/537.36"
-)
+# Versão unificada em _common_ua.py (Chrome 122 estável).
+from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT as _BROWSER_UA
 
 
 class CaixaSpider(ProviderSpider):

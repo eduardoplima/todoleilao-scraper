@@ -72,6 +72,14 @@ class PropertyItem(scrapy.Item):
     # Quando ausente, fallback é a própria `url`.
     source_lot_code = scrapy.Field()
 
+    # ----- modo incremental (interno do pipeline) ----------------------------
+    # True quando o spider já sabe que esse lot existe no DB e só está
+    # propagando status do listing (sem detail fetch). Pipeline detecta o
+    # flag e faz só UPDATE de `current_status` + `last_seen_at`,
+    # preservando address/spatial_unit/rounds/bids/imgs intocados.
+    # Acionado por IncrementalCrawlMixin em `_provider_base.py`.
+    listing_only_status_update = scrapy.Field()
+
     # ----- número humano do lote (ex.: "001") --------------------------------
     # Identificador exibido na listagem; útil pra UI mas não chave única.
     lot_number = scrapy.Field()

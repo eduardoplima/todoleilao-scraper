@@ -28,7 +28,9 @@ NEWSPIDER_MODULE = "leilao_scraper.spiders"
 
 ROBOTSTXT_OBEY = True
 
-USER_AGENT = "TodoLeilaoBot/1.0 (+contato@exemplo.com)"
+from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
+
+USER_AGENT = BROWSER_USER_AGENT
 
 DOWNLOAD_DELAY = 1.5
 CONCURRENT_REQUESTS_PER_DOMAIN = 2

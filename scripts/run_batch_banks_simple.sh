@@ -19,7 +19,7 @@ for spider in "${SPIDERS[@]}"; do
     echo "[$(date -u +%FT%TZ)] STARTING $spider (timeout ${TIMEOUT_PER_SPIDER}s)"
     BEFORE=$(python /app/scripts/spider_run_health.py --since-minutes 1 --host "${spider}.com.br" 2>/dev/null || echo 0)
 
-    nohup uv run scrapy crawl "$spider" \
+    nohup uv run scrapy crawl "$spider" -a incremental_only=true \
         -s LOG_LEVEL=INFO \
         -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
         > "$LOG_DIR/batch_${spider}.log" 2>&1 &

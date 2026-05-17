@@ -39,8 +39,10 @@ from playwright.async_api import (
     TimeoutError as PWTimeoutError,
 )
 
+from discovery._common_ua import BROWSER_USER_AGENT
+
 CACHE_DIR = Path("data/intermediate/cache/sites")
-USER_AGENT = "TodoLeilaoBot/0.1 (+contato: eplima.cc@gmail.com)"
+USER_AGENT = BROWSER_USER_AGENT
 HTTPX_TIMEOUT = 20.0
 PLAYWRIGHT_TIMEOUT_MS = 30_000
 DEFAULT_CONCURRENCY = 3

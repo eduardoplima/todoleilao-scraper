@@ -42,10 +42,7 @@ _LANCE_MIN_RE = re.compile(
     r"SEGUNDO\s+LEIL[ÃA]O|VALOR\s+M[ÍI]NIMO)[^R]{0,80}R\$\s*([\d.,]+)",
     re.I,
 )
-_BROWSER_UA = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-)
+from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT as _BROWSER_UA
 
 
 class WordpressSpider(ProviderSpider):

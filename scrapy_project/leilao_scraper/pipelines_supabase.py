@@ -266,6 +266,13 @@ class SupabasePipeline:
         source_id = self._upsert_source(cur, host, url, source_kind=source_kind)
         self._insert_scrape_event(cur, source_id, url, a.get("scraped_at"))
 
+        # Fast path: spider já sabe que esse lot existe no DB e só está
+        # propagando status do listing (IncrementalCrawlMixin). UPDATE só
+        # current_status + last_seen_at, sem mexer no resto.
+        if a.get("listing_only_status_update"):
+            self._upsert_auction_lot_status_only(cur, source_id, a, url)
+            return
+
         auctioneer_id = self._upsert_auctioneer(
             cur,
             a.get("auctioneer") or "desconhecido",
@@ -635,6 +642,45 @@ class SupabasePipeline:
         )
         row = cur.fetchone()
         return row[0], bool(row[1])
+
+    def _upsert_auction_lot_status_only(
+        self, cur, source_id: str, a: ItemAdapter, url: str
+    ) -> None:
+        """Fast path do IncrementalCrawlMixin — só UPDATE de status + last_seen.
+
+        Quando o spider sabe que `(source_id, source_lot_code)` já existe
+        no DB e não fez detail fetch, propaga só o `current_status` lido
+        do listing (badge) sem mexer em address, spatial_unit, rounds,
+        bids, encumbrances, images. Mantém o pipeline incremental "leve":
+        rastreia que o lot ainda está vivo (last_seen_at) + atualiza
+        status quando o site muda pra arrematado/encerrado.
+
+        No-op silencioso se o lot não existe (race condition entre cache
+        do mixin e DB) — fallback seguro.
+        """
+        lot_code = a.get("source_lot_code") or url
+        status_raw = a.get("status")
+        if status_raw:
+            cur.execute(
+                """
+                UPDATE core.auction_lot
+                   SET current_status = %s,
+                       last_seen_at   = now(),
+                       updated_at     = now()
+                 WHERE source_id = %s AND source_lot_code = %s
+                """,
+                (_map_lot_status(status_raw), source_id, lot_code),
+            )
+        else:
+            # Sem status no listing — só toca last_seen pra rastrear "ainda existe".
+            cur.execute(
+                """
+                UPDATE core.auction_lot
+                   SET last_seen_at = now(), updated_at = now()
+                 WHERE source_id = %s AND source_lot_code = %s
+                """,
+                (source_id, lot_code),
+            )
 
     def _insert_round(self, cur, lot_id: str, a: ItemAdapter) -> str | None:
         scheduled = _parse_dt(a.get("second_auction_date") or a.get("first_auction_date"))

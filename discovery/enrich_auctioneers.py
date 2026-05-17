@@ -29,8 +29,10 @@ import typer
 from bs4 import BeautifulSoup
 from loguru import logger
 
+from discovery._common_ua import BROWSER_USER_AGENT
+
 CACHE_DIR = Path("data/intermediate/cache/external_sites")
-USER_AGENT = "TodoLeilaoBot/0.1 (+contato: eplima.cc@gmail.com)"
+USER_AGENT = BROWSER_USER_AGENT
 DEFAULT_TIMEOUT = 12.0
 DEFAULT_CONCURRENCY = 5
 BODY_EXCERPT_CHARS = 4000
@@ -107,6 +109,11 @@ async def fetch_one(
     use_cache: bool = True,
     timeout: float = DEFAULT_TIMEOUT,
 ) -> dict[str, Any]:
+    # Normaliza URLs sem schema (INNLEI cadastra alguns como "www.foo.com.br"
+    # sem http://; httpx levanta ValueError nesse caso).
+    if not url.startswith(("http://", "https://")):
+        url = "http://" + url
+
     if use_cache:
         cached = _read_cache(url)
         if cached is not None:
@@ -144,7 +151,11 @@ async def fetch_one(
     except httpx.RequestError as exc:
         payload["site_error"] = f"request:{exc.__class__.__name__}"
     except Exception as exc:  # SSL errors, decoding, etc.
-        payload["site_error"] = f"other:{type(exc).__name__}"
+        # Inclui str(exc) truncada para diagnóstico de erros raros
+        # (decoding, charset, URL malformado). Útil quando o site
+        # retorna conteúdo que httpx ou BS4 não conseguem processar.
+        msg = (str(exc) or "").replace("\n", " ")[:120]
+        payload["site_error"] = f"other:{type(exc).__name__}:{msg}"
 
     _write_cache(url, payload)
     payload["_cache_hit"] = False

@@ -37,6 +37,7 @@ from urllib.parse import urlencode
 import scrapy
 from scrapy_playwright.page import PageMethod
 
+from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
 from leilao_scraper.spiders._provider_base import ProviderSpider
 from leilao_scraper.spiders.soleon import (
     _detail_is_imovel,
@@ -201,7 +202,7 @@ class S4BDigitalSpider(ProviderSpider):
                 "Accept": "application/json",
                 "Origin": f"https://{host}",
                 "Referer": f"https://{host}/",
-                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "User-Agent": BROWSER_USER_AGENT,
             },
         )
 

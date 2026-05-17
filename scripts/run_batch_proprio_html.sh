@@ -29,7 +29,7 @@ COUNT_FAIL=0
 for spider in "${SPIDERS[@]}"; do
     [ -z "$spider" ] && continue
 
-    nohup uv run scrapy crawl "$spider" \
+    nohup uv run scrapy crawl "$spider" -a incremental_only=true \
         -s LOG_LEVEL=WARNING \
         -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
         > "$LOG_DIR/batch_${spider}.log" 2>&1 &

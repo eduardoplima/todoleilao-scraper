@@ -36,8 +36,10 @@ import typer
 from bs4 import BeautifulSoup
 from loguru import logger
 
+from discovery._common_ua import BROWSER_USER_AGENT
+
 CACHE_DIR = Path("data/intermediate/cache/sites")  # mesmo cache do site_analyzer
-USER_AGENT = "TodoLeilaoBot/0.1 (+contato: eplima.cc@gmail.com)"
+USER_AGENT = BROWSER_USER_AGENT
 HTTPX_TIMEOUT = 15.0
 DEFAULT_CONCURRENCY = 5
 TOP_N_CANDIDATES = 5

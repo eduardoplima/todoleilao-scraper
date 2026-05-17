@@ -23,6 +23,7 @@ from typing import Any, Iterable
 import scrapy
 from scrapy_playwright.page import PageMethod
 
+from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
 from leilao_scraper.spiders._provider_base import ProviderSpider
 from leilao_scraper.spiders.soleon import (
     _brl_to_decimal,
@@ -59,11 +60,7 @@ class BradescoSpider(ProviderSpider):
         "DOWNLOAD_DELAY": 1.0,
         "PLAYWRIGHT_MAX_PAGES_PER_CONTEXT": 4,
         "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 60_000,
-        "USER_AGENT": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36 TodoLeilaoBot/1.0"
-        ),
+        "USER_AGENT": BROWSER_USER_AGENT,
     }
 
     MAX_LOTS_PER_RUN = 100

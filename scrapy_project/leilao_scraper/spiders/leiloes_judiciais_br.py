@@ -110,8 +110,15 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
         self._seen_leiloes: set[str] = set()
         self._seen_lotes: set[str] = set()
 
+    def closed(self, reason: str) -> None:
+        """Fecha conexão DB do IncrementalCrawlMixin (se aberta)."""
+        self.close_incremental_db()
+
     # ----- Override start_urls handling -------------------------------------
     def start_requests(self) -> Iterable[scrapy.Request]:
+        # Pré-carrega cache de lots existentes (IncrementalCrawlMixin no-op se
+        # incremental_only=false).
+        self._open_incremental_db()
         for url in self.start_urls:
             host = urlparse(url).hostname or ""
             api_url = f"https://{host}/core/api/get-leiloes?pg=1&itens_pagina=40"
@@ -193,11 +200,40 @@ class LeiloesJudiciaisBrSpider(ProviderSpider):
                 continue
             self._seen_lotes.add(f"{host}:{lote_id}")
             kept += 1
+            # Incremental: se lot já está no DB, emite só status update do
+            # listing (sem parse completo). API JSON já carrega o id_status
+            # do leilão atual; passa adiante pra reconstituir current_status.
+            if self.lot_exists(host, lote_id):
+                canonical_url = f"https://{host}/lote/{lote.get('leilao_id')}/{lote_id}"
+                yield self.make_listing_only_item(
+                    url=canonical_url,
+                    source_lot_code=lote_id,
+                    status=self._status_from_api(lote, leilao),
+                    auctioneer=f"leiloes_judiciais_br::{host}",
+                )
+                continue
             yield from self._emit_item(host, leilao, lote, response.url)
         self.log_event("ljb_lotes_api", host=host,
                        leilao_id=response.meta.get("leilao_id"),
                        imoveis_kept=kept,
                        total_items=len(items))
+
+    @staticmethod
+    def _status_from_api(lote: dict, leilao: dict) -> str | None:
+        """Mapeia status do JSON da API LJB pro enum core.lot_status.
+
+        statusleilao_id == 18 indica leilão encerrado (aceita propostas).
+        bn_finalizadonaodivulgado=True indica que praças encerraram.
+        Sem campo dedicado pro lot, infere via leilão (suficiente pra
+        listing-only update).
+        """
+        if leilao.get("encerrado") or leilao.get("retirado"):
+            return "arrematado" if lote.get("bn_arrematado") else "desconhecido"
+        if leilao.get("suspenso"):
+            return "suspenso"
+        if leilao.get("bn_finalizadonaodivulgado"):
+            return "desconhecido"
+        return "aberto"
 
     def _emit_item(self, host: str, leilao: dict, lote: dict, src_url: str):
         """Emite PropertyItem a partir do dict do lote da API."""

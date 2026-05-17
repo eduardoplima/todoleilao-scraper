@@ -26,7 +26,7 @@ for entry in "${SPIDERS[@]}"; do
 
     echo "[$(date -u +%FT%TZ)] STARTING $spider ($args; timeout ${TIMEOUT_PER_SPIDER}s)"
 
-    nohup uv run scrapy crawl "$spider" $args \
+    nohup uv run scrapy crawl "$spider" $args -a incremental_only=true \
         -s LOG_LEVEL=INFO \
         -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
         > "$LOG_DIR/batch_${spider}.log" 2>&1 &
