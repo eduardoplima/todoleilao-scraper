@@ -121,6 +121,36 @@ def _map_lot_status(status: str | None) -> str:
     return _LOT_STATUS_MAP.get(status, "desconhecido")
 
 
+# Threshold para detectar parsing provavelmente errado (minimum_bid pego de
+# campo ambíguo do HTML — taxa, IPTU, lote relacionado, etc). Lance abaixo de
+# 10% da avaliação é comercialmente improvável: o mínimo legal de 2ª praça
+# é 50% (CPC art. 891) e mesmo execuções fiscais raramente vão abaixo de 10%.
+# Quando dispara, gravamos `data_quality_flag='suspicious_bid_low_ratio'` em
+# `core.auction_lot` — o lote permanece no DB mas é filtrado por consumidores
+# (UI, lot_search) via `WHERE data_quality_flag IS NULL`.
+_SUSPICIOUS_BID_MIN_RATIO = Decimal("0.10")
+_SUSPICIOUS_APPRAISAL_FLOOR = Decimal("100000")  # ignora lotes com avaliação ínfima
+
+
+def _compute_quality_flag(
+    minimum_bid: Decimal | None,
+    appraisal_value: Decimal | None,
+) -> str | None:
+    """Retorna rótulo de qualidade quando os valores combinam num padrão
+    que indica parsing errado. None = sem suspeita.
+
+    Regra única hoje: `minimum_bid < 10% * appraisal_value` em lote com
+    avaliação > R$ 100k. Outros rótulos podem ser adicionados aqui.
+    """
+    if minimum_bid is None or appraisal_value is None:
+        return None
+    if appraisal_value < _SUSPICIOUS_APPRAISAL_FLOOR or minimum_bid <= 0:
+        return None
+    if minimum_bid < appraisal_value * _SUSPICIOUS_BID_MIN_RATIO:
+        return "suspicious_bid_low_ratio"
+    return None
+
+
 # Mapeia property_type (PropertyItem) → unit_kind enum (core.spatial_unit.kind)
 _UNIT_KIND_MAP = {
     "apartamento": "apartamento",
@@ -599,6 +629,10 @@ class SupabasePipeline:
         # public_v1.lot_search faz COALESCE pra escolher.
         min_bid = _to_decimal(a.get("minimum_bid"))
 
+        # Rótulo de qualidade: parser preferiu enviar via item.data_quality_flag,
+        # senão calcula aqui sobre os valores que vão pro DB.
+        quality_flag = a.get("data_quality_flag") or _compute_quality_flag(min_bid, appraisal)
+
         # sale_mode: leilao (default) | venda_direta | leilao_e_venda_direta
         # Spider só envia non-null quando detecta texto "Venda direta até ...".
         sale_mode = (a.get("sale_mode") or "").strip().lower() or None
@@ -610,10 +644,10 @@ class SupabasePipeline:
                 (auction_id, source_id, source_lot_code, source_url,
                  lot_number, current_status, appraisal_value, minimum_bid,
                  description, scraped_at, parser_version,
-                 sale_mode, direct_sale_deadline_at)
+                 sale_mode, direct_sale_deadline_at, data_quality_flag)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s,
                     COALESCE(%s::core.sale_mode, 'leilao'),
-                    %s)
+                    %s, %s)
             ON CONFLICT (source_id, source_lot_code) DO UPDATE
               SET current_status   = EXCLUDED.current_status,
                   appraisal_value  = COALESCE(EXCLUDED.appraisal_value, core.auction_lot.appraisal_value),
@@ -630,6 +664,7 @@ class SupabasePipeline:
                       EXCLUDED.direct_sale_deadline_at,
                       core.auction_lot.direct_sale_deadline_at
                   ),
+                  data_quality_flag = EXCLUDED.data_quality_flag,
                   last_seen_at     = now(),
                   scraped_at       = EXCLUDED.scraped_at
             RETURNING id, (xmax = 0) AS inserted
@@ -637,7 +672,7 @@ class SupabasePipeline:
             (
                 auction_id, source_id, lot_code, url,
                 lot_number, status, appraisal, min_bid, description, PARSER_VERSION,
-                sale_mode, direct_sale_deadline_at,
+                sale_mode, direct_sale_deadline_at, quality_flag,
             ),
         )
         row = cur.fetchone()

@@ -103,6 +103,13 @@ class PropertyItem(scrapy.Item):
     images = scrapy.Field()  # list[str] de URLs absolutas
     documents = scrapy.Field()  # list[{name, url}]
 
+    # ----- qualidade do dado (rótulo emitido pelo pipeline) ------------------
+    # Quando o pipeline detecta anomalia que provavelmente indica parsing
+    # errado (ex.: minimum_bid < 10% appraisal_value), preenche com um
+    # rótulo curto (ex.: 'suspicious_bid_low_ratio'). Persistido em
+    # `core.auction_lot.data_quality_flag`; UI/views filtram WHERE IS NULL.
+    data_quality_flag = scrapy.Field()
+
     # ----- diagnóstico -------------------------------------------------------
     raw_html_snapshot = scrapy.Field()  # opcional, para debug
     scraped_at = scrapy.Field()  # ISO 8601, preenchido pelo loader/pipeline

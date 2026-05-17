@@ -1,0 +1,31 @@
+name: Data Quality Audit
+
+# 08:00 UTC diário. Audita % de lotes ativos com data_quality_flag
+# preenchido por host (last 7d). Falha (exit 1) quando algum host passa
+# de 1% — visível em "actions failed" no GH; integração com Slack/Sentry
+# fica para depois.
+#
+# Roda via Fly machine ephemeral (`fly machines run --rm`), mesmo modelo
+# dos outros crons. Reusa image todoleilao-soleon:latest porque já tem
+# psycopg + acesso ao DB via env.
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Fly machines run (data quality audit)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl machines run --rm \
+            -a todoleilao-soleon \
+            registry.fly.io/todoleilao-soleon:latest \
+            sh -c 'python /app/scripts/data_quality_audit.py --window-days 7 --threshold 1.0'
