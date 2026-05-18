@@ -43,4 +43,17 @@ for entry in "${SPIDERS[@]}"; do
 done
 
 echo "[$(date -u +%FT%TZ)] BATCH DONE hosts_with_new=$TOTAL_NEW"
+
+# Refresh matviews pra propagar lots novos/atualizados pro front.
+# Cron diário às 06:00 UTC é rede de segurança; este é o caminho principal.
+echo "[$(date -u +%FT%TZ)] REFRESH matviews public_v1.*"
+python -c "
+import os, psycopg
+with psycopg.connect(os.environ['SUPABASE_DB_URL'], autocommit=True) as c, c.cursor() as cur:
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.lot_search')
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.uf_stats')
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.municipality_stats')
+print('refresh OK')
+" 2>&1 | tail -3 || true
+
 [ "$TOTAL_NEW" -gt 0 ] || exit 1

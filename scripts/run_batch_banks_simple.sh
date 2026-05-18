@@ -33,4 +33,16 @@ for spider in "${SPIDERS[@]}"; do
 done
 
 echo "[$(date -u +%FT%TZ)] BATCH DONE total_new=$TOTAL_NEW"
+
+# Refresh matviews (vide run_batch_providers_large.sh).
+echo "[$(date -u +%FT%TZ)] REFRESH matviews public_v1.*"
+python -c "
+import os, psycopg
+with psycopg.connect(os.environ['SUPABASE_DB_URL'], autocommit=True) as c, c.cursor() as cur:
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.lot_search')
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.uf_stats')
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.municipality_stats')
+print('refresh OK')
+" 2>&1 | tail -3 || true
+
 [ "$TOTAL_NEW" -gt 0 ] || exit 1

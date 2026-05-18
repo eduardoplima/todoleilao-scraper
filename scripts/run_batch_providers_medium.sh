@@ -43,4 +43,16 @@ done
 
 AFTER=$(python /app/scripts/spider_run_health.py --since-minutes 300 2>/dev/null | wc -l | tr -d ' ')
 echo "[$(date -u +%FT%TZ)] BATCH DONE hosts_with_new=$AFTER"
+
+# Refresh matviews (vide run_batch_providers_large.sh).
+echo "[$(date -u +%FT%TZ)] REFRESH matviews public_v1.*"
+python -c "
+import os, psycopg
+with psycopg.connect(os.environ['SUPABASE_DB_URL'], autocommit=True) as c, c.cursor() as cur:
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.lot_search')
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.uf_stats')
+    cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.municipality_stats')
+print('refresh OK')
+" 2>&1 | tail -3 || true
+
 [ "$AFTER" -gt 0 ] || exit 1

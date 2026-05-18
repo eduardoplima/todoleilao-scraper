@@ -636,16 +636,23 @@ class SupabasePipeline:
         sale_mode = (a.get("sale_mode") or "").strip().lower() or None
         direct_sale_deadline_at = _parse_dt(a.get("direct_sale_deadline"))
 
+        # Chaves de dedup pré-computadas (vide sql/dedup_keys.sql).
+        # Persistir em core.auction_lot permite que `_link_canonical` faça
+        # lookup indexado em vez do CTE de 549ms que materializava 35k rows.
+        addr_key = _address_key(a.get("address") or {}) or None
+        reg_key = _registry_key(a.get("description") or "")
+
         cur.execute(
             """
             INSERT INTO core.auction_lot
                 (auction_id, source_id, source_lot_code, source_url,
                  lot_number, current_status, appraisal_value, minimum_bid,
                  description, scraped_at, parser_version,
-                 sale_mode, direct_sale_deadline_at, data_quality_flag)
+                 sale_mode, direct_sale_deadline_at, data_quality_flag,
+                 address_key, registry_key)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s,
                     COALESCE(%s::core.sale_mode, 'leilao'),
-                    %s, %s)
+                    %s, %s, %s, %s)
             ON CONFLICT (source_id, source_lot_code) DO UPDATE
               SET current_status   = EXCLUDED.current_status,
                   appraisal_value  = COALESCE(EXCLUDED.appraisal_value, core.auction_lot.appraisal_value),
@@ -663,6 +670,8 @@ class SupabasePipeline:
                       core.auction_lot.direct_sale_deadline_at
                   ),
                   data_quality_flag = EXCLUDED.data_quality_flag,
+                  address_key      = COALESCE(EXCLUDED.address_key, core.auction_lot.address_key),
+                  registry_key     = COALESCE(EXCLUDED.registry_key, core.auction_lot.registry_key),
                   last_seen_at     = now(),
                   scraped_at       = EXCLUDED.scraped_at
             RETURNING id, (xmax = 0) AS inserted
@@ -671,6 +680,7 @@ class SupabasePipeline:
                 auction_id, source_id, lot_code, url,
                 lot_number, status, appraisal, min_bid, description, PARSER_VERSION,
                 sale_mode, direct_sale_deadline_at, quality_flag,
+                addr_key, reg_key,
             ),
         )
         row = cur.fetchone()
@@ -873,44 +883,30 @@ class SupabasePipeline:
             secondary, atual fica canonical (UPSERT por secondary_lot_id).
           - Se mesma source_kind dos dois lados → não faz dedup (mantém
             ambos como canônicos).
+
+        Lookup direto em colunas indexadas `core.auction_lot.address_key`
+        e `.registry_key` (vide sql/dedup_keys.sql). Antes (até 2026-05-18)
+        materializava CTE de 35k rows + regex sobre `description` — consumia
+        19.8% do Disk IO do projeto. Após o index lookup: ~7ms por chamada.
         """
-        addr_key = _address_key(a.get("address") or {})
+        addr_key = _address_key(a.get("address") or {}) or None
         reg_key = _registry_key(a.get("description") or "")
         # Sem chaves significativas, nada pra dedupar.
         if not addr_key and not reg_key:
             return
 
-        # Busca outros lots com mesma chave. O lookup vai contra os dados
-        # acabados de upsertar — ok porque _persist é dentro de 1 txn.
+        # Lookup indexado: índices partial em (address_key) e (registry_key)
+        # ambos WHERE IS NOT NULL. Bitmap OR combina os 2 quando ambos existem.
         cur.execute(
             """
-            WITH cand AS (
-              SELECT
-                al.id              AS lot_id,
-                src.source_kind    AS source_kind,
-                core.unaccent_lite(
-                  coalesce(ad.cep::text,'') || '|' ||
-                  coalesce(ad.street_name,'') || '|' || coalesce(ad.number,'')
-                )                  AS addr_key,
-                (
-                  SELECT (regexp_match(al.description,
-                    'matr[ií]cula?[^0-9]{0,20}(?:n[ºo°.]?\\s*)?(\\d{1,3}(?:\\.\\d{3})*|\\d{3,8})',
-                    'i'))[1]
-                )                  AS reg_key
-              FROM core.auction_lot al
-              LEFT JOIN core.source src ON src.id = al.source_id
-              LEFT JOIN core.lot_unit_link lu ON lu.lot_id = al.id
-              LEFT JOIN core.spatial_unit su ON su.id = lu.spatial_unit_id
-              LEFT JOIN core.address ad ON ad.id = su.address_id
-              WHERE al.id <> %s
-            )
-            SELECT lot_id, source_kind
-            FROM cand
-            WHERE
-              (CASE WHEN %s::text = '' THEN false
-                    ELSE addr_key = core.unaccent_lite(%s::text) END)
-              OR (CASE WHEN %s::text IS NULL THEN false
-                       ELSE reg_key = %s::text END)
+            SELECT al.id, s.source_kind
+            FROM core.auction_lot al
+            JOIN core.source s ON s.id = al.source_id
+            WHERE al.id <> %s
+              AND (
+                  (%s::text IS NOT NULL AND al.address_key  = %s)
+               OR (%s::text IS NOT NULL AND al.registry_key = %s)
+              )
             LIMIT 5
             """,
             (lot_id, addr_key, addr_key, reg_key, reg_key),

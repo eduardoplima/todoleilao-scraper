@@ -16,17 +16,31 @@
 
 -- A função CONCURRENTLY exige índice único (já criado em
 -- public_v1.lot_search_pk) e não bloqueia leituras durante o refresh.
--- 5 minutos é arbitrário — pode subir para 1 minuto se ingestão for
--- contínua, ou cair para 30 minutos se cron diário do scraper for
--- suficiente.
+--
+-- Decisão 2026-05-18: lots de leilão raramente mudam (item já existente é
+-- updated incrementalmente; novos só entram durante cron de spiders). Cron
+-- 5min era desperdício de Disk IO (~80 min/dia só de refresh, 26.7% do IO
+-- budget). Trocamos por:
+--   1. 1 refresh/dia às 06:00 UTC (rede de segurança).
+--   2. Refresh on-demand no FIM de cada batch script (vide
+--      scripts/run_batch_*.sh) — aciona a partir da Fly machine após
+--      raspar; garante latência <30min entre crawl e dado no front.
 
 -- Remove agendamento prévio se existir, antes de re-agendar.
 SELECT cron.unschedule(jobid)
   FROM cron.job
- WHERE jobname = 'refresh-public-v1-lot-search';
+ WHERE jobname IN (
+   'refresh-public-v1-lot-search',
+   'refresh-public-v1-stats',
+   'refresh-public-v1-daily'
+ );
 
 SELECT cron.schedule(
-  'refresh-public-v1-lot-search',
-  '*/5 * * * *',
-  $$REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.lot_search;$$
+  'refresh-public-v1-daily',
+  '0 6 * * *',
+  $$
+    REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.lot_search;
+    REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.uf_stats;
+    REFRESH MATERIALIZED VIEW CONCURRENTLY public_v1.municipality_stats;
+  $$
 );
