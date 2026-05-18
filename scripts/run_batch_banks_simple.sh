@@ -20,12 +20,11 @@ for spider in "${SPIDERS[@]}"; do
     BEFORE=$(python /app/scripts/spider_run_health.py --since-minutes 1 --host "${spider}.com.br" 2>/dev/null || echo 0)
 
     # Foreground via `timeout` (vide comentário em run_batch_providers_large.sh).
-    timeout --foreground --kill-after=300s "$TIMEOUT_PER_SPIDER" \
+    timeout --kill-after=60s "$TIMEOUT_PER_SPIDER" \
         scrapy crawl "$spider" -a incremental_only=true \
-        -s LOG_LEVEL=INFO \
-        -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" 2>&1 \
-      | tee "$LOG_DIR/batch_${spider}.log" \
-      | grep -E '^\d{4}-\d{2}-\d{2}.*\b(INFO|WARNING|ERROR)\b' || true
+            -s LOG_LEVEL=INFO \
+            -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
+            2>&1 || true
 
     AFTER_INTERVAL=$((TIMEOUT_PER_SPIDER / 60 + 5))
     NEW=$(python /app/scripts/spider_run_health.py --since-minutes "$AFTER_INTERVAL" 2>/dev/null | awk -v sp="$spider" '$1 ~ sp {sum+=$2} END {print sum+0}')

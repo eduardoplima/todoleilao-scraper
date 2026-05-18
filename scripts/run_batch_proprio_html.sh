@@ -31,12 +31,12 @@ for spider in "${SPIDERS[@]}"; do
 
     # Foreground via `timeout` (vide comentário em run_batch_providers_large.sh).
     echo "[$(date -u +%FT%TZ)] STARTING $spider (timeout ${TIMEOUT_PER_SPIDER}s)"
-    if timeout --foreground --kill-after=60s "$TIMEOUT_PER_SPIDER" \
+    if timeout --kill-after=60s "$TIMEOUT_PER_SPIDER" \
             scrapy crawl "$spider" -a incremental_only=true \
-            -s LOG_LEVEL=WARNING \
-            -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" 2>&1 \
-          | tee "$LOG_DIR/batch_${spider}.log" \
-          | grep -E '^\d{4}-\d{2}-\d{2}.*\b(WARNING|ERROR)\b' || true; then
+                -s LOG_LEVEL=WARNING \
+                -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
+                2>&1
+    then
         COUNT_OK=$((COUNT_OK + 1))
     else
         COUNT_FAIL=$((COUNT_FAIL + 1))

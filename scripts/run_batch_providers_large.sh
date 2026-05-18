@@ -26,16 +26,15 @@ for entry in "${SPIDERS[@]}"; do
 
     echo "[$(date -u +%FT%TZ)] STARTING $spider ($args; timeout ${TIMEOUT_PER_SPIDER}s)"
 
-    # Foreground via `timeout` — antes era `nohup ... &` + `PID=$!`, mas o $!
-    # do bash pegava o subshell que terminava no exec, fazendo o while loop
-    # sair imediatamente sem dar chance do scrapy nem iniciar. Stdout pra
-    # stdout direto (fly logs captura) + tee pro arquivo de log.
-    timeout --foreground --kill-after=300s "$TIMEOUT_PER_SPIDER" \
+    # Foreground simples — output direto pra stdout (fly logs captura).
+    # Antes era `nohup ... &` + `PID=$!`, mas o $! do bash referenciava
+    # subshell que terminava no exec, fazendo o while loop sair sem dar
+    # chance do scrapy nem iniciar.
+    timeout --kill-after=60s "$TIMEOUT_PER_SPIDER" \
         scrapy crawl "$spider" $args -a incremental_only=true \
-        -s LOG_LEVEL=INFO \
-        -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" 2>&1 \
-      | tee "$LOG_DIR/batch_${spider}.log" \
-      | grep -E '^\d{4}-\d{2}-\d{2}.*\b(INFO|WARNING|ERROR)\b' || true
+            -s LOG_LEVEL=INFO \
+            -s CLOSESPIDER_TIMEOUT="$TIMEOUT_PER_SPIDER" \
+            2>&1 || true
 
     AFTER_INTERVAL=$((TIMEOUT_PER_SPIDER / 60 + 5))
     NEW=$(python /app/scripts/spider_run_health.py --since-minutes "$AFTER_INTERVAL" 2>/dev/null | wc -l | tr -d ' ')
