@@ -25,6 +25,7 @@ from scrapy_playwright.page import PageMethod
 
 from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
 from leilao_scraper.spiders._provider_base import ProviderSpider
+from leilao_scraper.spiders._playwright_settings import PLAYWRIGHT_CUSTOM_SETTINGS
 from leilao_scraper.spiders.soleon import (
     _brl_to_decimal,
     _detail_is_imovel,
@@ -56,6 +57,7 @@ class BradescoSpider(ProviderSpider):
     requires_playwright = True
 
     custom_settings = {
+        **PLAYWRIGHT_CUSTOM_SETTINGS,
         "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
         "DOWNLOAD_DELAY": 1.0,
         "PLAYWRIGHT_MAX_PAGES_PER_CONTEXT": 4,

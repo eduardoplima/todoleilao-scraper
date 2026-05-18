@@ -39,6 +39,7 @@ from scrapy_playwright.page import PageMethod
 
 from leilao_scraper.spiders._common_ua import BROWSER_USER_AGENT
 from leilao_scraper.spiders._provider_base import ProviderSpider
+from leilao_scraper.spiders._playwright_settings import PLAYWRIGHT_CUSTOM_SETTINGS
 from leilao_scraper.spiders.soleon import (
     _detail_is_imovel,
     _normalize_text,
@@ -74,6 +75,7 @@ class S4BDigitalSpider(ProviderSpider):
     requires_playwright = True
 
     custom_settings = {
+        **PLAYWRIGHT_CUSTOM_SETTINGS,
         # Playwright só na home do tenant — depois cai pra HTTP normal.
         # Concorrência baixa porque cada home consome ~5s de browser.
         "CONCURRENT_REQUESTS_PER_DOMAIN": 1,

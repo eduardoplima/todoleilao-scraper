@@ -28,6 +28,10 @@ from __future__ import annotations
 import re
 from typing import Any, Iterable
 
+from leilao_scraper.spiders._playwright_settings import (
+    PLAYWRIGHT_CUSTOM_SETTINGS,
+)
+
 import scrapy
 from scrapy_playwright.page import PageMethod
 
@@ -109,6 +113,7 @@ class ProprioHtmlSpider(ProviderSpider):
     requires_playwright = True
 
     custom_settings = {
+        **PLAYWRIGHT_CUSTOM_SETTINGS,
         "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
         "DOWNLOAD_DELAY": 1.0,
         "PLAYWRIGHT_MAX_PAGES_PER_CONTEXT": 4,

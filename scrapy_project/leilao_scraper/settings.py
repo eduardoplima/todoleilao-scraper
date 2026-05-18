@@ -77,16 +77,16 @@ FEEDS = {
 }
 
 # ---------------------------------------------------------------------------
-# scrapy-playwright — registrado, mas opt-in por spider/request
+# scrapy-playwright — opt-in por spider via `custom_settings`
 # ---------------------------------------------------------------------------
-
-DOWNLOAD_HANDLERS = {
-    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
-    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
-}
-
-# scrapy-playwright requer o reactor asyncio.
-TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+#
+# DOWNLOAD_HANDLERS + TWISTED_REACTOR ficam em `spiders/_playwright_settings.py`
+# como PLAYWRIGHT_CUSTOM_SETTINGS. Spiders que precisam Chromium mergeam
+# essas chaves no seu próprio `custom_settings`. Eram globais até 2026-05-18,
+# mas o handler do scrapy-playwright 0.0.46 inicializa em thread separada e
+# explodia em prod (Fly machine + Playwright 1.58) com "Connection closed
+# while reading from the driver", matando 100% dos spiders na inicialização
+# — mesmo os que nem usam JS.
 
 PLAYWRIGHT_BROWSER_TYPE = "chromium"
 
